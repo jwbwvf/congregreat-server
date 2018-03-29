@@ -30,7 +30,7 @@ connect via cli
 
 ```
 docker exec -it congregreat-db mysql -u gr8admin -p
-Enter Password: 
+Enter Password:
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 24
 Server version: 5.7.21 MySQL Community Server (GPL)
@@ -50,3 +50,6 @@ JDBC:
 ```
 jdbc:mysql://gr8admin:<password>@localhost:5306/congregreat
 ```
+
+## Environment Variables
+__JWT_SECRET__ Used to Sign and Verify jsonwebtokens.
