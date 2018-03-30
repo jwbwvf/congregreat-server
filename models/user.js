@@ -3,6 +3,7 @@
 const sequelize = require('sequelize');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const config = require('../common/config');
 
 const iterations = 1000;
 const size = 16;
@@ -35,7 +36,7 @@ module.exports = function (sequelize, DataTypes){
   };
 
   User.verifyJwt = function (token) {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    return jwt.verify(token, config.jwt.secret);
   };
 
   User.getSalt = function () {
@@ -58,7 +59,7 @@ module.exports = function (sequelize, DataTypes){
       id : id,
       email : email,
       exp : parseInt(expiry.getTime() / 1000)
-    }, process.env.JWT_SECRET);
+    }, config.jwt.secret);
   };
 
   return User;

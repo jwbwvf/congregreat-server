@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var config = require('../common/config');
 var jwt = require('express-jwt');
 var auth = jwt({
-  secret : process.env.JWT_SECRET,
+  secret : config.jwt.secret,
   userProperty : 'payload'
 });
 
