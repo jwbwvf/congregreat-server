@@ -1,10 +1,10 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var models = require('../models');
+var User = require('../models').User;
 
 passport.use(new LocalStrategy({ usernameField : 'email' },
   function (username, password, done) {
-    models.User.findOne({ where: { email: username } })
+    User.findOne({ where: { email: username } })
     .then(user => {
       if (!user) {
         return done(null, false, {
@@ -19,16 +19,9 @@ passport.use(new LocalStrategy({ usernameField : 'email' },
       }
 
       user.hash = '';
-      user.hash = undefined;
       user.salt = '';
-      user.salt = undefined;
       return done(null, user);
     })
-    .catch(error => {
-      return done(null, false, {
-        message: error.message
-      });
-    });
   })
 );
 

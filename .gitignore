@@ -3,6 +3,8 @@ node_modules
 
 ##nyc
 .nyc_output
+coverage
 
 ##vscode
 launch.json
+.vscode
