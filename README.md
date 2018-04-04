@@ -1,6 +1,8 @@
 congregreat-server
 ===
 
+[![Build Status](https://travis-ci.com/drewsmith/congregreat-server.svg?token=w9qCFsdDt69XgriyzpJj&branch=master)](https://travis-ci.com/drewsmith/congregreat-server)
+
 The backend for congregreat
 
 ## Stack
