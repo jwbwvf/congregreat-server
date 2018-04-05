@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const uuid = require('uuid/v4');
+const uuid = require('uuid/v4')
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -31,9 +31,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    })
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Users');
+    return queryInterface.dropTable('Users')
   }
-};
+}
