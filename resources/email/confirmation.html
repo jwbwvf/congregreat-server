@@ -1,0 +1,109 @@
+<html>
+  <head>
+    <title>Congregreat - Account Confirmation</title>
+    <link href="https://fonts.googleapis.com/css?family=Pacifico|Lato:300,500:700|Montserrat:100,300,400,700" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #FAFAFA;
+        font-family: 'Lato', serif;
+        text-align: center;
+      }
+      .wrapper {
+        background: #FFFFFF;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+        margin: 20px auto;
+        border-radius: 10px;
+        max-width: 800px;
+      }
+      .header {
+        font-family: 'Pacifico', cursive;
+        font-size: 28px;
+        font-weight: 400;
+        color: #64B5F6;
+        padding: 10px 20px;
+        border-bottom: 1px solid #EAEAEA;
+        text-align:center;
+      }
+      .content {
+        background:#FFFFFF;
+        padding: 20px;
+        font-size: 18px;
+      }
+      .content p {
+        font-size: 18px;
+        font-weight: 300;
+        color: #111111;
+        margin: 20px 0;
+        padding: 0 10px;
+        text-align: left;
+        line-height: 24px;
+      }
+      .content h3 {
+        font-weight: 700;
+        margin: 20px 0 30px 0;
+        padding: 0;
+      }
+      .content p a {
+        color: #0288D1;
+      }
+      .confirm {
+        text-align: center;
+        padding: 20px;
+      }
+      .confirm a {
+        margin: 10px auto;
+        border: 0px;
+        border-bottom: 2px solid #0277BD;
+        background: #0288D1;
+        color: #FFFFFF;
+        padding: 15px 20px;
+        text-transform: uppercase;
+        font-size: 16px;
+        font-weight: 100;
+        border-radius: 5px;
+        box-shadow:0 2px 4px rgba(0, 0, 0, .25);
+        text-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+        outline: none;
+        text-decoration: none;
+        font-weight: 700;
+        font-family: 'Montserrat', serif;
+      }
+      .footer {
+        border-top: 1px solid #EAEAEA;
+        padding: 20px;
+        text-align: center;
+        font-size: 16px;
+        color: #BDBDBD;
+        margin-top: 10px;
+      }
+      .footer a {
+        color: #0288D1;
+        font-weight: 700;
+      }
+      .footer a:hover {
+        opacity: .75;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        Congregreat
+      </div>
+      <div class="content">
+        <h3>Hey There {{firstName}} {{lastName}}!</h3>
+        <p>
+          Thanks for signing up for Congregreat! In order to activate your account, we need to confirm your identity. Please click the confirmation button to complete your account registration. If you feel you recieved this email in error or have additional questions, please contact <a href="mailto:support@congregreat.com" class="email-link">support@congregreat.com</a>
+        </p>
+        <div class="confirm">
+            <a href="#">Confirm Your Account</a>
+        </div>
+      </div>
+      <div class="footer">
+        <a href="#">Congregreat</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mailto:support@congregreat.com">support@congregreat.com</a>
+      </div>
+    </div>
+  </body>
+</html>
