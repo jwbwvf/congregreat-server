@@ -8,13 +8,19 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
       .then(user => {
         if (!user) {
           return done(null, false, {
-            message: 'Incorrect username or password'
+            message: 'Incorrect username or password.'
           })
         }
 
         if (!user.validPassword(password)) {
           return done(null, false, {
-            message: 'Incorrect username or password'
+            message: 'Incorrect username or password.'
+          })
+        }
+
+        if (!user.verified) {
+          return done(null, false, {
+            message: 'User has not verified their email.'
           })
         }
 
