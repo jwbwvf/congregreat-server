@@ -150,7 +150,7 @@ describe('index routes', function () {
         .end(function (error, response, body) {
           assert(!error)
           expect(response.status).to.equal(200)
-          expect(response.body).to.eql({ 'user': { id: id }, 'token': token })
+          expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
         })
     })
   })

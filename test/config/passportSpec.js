@@ -27,7 +27,7 @@ describe('passport', function () {
       passport.authenticate('local', function (err, user, info) {
         if (err) done(err)
         assert(!user)
-        expect(info.message).to.equal('Incorrect username or password')
+        expect(info.message).to.equal('Incorrect username or password.')
         done()
       })(req, res)
     })
@@ -38,11 +38,28 @@ describe('passport', function () {
       const res = {}
       const userStub = sandbox.stub()
       userStub.validPassword = password => false
+      userStub.verified = true
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {
         if (err) done(err)
         assert(!user)
-        expect(info.message).to.equal('Incorrect username or password')
+        expect(info.message).to.equal('Incorrect username or password.')
+        done()
+      })(req, res)
+    })
+    it('returns false if the user has not verified their email', function (done) {
+      const email = 'testEmail@example.com'
+      const password = 'testPassword'
+      const req = {body: {email: email, password: password}}
+      const res = {}
+      const userStub = sandbox.stub()
+      userStub.validPassword = password => true
+      userStub.verified = false
+      sandbox.stub(User, 'findOne').resolves(userStub)
+      passport.authenticate('local', function (err, user, info) {
+        if (err) done(err)
+        assert(!user)
+        expect(info.message).to.equal('User has not verified their email.')
         done()
       })(req, res)
     })
@@ -54,6 +71,7 @@ describe('passport', function () {
       const userStub = sandbox.stub()
       userStub.hash = 'testHash'
       userStub.salt = 'testSalt'
+      userStub.verified = true
       userStub.validPassword = password => true
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {

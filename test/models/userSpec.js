@@ -49,14 +49,22 @@ describe('User', function () {
   })
   describe('generateJwt', function () {
     it('encodes a token that includes the id and email', function () {
-      const id = 'testId'
+      const userId = 'testId'
       const email = 'testEmail@example.com'
-      const token = User.generateJwt(id, email)
+      const token = User.generateJwt(userId, email)
 
       const decodedToken = jwt.verify(token, config.jwt.secret)
-      expect(decodedToken.id).to.eql(id)
+      expect(decodedToken.userId).to.eql(userId)
       expect(decodedToken.email).to.eql(email)
       assert(decodedToken.exp !== null)
+    })
+    it('throws an error if the userId is not passed as parameters', function () {
+      const email = 'testEmail@example.com'
+      assert.throws(() => { User.generateJwt(null, email) }, Error, 'Missing required parameter to generateJwt.')
+    })
+    it('throws an error if the email is not passed as parameters', function () {
+      const userId = 'testId'
+      assert.throws(() => { User.generateJwt(userId, null) }, Error, 'Missing required parameter to generateJwt.')
     })
   })
   describe('verifyJwt', function () {

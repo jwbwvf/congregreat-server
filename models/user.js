@@ -18,7 +18,10 @@ module.exports = function (sequelize, DataTypes) {
     email: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isEmail: true
+      }
     },
     verified: {
       type: DataTypes.BOOLEAN,
@@ -77,7 +80,7 @@ module.exports = function (sequelize, DataTypes) {
 
   User.generateJwt = function (userId, email, expirationInDays = 2) {
     if (!userId || !email) {
-      throw new Error('missing required parameter to generate jwt')
+      throw new Error('Missing required parameter to generateJwt.')
     }
     const expiry = new Date()
     expiry.setDate(expiry.getDate() + expirationInDays)

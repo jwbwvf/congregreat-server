@@ -14,7 +14,7 @@ router.get('/', function (req, res, next) {
 router.post('/register', async function (req, res, next) {
   if (!req.body.email || !req.body.confirm_email || !req.body.password || !req.body.confirm_password) {
     return res.status(400).json({ message: 'All fields are required.' })
-  };
+  }
 
   if (req.body.email !== req.body.confirm_email) {
     return res.status(400).json({ message: 'Email fields do not match, try again.' })
@@ -88,7 +88,7 @@ router.get('/confirm/:token', async function (req, res, next) {
     }
 
     if (user.verified) {
-      return res.status(400).json({ message: `The user's email has already been verified` })
+      return res.status(400).json({ message: `The user's email has already been verified.` })
     }
 
     user.update({ verified: true })
@@ -110,11 +110,11 @@ router.post('/resend', async function (req, res, next) {
       attributes: ['id', 'firstName', 'lastName', 'email', 'verified']})
 
     if (!user) {
-      return res.status(400).json({ message: 'Unable to resend verification email.' })
+      return res.status(400).json({ message: 'Email was never registered. Did you forget your login information?' })
     }
 
     if (user.verified) {
-      return res.status(400).json({ message: `The user's email has already been verified` })
+      return res.status(400).json({ message: `The user's email has already been verified.` })
     }
 
     // generate token that expires in half a day
