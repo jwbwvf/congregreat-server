@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const config = require('../common/config')
 
-const sendMail = ({firstName, lastName}, email, token) => {
+const sendMail = async ({firstName, lastName}, email, token) => {
 // Create a SMTP transporter object
   const transporter = nodemailer.createTransport({
     host: config.smtp.host,
@@ -29,18 +29,18 @@ const sendMail = ({firstName, lastName}, email, token) => {
   const html = template(data)
 
   const message = {
-    from: 'Congregreat <comfirmation@congregreat.com>',
+    from: 'Congregreat <confirmation@congregreat.com>',
     to: `${firstName} ${lastName} <${email}>`,
     subject: 'Email Confirmation',
     html: html
   }
 
-  transporter.sendMail(message, (err, info) => {
-    if (err) {
-      console.log('Error occurred. ' + err.message)
-      throw new Error(err.message)
-    }
-  })
+  try {
+    const info = await transporter.sendMail(message)
+    console.log(info)
+  } catch (error) {
+    console.log(error.message)
+  }
 }
 
 module.exports = {

@@ -4,7 +4,7 @@ const router = express.Router()
 const uuidv4 = require('uuid/v4')
 const passport = require('passport')
 const User = require('../models').User
-const nodemailer = require('../common/nodemailer')
+const mailer = require('../common/mailer')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -43,7 +43,7 @@ router.post('/register', async function (req, res, next) {
     // generate token that expires in half a day
     const token = User.generateJwt(user.id, user.email, 0.5)
 
-    nodemailer.sendMail(user, email, token)
+    mailer.sendMail(user, email, token)
 
     res.status(200).json({ message: 'Please check your email to verify your account.' })
   } catch (error) {
@@ -120,7 +120,7 @@ router.post('/resend', async function (req, res, next) {
     // generate token that expires in half a day
     const token = User.generateJwt(user.id, user.email, 0.5)
 
-    nodemailer.sendMail(user, user.email, token)
+    mailer.sendMail(user, user.email, token)
 
     res.status(200).json({ message: 'Email has been resent.  Please check your email to verify your account.' })
   } catch (error) {
