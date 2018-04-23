@@ -74,8 +74,9 @@ router.post('/login', function (req, res, next) {
 
 router.get('/confirm/:token', async function (req, res, next) {
   const token = User.verifyJwt(req.params.token)
-  const currentTime = parseInt(new Date()) / 1000
-  if (token.expiration > currentTime) {
+  const date = new Date()
+  const currentTime = parseInt(date.getTime() / 1000)
+  if (token.expiration < currentTime) {
     return res.status(400).json({ message: 'The token has already expired.' })
   }
 
