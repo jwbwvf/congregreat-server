@@ -18,7 +18,15 @@ module.exports = function (sequelize, DataTypes) {
     email: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        isEmail: true
+      }
+    },
+    verified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     },
     hash: {
       type: DataTypes.STRING,
@@ -27,6 +35,26 @@ module.exports = function (sequelize, DataTypes) {
     salt: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      field: 'updated_at'
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      field: 'first_name',
+      defaultValue: ''
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      field: 'last_name',
+      defaultValue: ''
     }
   }, {})
 
@@ -50,14 +78,17 @@ module.exports = function (sequelize, DataTypes) {
     return this.hash === hash
   }
 
-  User.generateJwt = function (id, email) {
+  User.generateJwt = function (userId, email, expirationInDays = 2) {
+    if (!userId || !email) {
+      throw new Error('Missing required parameter to generateJwt.')
+    }
     const expiry = new Date()
-    expiry.setDate(expiry.getDate() + 2) // set expire in two days
+    expiry.setDate(expiry.getDate() + expirationInDays)
 
     return jwt.sign({
-      id: id,
+      userId: userId,
       email: email,
-      exp: parseInt(expiry.getTime() / 1000)
+      expiration: parseInt(expiry.getTime() / 1000)
     }, config.jwt.secret)
   }
 

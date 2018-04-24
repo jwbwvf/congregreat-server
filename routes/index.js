@@ -1,9 +1,10 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const router = express.Router()
 
 const uuidv4 = require('uuid/v4')
-var passport = require('passport')
-var User = require('../models').User
+const passport = require('passport')
+const User = require('../models').User
+const mailer = require('../common/mailer')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -13,7 +14,7 @@ router.get('/', function (req, res, next) {
 router.post('/register', async function (req, res, next) {
   if (!req.body.email || !req.body.confirm_email || !req.body.password || !req.body.confirm_password) {
     return res.status(400).json({ message: 'All fields are required.' })
-  };
+  }
 
   if (req.body.email !== req.body.confirm_email) {
     return res.status(400).json({ message: 'Email fields do not match, try again.' })
@@ -39,10 +40,12 @@ router.post('/register', async function (req, res, next) {
     user.hash = ''
     user.salt = ''
 
-    var token = User.generateJwt()
+    // generate token that expires in half a day
+    const token = User.generateJwt(user.id, user.email, 0.5)
 
-    const userResponse = (({id}) => ({id}))(user)
-    res.status(200).json({ 'user': userResponse, 'token': token })
+    mailer.sendMail(user, email, token)
+
+    res.status(200).json({ message: 'Please check your email to verify your account.' })
   } catch (error) {
     res.status(400).send(error)
   };
@@ -56,16 +59,74 @@ router.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user, info) {
     if (err) { return next(err) }
     if (!user) {
-      return res.status(400).json({ message: 'Incorrect email or password.' })
+      return res.status(400).json({ message: info.message })
     }
     req.logIn(user, function (err) {
       if (err) { return next(err) }
 
-      var token = User.generateJwt()
+      const token = User.generateJwt(user.id, user.email)
+
       const userResponse = (({id}) => ({id}))(user)
       return res.status(200).json({ 'user': userResponse, 'token': token })
     })
   })(req, res, next)
+})
+
+router.get('/confirm/:token', async function (req, res, next) {
+  const token = User.verifyJwt(req.params.token)
+  const date = new Date()
+  const currentTime = parseInt(date.getTime() / 1000)
+  if (token.expiration < currentTime) {
+    return res.status(409).json({ message: 'The token has already expired.' })
+  }
+
+  try {
+    const user = await User.findOne({ where: { id: token.userId },
+      attributes: ['id', 'verified'] })
+
+    if (!user) {
+      return res.status(404).json({ message: 'No user exists for this token.' })
+    }
+
+    if (user.verified) {
+      return res.status(400).json({ message: `The user's email has already been verified.` })
+    }
+
+    user.update({ verified: true })
+
+    const userResponse = (({id}) => ({id}))(user)
+    return res.status(200).json({ 'user': userResponse, 'token': User.generateJwt(user.id, user.email) })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+
+router.post('/resend', async function (req, res, next) {
+  if (!req.body.email) {
+    return res.status(400).json({ message: 'Email is required.' })
+  }
+
+  try {
+    const user = await User.findOne({ where: { email: req.body.email },
+      attributes: ['id', 'firstName', 'lastName', 'email', 'verified']})
+
+    if (!user) {
+      return res.status(400).json({ message: 'Email was never registered. Did you forget your login information?' })
+    }
+
+    if (user.verified) {
+      return res.status(400).json({ message: `The user's email has already been verified.` })
+    }
+
+    // generate token that expires in half a day
+    const token = User.generateJwt(user.id, user.email, 0.5)
+
+    mailer.sendMail(user, user.email, token)
+
+    res.status(200).json({ message: 'Email has been resent.  Please check your email to verify your account.' })
+  } catch (error) {
+    res.status(400).send(error)
+  }
 })
 
 module.exports = router
