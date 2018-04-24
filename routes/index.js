@@ -77,7 +77,7 @@ router.get('/confirm/:token', async function (req, res, next) {
   const date = new Date()
   const currentTime = parseInt(date.getTime() / 1000)
   if (token.expiration < currentTime) {
-    return res.status(400).json({ message: 'The token has already expired.' })
+    return res.status(409).json({ message: 'The token has already expired.' })
   }
 
   try {
@@ -85,7 +85,7 @@ router.get('/confirm/:token', async function (req, res, next) {
       attributes: ['id', 'verified'] })
 
     if (!user) {
-      return res.status(400).json({ message: 'No user exists for this token.' })
+      return res.status(404).json({ message: 'No user exists for this token.' })
     }
 
     if (user.verified) {

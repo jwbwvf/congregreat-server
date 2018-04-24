@@ -172,7 +172,7 @@ describe('index routes', function () {
       try {
         await chai.request(app).get(`/confirm/12345678`)
       } catch ({response}) {
-        expect(response.status).to.equal(400)
+        expect(response.status).to.equal(409)
         expect(response.body.message).to.equal(`The token has already expired.`)
       }
     })
@@ -187,7 +187,7 @@ describe('index routes', function () {
       try {
         await chai.request(app).get(`/confirm/12345678`)
       } catch ({response}) {
-        expect(response.status).to.equal(400)
+        expect(response.status).to.equal(404)
         expect(response.body.message).to.equal('No user exists for this token.')
       }
     })
