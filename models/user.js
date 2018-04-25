@@ -59,7 +59,12 @@ module.exports = function (sequelize, DataTypes) {
   }, {})
 
   User.associate = function (models) {
-    // associations can be defined here
+    User.belongsTo(models.Congregation, {
+      foreignKey: {
+        name: 'congregationId',
+        field: 'congregation_id'
+      }
+    })
   }
 
   User.verifyJwt = function (token) {

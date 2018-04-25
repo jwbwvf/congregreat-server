@@ -22,8 +22,15 @@ module.exports = (sequelize, DataTypes) => {
       field: 'updated_at'
     }
   }, {})
+
   Congregation.associate = function (models) {
-    // associations can be defined here
+    Congregation.hasMany(models.User, {
+      foreignKey: {
+        name: 'congregationId',
+        field: 'congregation_id'
+      }
+    })
   }
+
   return Congregation
 }

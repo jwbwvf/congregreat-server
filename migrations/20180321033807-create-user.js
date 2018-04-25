@@ -45,6 +45,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
         field: 'last_name'
+      },
+      congregationId: {
+        type: Sequelize.UUID,
+        field: 'congregation_id',
+        references: {
+          model: 'Congregations',
+          key: 'id'
+        }
       }
     })
   },
