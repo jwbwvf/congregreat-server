@@ -30,6 +30,16 @@ app.use(passport.initialize())
 app.use('/', index)
 app.use('/users', users)
 
+// admin sub app
+var admin = express()
+app.use('/admin', admin)
+
+var adminCongregations = require('./routes/admin/congregations')
+var adminUsers = require('./routes/admin/users')
+
+admin.use('/congregations', adminCongregations)
+admin.use('/users', adminUsers)
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found')
