@@ -1,5 +1,6 @@
 /* global describe it beforeEach afterEach */
 
+const {JsonWebTokenError} = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
@@ -160,6 +161,15 @@ describe('index routes', function () {
     })
   })
   describe('GET /confirm/:token', function () {
+    it('should fail if the token is invalid', async function () {
+      sandbox.stub(User, 'verifyJwt').throws(new JsonWebTokenError())
+      try {
+        await chai.request(app).get(`/confirm/12345678`)
+      } catch ({response}) {
+        expect(response.status).to.equal(400)
+        expect(response.body.message).to.equal(`The token is invalid.`)
+      }
+    })
     it('should fail if the token is already expired', async function () {
       const user = {verified: false}
       const date = new Date()
@@ -207,7 +217,7 @@ describe('index routes', function () {
         expect(response.body.message).to.equal(`The user's email has already been verified.`)
       }
     })
-    it('should return the user id and new session token for a successful confirmation', async function () {
+    it('should return the user successfuly confirmed their email', async function () {
       const generatedToken = 'testGeneratedToken'
       const id = 'testId'
       const user = {verified: false, id: id}
@@ -223,7 +233,7 @@ describe('index routes', function () {
       const response = await chai.request(app).get(`/confirm/12345678`)
 
       expect(response.status).to.equal(200)
-      expect(response.body).to.eql({ 'user': { id: id }, 'token': generatedToken })
+      expect(response.body).to.eql({ message: `The user's email has been verified, please login.` })
     })
   })
   describe('POST /resend', function () {
