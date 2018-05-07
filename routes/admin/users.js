@@ -9,7 +9,7 @@ router.get('/', async function (req, res, next) {
       attributes: ['id', 'first_name', 'last_name', 'email', 'congregation_id']
     })
   } catch (error) {
-    res.status(400).json(error)
+    res.status(400).json({ message: 'Unable to find all users.' })
   }
   res.status(200).json(users)
 })

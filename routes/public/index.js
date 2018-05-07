@@ -3,13 +3,8 @@ const router = express.Router()
 
 const uuidv4 = require('uuid/v4')
 const passport = require('passport')
-const User = require('../models').User
-const mailer = require('../common/mailer')
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  res.json({ title: 'Landing Page' })
-})
+const User = require('../../models').User
+const mailer = require('../../common/mailer')
 
 router.post('/register', async function (req, res, next) {
   if (!req.body.email || !req.body.confirm_email || !req.body.password || !req.body.confirm_password) {
@@ -73,7 +68,13 @@ router.post('/login', function (req, res, next) {
 })
 
 router.get('/confirm/:token', async function (req, res, next) {
-  const token = User.verifyJwt(req.params.token)
+  let token
+  try {
+    token = User.verifyJwt(req.params.token)
+  } catch (error) {
+    return res.status(400).json({ message: 'The token is invalid.' })
+  }
+
   const date = new Date()
   const currentTime = parseInt(date.getTime() / 1000)
   if (token.expiration < currentTime) {
@@ -94,8 +95,9 @@ router.get('/confirm/:token', async function (req, res, next) {
 
     user.update({ verified: true })
 
-    const userResponse = (({id}) => ({id}))(user)
-    return res.status(200).json({ 'user': userResponse, 'token': User.generateJwt(user.id, user.email) })
+    // now that the user has been verified have them log in instead of responding with a token incase
+    // it was someone hitting this service trying to get back a token by guessing confirmation tokens
+    return res.status(200).json({ message: `The user's email has been verified, please login.` })
   } catch (error) {
     res.status(400).send(error)
   }

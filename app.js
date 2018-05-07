@@ -8,9 +8,6 @@ var cors = require('cors')
 
 require('./common/passport')
 
-var index = require('./routes/index')
-var users = require('./routes/users')
-
 var app = express()
 
 var env = process.env.NODE_ENV || 'development'
@@ -27,8 +24,18 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(passport.initialize())
 
-app.use('/', index)
-app.use('/users', users)
+var config = require('./common/config')
+var expressjwt = require('express-jwt')
+app.use(expressjwt({
+  secret: config.jwt.secret
+}).unless({
+  path: [
+    /^\/public\/.*/
+  ]
+}))
+
+app.use('/public', require('./routes/public/index'))
+app.use('/users', require('./routes/users'))
 
 // admin sub app
 var admin = express()
@@ -49,6 +56,10 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ message: 'Unauthorized.' })
+    return
+  }
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
