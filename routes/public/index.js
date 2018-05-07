@@ -93,11 +93,14 @@ router.get('/confirm/:token', async function (req, res, next) {
       return res.status(400).json({ message: `The user's email has already been verified.` })
     }
 
-    user.update({ verified: true })
-
+    const response = await user.update({ verified: true })
+    const statusCode = response ? 200 : 500
+    const statusMessage = response
+      ? `The user's email has been verified, please login.`
+      : 'Unable to verify email at this time, please try again.'
     // now that the user has been verified have them log in instead of responding with a token incase
     // it was someone hitting this service trying to get back a token by guessing confirmation tokens
-    return res.status(200).json({ message: `The user's email has been verified, please login.` })
+    return res.status(statusCode).json({ message: statusMessage })
   } catch (error) {
     res.status(400).send(error)
   }
