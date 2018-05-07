@@ -3,8 +3,8 @@ const router = express.Router()
 
 const uuidv4 = require('uuid/v4')
 const passport = require('passport')
-const User = require('../models').User
-const mailer = require('../common/mailer')
+const User = require('../../models').User
+const mailer = require('../../common/mailer')
 
 router.post('/register', async function (req, res, next) {
   if (!req.body.email || !req.body.confirm_email || !req.body.password || !req.body.confirm_password) {

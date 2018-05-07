@@ -8,9 +8,6 @@ var cors = require('cors')
 
 require('./common/passport')
 
-var index = require('./routes/index')
-var users = require('./routes/users')
-
 var app = express()
 
 var env = process.env.NODE_ENV || 'development'
@@ -33,16 +30,12 @@ app.use(expressjwt({
   secret: config.jwt.secret
 }).unless({
   path: [
-    '/login',
-    '/register',
-    '/resend',
-    '/confirm/:token',
-    /^\/confirm\/.*/
+    /^\/public\/.*/
   ]
 }))
 
-app.use('/', index)
-app.use('/users', users)
+app.use('/public', require('./routes/public/index'))
+app.use('/users', require('./routes/users'))
 
 // admin sub app
 var admin = express()

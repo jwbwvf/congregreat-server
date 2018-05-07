@@ -5,9 +5,9 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
 const passport = require('passport')
-const mailer = require('../../common/mailer')
-const app = require('../../app')
-const User = require('../../models').User
+const mailer = require('../../../common/mailer')
+const app = require('../../../app')
+const User = require('../../../models').User
 const expect = chai.expect
 const assert = chai.assert
 
@@ -22,9 +22,9 @@ describe('index routes', function () {
   afterEach(function () {
     sandbox.restore()
   })
-  describe('POST /login', function () {
+  describe('POST /public/login', function () {
     it('should fail if email is missing', function () {
-      chai.request(app).post('/login')
+      chai.request(app).post('/public/login')
         .send({ password: '12345678' })
         .end(function (error, response, body) {
           assert(error)
@@ -33,7 +33,7 @@ describe('index routes', function () {
         })
     })
     it('should fail if password is missing', function () {
-      chai.request(app).post('/login')
+      chai.request(app).post('/public/login')
         .send({ email: 'test@example.com' })
         .end(function (error, response, body) {
           assert(error)
@@ -44,7 +44,7 @@ describe('index routes', function () {
     it('should fail if the user is can not be authenticated', function () {
       sandbox.stub(passport, 'authenticate').yields(null, null, null)
 
-      chai.request(app).post('/login')
+      chai.request(app).post('/public/login')
         .send({ email: 'test@example.com', password: '12345678' })
         .end(function (error, response, body) {
           assert(error)
@@ -61,7 +61,7 @@ describe('index routes', function () {
       sandbox.stub(passport, 'authenticate').yields(null, user, null)
       sandbox.stub(User, 'generateJwt').returns(token)
 
-      chai.request(app).post('/login')
+      chai.request(app).post('/public/login')
         .send({ email: email, password: '12345678' })
         .end(function (error, response, body) {
           assert(!error)
@@ -70,10 +70,10 @@ describe('index routes', function () {
         })
     })
   })
-  describe('POST /register', async function () {
+  describe('POST /public/register', async function () {
     it('should fail if email is missing', async function () {
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ confirm_email: 'test@example.com', password: '12345678', confirm_password: '12345678' })
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -82,7 +82,7 @@ describe('index routes', function () {
     })
     it('should fail if confirm email is missing', async function () {
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ email: 'test@example.com', password: '12345678', confirm_password: '12345678' })
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -91,7 +91,7 @@ describe('index routes', function () {
     })
     it('should fail if password is missing', async function () {
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ email: 'test@example.com', confirm_email: 'test@example.com', confirm_password: '12345678' })
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -100,7 +100,7 @@ describe('index routes', function () {
     })
     it('should fail if confirm password is missing', async function () {
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ email: 'test@example.com', confirm_email: 'test@example.com', password: '12345678' })
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -109,7 +109,7 @@ describe('index routes', function () {
     })
     it('should fail if email and confirm email do not match', async function () {
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ email: 'test@example.com', confirm_email: 'nottest@example.com', password: '12345678', confirm_password: '12345678' })
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -121,7 +121,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'verifyJwt').returns('123456')
 
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ email: 'test@example.com', confirm_email: 'test@example.com', password: '12345678', confirm_password: '1234' })
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -132,7 +132,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves({ id: 'testId', email: 'test@example.com' })
 
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ email: 'test@example.com', confirm_email: 'test@example.com', password: '12345678', confirm_password: '1234' })
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -152,7 +152,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'getHash').returns(hash)
       sandbox.stub(User, 'generateJwt').returns(token)
       try {
-        await chai.request(app).post('/register')
+        await chai.request(app).post('/public/register')
           .send({ email: email, confirm_email: email, password: '12345678', confirm_password: '12345678' })
       } catch ({response}) {
         expect(response.status).to.equal(200)
@@ -160,11 +160,11 @@ describe('index routes', function () {
       }
     })
   })
-  describe('GET /confirm/:token', function () {
+  describe('GET /public/confirm/:token', function () {
     it('should fail if the token is invalid', async function () {
       sandbox.stub(User, 'verifyJwt').throws(new JsonWebTokenError())
       try {
-        await chai.request(app).get(`/confirm/12345678`)
+        await chai.request(app).get(`/public/confirm/12345678`)
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal(`The token is invalid.`)
@@ -180,7 +180,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(user)
 
       try {
-        await chai.request(app).get(`/confirm/12345678`)
+        await chai.request(app).get(`/public/confirm/12345678`)
       } catch ({response}) {
         expect(response.status).to.equal(409)
         expect(response.body.message).to.equal(`The token has already expired.`)
@@ -195,7 +195,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(null)
 
       try {
-        await chai.request(app).get(`/confirm/12345678`)
+        await chai.request(app).get(`/public/confirm/12345678`)
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body.message).to.equal('No user exists for this token.')
@@ -211,7 +211,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(user)
 
       try {
-        await chai.request(app).get(`/confirm/12345678`)
+        await chai.request(app).get(`/public/confirm/12345678`)
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal(`The user's email has already been verified.`)
@@ -230,16 +230,16 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(user)
       sandbox.stub(User, 'generateJwt').returns(generatedToken)
 
-      const response = await chai.request(app).get(`/confirm/12345678`)
+      const response = await chai.request(app).get(`/public/confirm/12345678`)
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: `The user's email has been verified, please login.` })
     })
   })
-  describe('POST /resend', function () {
+  describe('POST /public/resend', function () {
     it('should fail if email is missing', async function () {
       try {
-        await chai.request(app).post('/resend')
+        await chai.request(app).post('/public/resend')
           .send({})
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -252,7 +252,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(null)
 
       try {
-        await chai.request(app).post('/resend')
+        await chai.request(app).post('/public/resend')
           .send({email: email})
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -266,7 +266,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(user)
 
       try {
-        await chai.request(app).post('/resend')
+        await chai.request(app).post('/public/resend')
           .send({email: email})
       } catch ({response}) {
         expect(response.status).to.equal(400)
@@ -283,7 +283,7 @@ describe('index routes', function () {
       const sendMailStub = sandbox.stub(mailer, 'sendMail')
       sendMailStub.resolves()
 
-      const response = await chai.request(app).post('/resend')
+      const response = await chai.request(app).post('/public/resend')
         .send({email: email})
 
       expect(response.status).to.equal(200)
