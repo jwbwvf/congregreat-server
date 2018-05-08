@@ -125,7 +125,7 @@ describe('admin congregations routes', function () {
       sandbox.stub(uuidv, 'v4').returns(id)
 
       const response = await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`)
-        .send({id, name})
+        .send({ id, name })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
@@ -139,7 +139,7 @@ describe('admin congregations routes', function () {
       sandbox.stub(uuidv, 'v4').returns(id)
 
       try {
-        await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`).send({id, name})
+        await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
       } catch ({response}) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'Unable to create congregation.' })
@@ -163,6 +163,69 @@ describe('admin congregations routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
+      }
+    })
+  })
+  describe('PATCH /:id', function () {
+    it('should update the congregation with new name', async function () {
+      const id = 'testId'
+      const name = 'testCongregationName'
+      const updateName = 'testCongregationNameUpdate'
+      const congregation = { id: id, name: name }
+      congregation.update = sandbox.stub().returns(true)
+
+      const findByIdStub = sandbox.stub(Congregation, 'findById').resolves(congregation)
+
+      const response = await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+        .send({ name: updateName })
+
+      expect(response.status).to.equal(200)
+      expect(response.body).to.eql({ message: 'Congregation was updated.' })
+      expect(findByIdStub.getCall(0).args[0]).to.equal(id)
+      expect(congregation.update.getCall(0).args[0]).to.eql({ name: updateName })
+    })
+    it('should return a failure if findById throws an error', async function () {
+      const id = 'testId'
+      const updateName = 'testCongregationNameUpdate'
+      const findByIdStub = sandbox.stub(Congregation, 'findById').throws(new Error())
+
+      try {
+        await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`).send({ name: updateName })
+      } catch ({response}) {
+        expect(response.status).to.equal(404)
+        expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
+        expect(findByIdStub.getCall(0).args[0]).to.eql(id)
+      }
+    })
+    it('should should fail for unauthorized if a valid token is not provided', async function () {
+      token = jwt.sign({
+        id: 1
+      }, 'not correct secret', { expiresIn: 60 * 60 })
+      try {
+        await chai.request(app).patch('/admin/congregations/1').set('Authorization', `Bearer ${token}`)
+      } catch ({response}) {
+        expect(response.status).to.equal(401)
+        expect(response.body.message).to.equal('Unauthorized.')
+      }
+    })
+    it('should should fail for unauthorized if no token is not provided', async function () {
+      try {
+        await chai.request(app).patch('/admin/congregations/1')
+      } catch ({response}) {
+        expect(response.status).to.equal(401)
+        expect(response.body.message).to.equal('Unauthorized.')
+      }
+    })
+    it('should return a failure if no modifiable congregation property is provided', async function () {
+      const id = 'testId'
+      const updateId = 'testIdUpdate'
+
+      try {
+        await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+          .send({ id: updateId })
+      } catch ({response}) {
+        expect(response.status).to.equal(500)
+        expect(response.body).to.eql({ message: 'No modifiable congregation property was provided.' })
       }
     })
   })

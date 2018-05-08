@@ -221,7 +221,7 @@ describe('index routes', function () {
       const generatedToken = 'testGeneratedToken'
       const id = 'testId'
       const user = {verified: false, id: id}
-      user.update = sandbox.stub()
+      user.update = sandbox.stub().returns(true)
       const date = new Date()
       date.setDate(date.getDate() + 1)
       const token = {expiration: parseInt(date.getTime() / 1000)}
@@ -234,6 +234,26 @@ describe('index routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: `The user's email has been verified, please login.` })
+    })
+    it('should return the user failed to confirmed their email', async function () {
+      const generatedToken = 'testGeneratedToken'
+      const id = 'testId'
+      const user = {verified: false, id: id}
+      user.update = sandbox.stub().returns(false)
+      const date = new Date()
+      date.setDate(date.getDate() + 1)
+      const token = {expiration: parseInt(date.getTime() / 1000)}
+
+      sandbox.stub(User, 'verifyJwt').returns(token)
+      sandbox.stub(User, 'findOne').resolves(user)
+      sandbox.stub(User, 'generateJwt').returns(generatedToken)
+
+      try {
+        await chai.request(app).get(`/public/confirm/12345678`)
+      } catch ({response}) {
+        expect(response.status).to.equal(500)
+        expect(response.body).to.eql({ message: 'Unable to verify email at this time, please try again.' })
+      }
     })
   })
   describe('POST /public/resend', function () {
