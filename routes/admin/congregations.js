@@ -42,20 +42,22 @@ router.get('/:id', async function (req, res, next) {
 
 router.patch('/:id', async function (req, res, next) {
   if (!req.body.name) {
-    res.status(500).json({ message: 'No modifiable congregation property was provided.' })
+    return res.status(500).json({ message: 'No modifiable congregation property was provided.' })
   }
 
   let congregation
   try {
     congregation = await Congregation.findById(req.params.id)
   } catch (error) {
-    res.status(404).json({ message: 'Unable to find congregation by id.' })
+    return res.status(404).json({ message: 'Unable to find congregation by id.' })
   }
 
   const response = await congregation.update({ name: req.body.name })
-  const statusCode = response ? 200 : 500
-  const statusMessage = response ? 'Congregation was updated.' : 'Failed to update the congregation.'
-  res.status(statusCode).json({ message: statusMessage })
+  if (response) {
+    res.status(200).json({ message: 'Congregation was updated.' })
+  } else {
+    res.status(500).json({ message: 'Failed to update the congregation.' })
+  }
 })
 
 module.exports = router
