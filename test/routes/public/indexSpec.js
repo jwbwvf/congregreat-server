@@ -314,5 +314,10 @@ describe('index routes', function () {
       expect(args[1]).to.equal(email)
       expect(args[2]).to.equal(token)
     })
+    it('GET /public/status', async function () {
+      const response = await chai.request(app).get('/public/status')
+      expect(response.status).to.equal(200)
+      expect(response.body.status).to.equal('online')
+    })
   })
 })
