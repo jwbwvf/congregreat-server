@@ -67,10 +67,10 @@ router.post('/login', function (req, res, next) {
   })(req, res, next)
 })
 
-router.get('/confirm/:token', async function (req, res, next) {
+router.put('/confirm', async function (req, res, next) {
   let token
   try {
-    token = User.verifyJwt(req.params.token)
+    token = User.verifyJwt(req.body.token)
   } catch (error) {
     return res.status(400).json({ message: 'The token is invalid.' })
   }

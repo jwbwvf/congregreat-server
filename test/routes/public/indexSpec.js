@@ -160,11 +160,11 @@ describe('index routes', function () {
       }
     })
   })
-  describe('GET /public/confirm/:token', function () {
+  describe('PUT /public/confirm/', function () {
     it('should fail if the token is invalid', async function () {
       sandbox.stub(User, 'verifyJwt').throws(new JsonWebTokenError())
       try {
-        await chai.request(app).get(`/public/confirm/12345678`)
+        await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal(`The token is invalid.`)
@@ -180,7 +180,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(user)
 
       try {
-        await chai.request(app).get(`/public/confirm/12345678`)
+        await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
         expect(response.status).to.equal(409)
         expect(response.body.message).to.equal(`The token has already expired.`)
@@ -195,7 +195,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(null)
 
       try {
-        await chai.request(app).get(`/public/confirm/12345678`)
+        await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body.message).to.equal('No user exists for this token.')
@@ -211,7 +211,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(user)
 
       try {
-        await chai.request(app).get(`/public/confirm/12345678`)
+        await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal(`The user's email has already been verified.`)
@@ -230,7 +230,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'findOne').resolves(user)
       sandbox.stub(User, 'generateJwt').returns(generatedToken)
 
-      const response = await chai.request(app).get(`/public/confirm/12345678`)
+      const response = await chai.request(app).put(`/public/confirm`).send('12345678')
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: `The user's email has been verified, please login.` })
@@ -249,7 +249,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'generateJwt').returns(generatedToken)
 
       try {
-        await chai.request(app).get(`/public/confirm/12345678`)
+        await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
         expect(response.status).to.equal(500)
         expect(response.body).to.eql({ message: 'Unable to verify email at this time, please try again.' })
