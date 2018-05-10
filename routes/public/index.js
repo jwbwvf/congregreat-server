@@ -6,6 +6,10 @@ const passport = require('passport')
 const User = require('../../models').User
 const mailer = require('../../common/mailer')
 
+router.get('/status', async function (req, res, next) {
+  return res.status(200).json({ status: 'online' })
+})
+
 router.post('/register', async function (req, res, next) {
   if (!req.body.email || !req.body.confirm_email || !req.body.password || !req.body.confirm_password) {
     return res.status(400).json({ message: 'All fields are required.' })
