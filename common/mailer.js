@@ -20,7 +20,7 @@ const sendMail = async ({firstName, lastName}, email, token) => {
   const data = {
     firstName: firstName,
     lastName: lastName,
-    url: `localhost:3000/confirm/${token}`
+    url: `localhost:3001/confirm/${token}`
   }
 
   const confirmationHtml = path.join(__dirname, '..', 'resources', 'email', 'confirmation.html')
