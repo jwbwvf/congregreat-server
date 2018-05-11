@@ -41,15 +41,15 @@ describe('index routes', function () {
           expect(response.body.message).to.equal('All fields are required.')
         })
     })
-    it('should fail if the user is can not be authenticated', function () {
-      sandbox.stub(passport, 'authenticate').yields(null, null, null)
+    it('should fail if the user can not be authenticated', function () {
+      sandbox.stub(passport, 'authenticate').yields(null, null, {message: 'Incorrect username or password.'})
 
       chai.request(app).post('/public/login')
         .send({ email: 'test@example.com', password: '12345678' })
         .end(function (error, response, body) {
           assert(error)
           expect(response.status).to.equal(400)
-          expect(response.body.message).to.equal('Incorrect email or password.')
+          expect(response.body.message).to.equal('Incorrect username or password.')
         })
     })
     it('should return the user and a token on success', function () {
