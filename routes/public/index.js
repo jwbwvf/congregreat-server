@@ -76,13 +76,8 @@ router.put('/confirm', async function (req, res, next) {
   try {
     token = User.verifyJwt(req.body.token)
   } catch (error) {
+    console.error(error) // replace when we switch to a logger
     return res.status(400).json({ message: 'The token is invalid.' })
-  }
-
-  const date = new Date()
-  const currentTime = parseInt(date.getTime() / 1000)
-  if (token.expiration < currentTime) {
-    return res.status(409).json({ message: 'The token has already expired.' })
   }
 
   try {

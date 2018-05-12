@@ -1,5 +1,6 @@
 /* global describe it */
 
+const fs = require('fs')
 const User = require('../../models').User
 const jwt = require('jsonwebtoken')
 const config = require('../../common/config')
@@ -9,7 +10,9 @@ const assert = chai.assert
 
 describe('User', function () {
   const hex = /[0-9A-Fa-f]{16}/g
-
+  const publicKey = fs.readFileSync(config.jwt.public)
+  const privateKey = fs.readFileSync(config.jwt.private)
+  const passphrase = config.jwt.passphrase
   describe('getSalt', function () {
     it('gets a random 16 character string in hex form', function () {
       const salt = User.getSalt()
@@ -53,7 +56,7 @@ describe('User', function () {
       const email = 'testEmail@example.com'
       const token = User.generateJwt(userId, email)
 
-      const decodedToken = jwt.verify(token, config.jwt.secret)
+      const decodedToken = jwt.verify(token, publicKey, { algorithm: 'RS512' })
       expect(decodedToken.userId).to.eql(userId)
       expect(decodedToken.email).to.eql(email)
       assert(decodedToken.exp !== null)
@@ -75,7 +78,7 @@ describe('User', function () {
       const token = jwt.sign({
         id: id,
         email: email
-      }, config.jwt.secret)
+      }, { key: privateKey, passphrase }, { algorithm: 'RS512' })
 
       const decodedToken = User.verifyJwt(token)
       expect(decodedToken.id).to.eql(id)

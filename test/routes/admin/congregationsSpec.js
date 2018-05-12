@@ -1,5 +1,6 @@
 /* global describe it beforeEach afterEach */
 
+const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -15,11 +16,13 @@ chai.use(chaiHttp)
 
 describe('admin congregations routes', function () {
   let sandbox, token
+  const privateKey = fs.readFileSync(config.jwt.private)
+  const passphrase = config.jwt.passphrase
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
     token = jwt.sign({
       id: 1
-    }, config.jwt.secret, { expiresIn: 60 * 60 })
+    }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: '1d' })
   })
 
   afterEach(function () {

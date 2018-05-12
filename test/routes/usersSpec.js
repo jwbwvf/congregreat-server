@@ -1,5 +1,6 @@
 /* global describe it */
 
+const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -11,11 +12,13 @@ const expect = chai.expect
 chai.use(chaiHttp)
 
 describe('users routes', function () {
+  const privateKey = fs.readFileSync(config.jwt.private)
+  const passphrase = config.jwt.passphrase
   describe('GET /users', function () {
     it('should return respond with a resource', async function () {
       var token = jwt.sign({
         id: 1
-      }, config.jwt.secret, { expiresIn: 60 * 60 })
+      }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: 60 * 60 })
       const response = await chai.request(app).get('/users').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.equal('respond with a resource')

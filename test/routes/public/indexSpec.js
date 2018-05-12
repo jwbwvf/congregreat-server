@@ -172,24 +172,19 @@ describe('index routes', function () {
     })
     it('should fail if the token is already expired', async function () {
       const user = {verified: false}
-      const date = new Date()
-      date.setDate(date.getDate() - 1)
-      const token = {expiration: parseInt(date.getTime() / 1000)}
 
-      sandbox.stub(User, 'verifyJwt').returns(token)
+      sandbox.stub(User, 'verifyJwt').throws(new Error())
       sandbox.stub(User, 'findOne').resolves(user)
 
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
-        expect(response.status).to.equal(409)
-        expect(response.body.message).to.equal(`The token has already expired.`)
+        expect(response.status).to.equal(400)
+        expect(response.body.message).to.equal(`The token is invalid.`)
       }
     })
     it('should fail if the user does not exist', async function () {
-      const date = new Date()
-      date.setDate(date.getDate() + 1)
-      const token = {expiration: parseInt(date.getTime() / 1000)}
+      const token = {id: 1}
 
       sandbox.stub(User, 'verifyJwt').returns(token)
       sandbox.stub(User, 'findOne').resolves(null)
@@ -203,11 +198,8 @@ describe('index routes', function () {
     })
     it('should fail for a user that has already verified their email', async function () {
       const user = {verified: true}
-      const date = new Date()
-      date.setDate(date.getDate() + 1)
-      const token = {expiration: parseInt(date.getTime() / 1000)}
 
-      sandbox.stub(User, 'verifyJwt').returns(token)
+      sandbox.stub(User, 'verifyJwt').returns({})
       sandbox.stub(User, 'findOne').resolves(user)
 
       try {
@@ -222,11 +214,8 @@ describe('index routes', function () {
       const id = 'testId'
       const user = {verified: false, id: id}
       user.update = sandbox.stub().returns(true)
-      const date = new Date()
-      date.setDate(date.getDate() + 1)
-      const token = {expiration: parseInt(date.getTime() / 1000)}
 
-      sandbox.stub(User, 'verifyJwt').returns(token)
+      sandbox.stub(User, 'verifyJwt').returns({})
       sandbox.stub(User, 'findOne').resolves(user)
       sandbox.stub(User, 'generateJwt').returns(generatedToken)
 
@@ -240,11 +229,8 @@ describe('index routes', function () {
       const id = 'testId'
       const user = {verified: false, id: id}
       user.update = sandbox.stub().returns(false)
-      const date = new Date()
-      date.setDate(date.getDate() + 1)
-      const token = {expiration: parseInt(date.getTime() / 1000)}
 
-      sandbox.stub(User, 'verifyJwt').returns(token)
+      sandbox.stub(User, 'verifyJwt').returns({})
       sandbox.stub(User, 'findOne').resolves(user)
       sandbox.stub(User, 'generateJwt').returns(generatedToken)
 

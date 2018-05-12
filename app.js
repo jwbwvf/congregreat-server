@@ -24,10 +24,13 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(passport.initialize())
 
+var fs = require('fs')
 var config = require('./common/config')
 var expressjwt = require('express-jwt')
+var publicKey = fs.readFileSync(config.jwt.public)
 app.use(expressjwt({
-  secret: config.jwt.secret
+  secret: publicKey,
+  algorithm: 'RS512'
 }).unless({
   path: [
     /^\/public\/.*/
