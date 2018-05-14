@@ -3,6 +3,10 @@
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const config = require('../common/config')
+const fs = require('fs')
+const publicKey = fs.readFileSync(config.jwt.public)
+const privateKey = fs.readFileSync(config.jwt.private)
+const passphrase = config.jwt.passphrase
 
 const iterations = 1000
 const size = 16
@@ -68,7 +72,7 @@ module.exports = function (sequelize, DataTypes) {
   }
 
   User.verifyJwt = function (token) {
-    return jwt.verify(token, config.jwt.secret)
+    return jwt.verify(token, publicKey, { algorithm: 'RS512' })
   }
 
   User.getSalt = function () {
@@ -87,14 +91,15 @@ module.exports = function (sequelize, DataTypes) {
     if (!userId || !email) {
       throw new Error('Missing required parameter to generateJwt.')
     }
-    const expiry = new Date()
-    expiry.setDate(expiry.getDate() + expirationInDays)
 
-    return jwt.sign({
-      userId: userId,
-      email: email,
-      expiration: parseInt(expiry.getTime() / 1000)
-    }, config.jwt.secret)
+    try {
+      return jwt.sign({
+        userId: userId,
+        email: email
+      }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: `${expirationInDays}d` })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return User

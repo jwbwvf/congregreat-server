@@ -1,5 +1,6 @@
 /* global describe it beforeEach afterEach */
 
+const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -14,6 +15,8 @@ chai.use(chaiHttp)
 
 describe('admin users routes', function () {
   let sandbox
+  const privateKey = fs.readFileSync(config.jwt.private)
+  const passphrase = config.jwt.passphrase
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
   })
@@ -25,7 +28,7 @@ describe('admin users routes', function () {
     it('should return all users', async function () {
       var token = jwt.sign({
         id: 1
-      }, config.jwt.secret, { expiresIn: 60 * 60 })
+      }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: 60 * 60 })
 
       const userOne = { id: 'testIdOne', email: 'testOne@example.com' }
       const userTwo = { id: 'testIdTwo', email: 'testTwo@example.com' }
