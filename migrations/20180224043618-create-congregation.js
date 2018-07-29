@@ -21,6 +21,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
         field: 'updated_at'
+      },
+      status: {
+        allowNull: false,
+        type: Sequelize.STRING
       }
     })
   },
