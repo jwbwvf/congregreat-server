@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
       field: 'updated_at'
+    },
+    status: {
+      allowNull: false,
+      type: DataTypes.STRING
     }
   }, {})
 

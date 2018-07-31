@@ -39,7 +39,7 @@ describe('admin congregations routes', function () {
       const response = await chai.request(app).get('/admin/congregations').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregations)
-      expect(findAllStub.getCall(0).args[0]).to.eql({ attributes: ['id', 'name'] })
+      expect(findAllStub.getCall(0).args[0]).to.eql({ attributes: ['id', 'name', 'status'] })
     })
     it('should return a failure if findAll throws an error', async function () {
       const findAllStub = sandbox.stub(Congregation, 'findAll').throws(new Error())
@@ -49,7 +49,7 @@ describe('admin congregations routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find all congregations.' })
-        expect(findAllStub.getCall(0).args[0]).to.eql({ attributes: ['id', 'name'] })
+        expect(findAllStub.getCall(0).args[0]).to.eql({ attributes: ['id', 'name', 'status'] })
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
@@ -122,7 +122,8 @@ describe('admin congregations routes', function () {
     it('should return the new congregations', async function () {
       const id = 'testId'
       const name = 'testCongregationName'
-      const congregation = { id: 'testIdOne', name: 'testCongregationName' }
+      const status = 'new'
+      const congregation = { id, name, status }
 
       const createStub = sandbox.stub(Congregation, 'create').resolves(congregation)
       sandbox.stub(uuidv, 'v4').returns(id)
@@ -132,11 +133,12 @@ describe('admin congregations routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
-      expect(createStub.getCall(0).args[0]).to.eql({id, name})
+      expect(createStub.getCall(0).args[0]).to.eql({id, name, status})
     })
     it('should return a failure if create throws an error', async function () {
       const id = 'testId'
       const name = 'testCongregationName'
+      const status = 'new'
 
       const createStub = sandbox.stub(Congregation, 'create').throws(new Error())
       sandbox.stub(uuidv, 'v4').returns(id)
@@ -146,7 +148,7 @@ describe('admin congregations routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'Unable to create congregation.' })
-        expect(createStub.getCall(0).args[0]).to.eql({id, name})
+        expect(createStub.getCall(0).args[0]).to.eql({id, name, status})
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
