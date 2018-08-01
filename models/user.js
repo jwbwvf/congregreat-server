@@ -3,10 +3,12 @@
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const config = require('../common/config')
+const { USER_STATUS } = require('../common/status')
 const fs = require('fs')
 const publicKey = fs.readFileSync(config.jwt.public)
 const privateKey = fs.readFileSync(config.jwt.private)
 const passphrase = config.jwt.passphrase
+
 
 const iterations = 1000
 const size = 16
@@ -27,10 +29,9 @@ module.exports = function (sequelize, DataTypes) {
         isEmail: true
       }
     },
-    verified: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     hash: {
       type: DataTypes.STRING,
@@ -85,6 +86,10 @@ module.exports = function (sequelize, DataTypes) {
   User.prototype.validPassword = function (password) {
     const hash = crypto.pbkdf2Sync(password, this.salt, iterations, size, digest).toString('hex')
     return this.hash === hash
+  }
+
+  User.prototype.isVerified = function () {
+    return this.status === USER_STATUS.VERIFIED
   }
 
   User.generateJwt = function (userId, email, expirationInDays = 2) {

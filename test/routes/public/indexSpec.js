@@ -71,10 +71,17 @@ describe('index routes', function () {
     })
   })
   describe('POST /public/register', async function () {
+    const email = 'test@example.com'
+    const confirm_email = 'test@example.com'
+    const password = 'testPassword'
+    const confirm_password = 'testPassword'
+    const first_name = 'testFirstName'
+    const last_name = 'testLastName'
+
     it('should fail if email is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ confirm_email: 'test@example.com', password: '12345678', confirm_password: '12345678' })
+          .send({ confirm_email, password, confirm_password, first_name, last_name })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -83,7 +90,7 @@ describe('index routes', function () {
     it('should fail if confirm email is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email: 'test@example.com', password: '12345678', confirm_password: '12345678' })
+          .send({ email, password, confirm_password, first_name, last_name })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -92,7 +99,7 @@ describe('index routes', function () {
     it('should fail if password is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email: 'test@example.com', confirm_email: 'test@example.com', confirm_password: '12345678' })
+          .send({ email, confirm_email, confirm_password, first_name, last_name })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -101,7 +108,25 @@ describe('index routes', function () {
     it('should fail if confirm password is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email: 'test@example.com', confirm_email: 'test@example.com', password: '12345678' })
+          .send({ email, confirm_email, password, first_name, last_name })
+      } catch ({response}) {
+        expect(response.status).to.equal(400)
+        expect(response.body.message).to.equal('All fields are required.')
+      }
+    })
+    it('should fail if first_name is missing', async function () {
+      try {
+        await chai.request(app).post('/public/register')
+          .send({ confirm_email, password, confirm_password, last_name })
+      } catch ({response}) {
+        expect(response.status).to.equal(400)
+        expect(response.body.message).to.equal('All fields are required.')
+      }
+    })
+    it('should fail if last_name is missing', async function () {
+      try {
+        await chai.request(app).post('/public/register')
+          .send({ confirm_email, password, confirm_password, first_name })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -110,7 +135,7 @@ describe('index routes', function () {
     it('should fail if email and confirm email do not match', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email: 'test@example.com', confirm_email: 'nottest@example.com', password: '12345678', confirm_password: '12345678' })
+          .send({ email, confirm_email: `not${confirm_email}`, password, confirm_password, first_name, last_name })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Email fields do not match, try again.')
@@ -122,7 +147,7 @@ describe('index routes', function () {
 
       try {
         await chai.request(app).post('/public/register')
-          .send({ email: 'test@example.com', confirm_email: 'test@example.com', password: '12345678', confirm_password: '1234' })
+          .send({ email, confirm_email, password, confirm_password: `not${confirm_password}`, first_name, last_name })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Password fields do not match, try again.')
@@ -133,7 +158,7 @@ describe('index routes', function () {
 
       try {
         await chai.request(app).post('/public/register')
-          .send({ email: 'test@example.com', confirm_email: 'test@example.com', password: '12345678', confirm_password: '1234' })
+          .send({ email, confirm_email, password, confirm_password, first_name, last_name })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Email is already registered. Did you forget your login information?')
@@ -141,19 +166,18 @@ describe('index routes', function () {
     })
     it('should return the new user and a token on success', async function () {
       const id = 'testId'
-      const email = 'test@example.com'
       const salt = 'testSalt'
       const hash = 'testHash'
       const token = 'testToken'
 
       sandbox.stub(User, 'findOne').resolves(null)
-      sandbox.stub(User, 'create').resolves({id: id, email: email, salt: salt, hash: hash})
+      sandbox.stub(User, 'create').resolves({id, email, salt, hash})
       sandbox.stub(User, 'getSalt').returns(salt)
       sandbox.stub(User, 'getHash').returns(hash)
       sandbox.stub(User, 'generateJwt').returns(token)
       try {
         await chai.request(app).post('/public/register')
-          .send({ email: email, confirm_email: email, password: '12345678', confirm_password: '12345678' })
+          .send({ email, confirm_email, password, confirm_password, first_name, last_name })
       } catch ({response}) {
         expect(response.status).to.equal(200)
         expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
@@ -171,10 +195,11 @@ describe('index routes', function () {
       }
     })
     it('should fail if the token is already expired', async function () {
-      const user = {verified: false}
+      const userStub = sandbox.stub()
+      userStub.isVerified = () => false
 
       sandbox.stub(User, 'verifyJwt').throws(new Error())
-      sandbox.stub(User, 'findOne').resolves(user)
+      sandbox.stub(User, 'findOne').resolves(userStub)
 
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
@@ -197,10 +222,11 @@ describe('index routes', function () {
       }
     })
     it('should fail for a user that has already verified their email', async function () {
-      const user = {verified: true}
+      const userStub = sandbox.stub()
+      userStub.isVerified = () => true
 
       sandbox.stub(User, 'verifyJwt').returns({})
-      sandbox.stub(User, 'findOne').resolves(user)
+      sandbox.stub(User, 'findOne').resolves(userStub)
 
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
@@ -212,11 +238,13 @@ describe('index routes', function () {
     it('should return the user successfuly confirmed their email', async function () {
       const generatedToken = 'testGeneratedToken'
       const id = 'testId'
-      const user = {verified: false, id: id}
-      user.update = sandbox.stub().returns(true)
+      const userStub = sandbox.stub()
+      userStub.id = id
+      userStub.isVerified = () => false
+      userStub.update = () => true
 
       sandbox.stub(User, 'verifyJwt').returns({})
-      sandbox.stub(User, 'findOne').resolves(user)
+      sandbox.stub(User, 'findOne').resolves(userStub)
       sandbox.stub(User, 'generateJwt').returns(generatedToken)
 
       const response = await chai.request(app).put(`/public/confirm`).send('12345678')
@@ -227,11 +255,13 @@ describe('index routes', function () {
     it('should return the user failed to confirmed their email', async function () {
       const generatedToken = 'testGeneratedToken'
       const id = 'testId'
-      const user = {verified: false, id: id}
-      user.update = sandbox.stub().returns(false)
+      const userStub = sandbox.stub()
+      userStub.id = id
+      userStub.isVerified = () => false
+      userStub.update = () => false // TODO remove if works sandbox.stub().returns(false)
 
       sandbox.stub(User, 'verifyJwt').returns({})
-      sandbox.stub(User, 'findOne').resolves(user)
+      sandbox.stub(User, 'findOne').resolves(userStub)
       sandbox.stub(User, 'generateJwt').returns(generatedToken)
 
       try {
@@ -266,10 +296,11 @@ describe('index routes', function () {
       }
     })
     it('should fail for a user that has already verified their email', async function () {
-      const user = {verified: true}
+      const userStub = sandbox.stub()
+      userStub.isVerified = () => true
       const email = 'test@example.com'
 
-      sandbox.stub(User, 'findOne').resolves(user)
+      sandbox.stub(User, 'findOne').resolves(userStub)
 
       try {
         await chai.request(app).post('/public/resend')
@@ -281,10 +312,12 @@ describe('index routes', function () {
     })
     it('should send a new token in an email', async function () {
       const email = 'test@example.com'
-      const user = {verified: false, email: email}
+      const userStub = sandbox.stub()
+      userStub.isVerified = () => false
+      userStub.email = email
       const token = 'testToken'
 
-      sandbox.stub(User, 'findOne').resolves(user)
+      sandbox.stub(User, 'findOne').resolves(userStub)
       sandbox.stub(User, 'generateJwt').returns(token)
       const sendMailStub = sandbox.stub(mailer, 'sendMail')
       sendMailStub.resolves()
@@ -296,7 +329,7 @@ describe('index routes', function () {
       expect(response.body.message).to.equal('Email has been resent.  Please check your email to verify your account.')
 
       const args = sendMailStub.getCall(0).args
-      expect(args[0]).to.equal(user)
+      expect(args[0]).to.equal(userStub)
       expect(args[1]).to.equal(email)
       expect(args[2]).to.equal(token)
     })

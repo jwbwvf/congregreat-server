@@ -38,7 +38,7 @@ describe('passport', function () {
       const res = {}
       const userStub = sandbox.stub()
       userStub.validPassword = password => false
-      userStub.verified = true
+      userStub.isVerified = () => true
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {
         if (err) done(err)
@@ -54,7 +54,7 @@ describe('passport', function () {
       const res = {}
       const userStub = sandbox.stub()
       userStub.validPassword = password => true
-      userStub.verified = false
+      userStub.isVerified = () => false
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {
         if (err) done(err)
@@ -71,7 +71,7 @@ describe('passport', function () {
       const userStub = sandbox.stub()
       userStub.hash = 'testHash'
       userStub.salt = 'testSalt'
-      userStub.verified = true
+      userStub.isVerified = () => true
       userStub.validPassword = password => true
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {

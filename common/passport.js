@@ -18,7 +18,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
           })
         }
 
-        if (!user.verified) {
+        if (!user.isVerified()) {
           return done(null, false, {
             message: 'User has not verified their email.'
           })
