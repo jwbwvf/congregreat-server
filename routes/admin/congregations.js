@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var Congregation = require('../../models').Congregation
 var uuid = require('uuid')
+const { CONGREGATION_STATUS } = require('../../common/status')
 
 router.get('/', async function (req, res, next) {
   let congregations
@@ -19,7 +20,7 @@ router.get('/', async function (req, res, next) {
 router.post('/', async function (req, res, next) {
   const id = uuid.v4()
   const name = req.body.name
-  const status = 'new'
+  const status = CONGREGATION_STATUS.NEW
   let congregation
   try {
     congregation = await Congregation.create({id, name, status})
@@ -69,7 +70,7 @@ router.delete('/:id', async function (req, res, next) {
     return res.status(404).json({ message: 'Unable to find congregation by id.' })
   }
 
-  const response = await congregation.update({ status: 'deleted' })
+  const response = await congregation.update({ status: CONGREGATION_STATUS.DELETED })
   if (response) {
     res.status(200).json({ message: 'Congregation was deleted.' })
   } else {

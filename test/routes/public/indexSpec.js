@@ -258,7 +258,7 @@ describe('index routes', function () {
       const userStub = sandbox.stub()
       userStub.id = id
       userStub.isVerified = () => false
-      userStub.update = () => false // TODO remove if works sandbox.stub().returns(false)
+      userStub.update = () => false
 
       sandbox.stub(User, 'verifyJwt').returns({})
       sandbox.stub(User, 'findOne').resolves(userStub)
