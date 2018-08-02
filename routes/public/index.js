@@ -5,13 +5,19 @@ const uuidv4 = require('uuid/v4')
 const passport = require('passport')
 const User = require('../../models').User
 const mailer = require('../../common/mailer')
+const { USER_STATUS } = require('../../common/status')
 
 router.get('/status', async function (req, res, next) {
   return res.status(200).json({ status: 'online' })
 })
 
 router.post('/register', async function (req, res, next) {
-  if (!req.body.email || !req.body.confirm_email || !req.body.password || !req.body.confirm_password) {
+  if (!req.body.email
+    || !req.body.confirm_email
+    || !req.body.password
+    || !req.body.confirm_password
+    || !req.body.first_name
+    || !req.body.last_name) {
     return res.status(400).json({ message: 'All fields are required.' })
   }
 
@@ -31,9 +37,12 @@ router.post('/register', async function (req, res, next) {
 
     const id = uuidv4()
     const email = req.body.email
+    const firstName = req.body.first_name
+    const lastName = req.body.last_name
     let salt = User.getSalt()
     let hash = User.getHash(salt, req.body.password)
-    const user = await User.create({id, email, salt, hash})
+    const status = USER_STATUS.UNVERIFIED
+    const user = await User.create({id, email, salt, hash, status, firstName, lastName})
     salt = ''
     hash = ''
     user.hash = ''
@@ -82,19 +91,19 @@ router.put('/confirm', async function (req, res, next) {
 
   try {
     const user = await User.findOne({ where: { id: token.userId },
-      attributes: ['id', 'verified'] })
+      attributes: ['id', 'status'] })
 
     if (!user) {
       return res.status(404).json({ message: 'No user exists for this token.' })
     }
 
-    if (user.verified) {
+    if (user.isVerified()) {
       return res.status(400).json({ message: `The user's email has already been verified.` })
     }
 
     // now that the user has been verified have them log in instead of responding with a token incase
     // it was someone hitting this service trying to get back a token by guessing confirmation tokens
-    const response = await user.update({ verified: true })
+    const response = await user.update({ status: USER_STATUS.VERIFIED })
     if (response) {
       res.status(200).json({ message: `The user's email has been verified, please login.` })
     } else {
@@ -112,13 +121,13 @@ router.post('/resend', async function (req, res, next) {
 
   try {
     const user = await User.findOne({ where: { email: req.body.email },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'verified']})
+      attributes: ['id', 'firstName', 'lastName', 'email', 'status']})
 
     if (!user) {
       return res.status(400).json({ message: 'Email was never registered. Did you forget your login information?' })
     }
 
-    if (user.verified) {
+    if (user.isVerified()) {
       return res.status(400).json({ message: `The user's email has already been verified.` })
     }
 

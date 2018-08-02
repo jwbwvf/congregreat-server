@@ -13,10 +13,9 @@ module.exports = {
         unique: true,
         type: Sequelize.STRING
       },
-      verified: {
+      status: {
         allowNull: false,
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
+        type: Sequelize.STRING
       },
       hash: {
         allowNull: false,
