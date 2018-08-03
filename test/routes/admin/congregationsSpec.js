@@ -9,6 +9,7 @@ const uuidv = require('uuid')
 const app = require('../../../app')
 const config = require('../../../common/config')
 const Congregation = require('../../../models').Congregation
+const {CONGREGATION_STATUS} = require('../../../common/status')
 
 const expect = chai.expect
 
@@ -75,7 +76,7 @@ describe('admin congregations routes', function () {
   describe('GET /:id', function () {
     it('should return all congregations', async function () {
       const id = 'testId'
-      const congregation = { id: id, name: 'testCongregationName' }
+      const congregation = { id, name: 'testCongregationName' }
 
       const findByIdStub = sandbox.stub(Congregation, 'findById').resolves(congregation)
 
@@ -176,7 +177,7 @@ describe('admin congregations routes', function () {
       const id = 'testId'
       const name = 'testCongregationName'
       const updateName = 'testCongregationNameUpdate'
-      const congregation = { id: id, name: name }
+      const congregation = { id, name }
       congregation.update = sandbox.stub().returns(true)
 
       const findByIdStub = sandbox.stub(Congregation, 'findById').resolves(congregation)
@@ -187,7 +188,7 @@ describe('admin congregations routes', function () {
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Congregation was updated.' })
       expect(findByIdStub.getCall(0).args[0]).to.equal(id)
-      expect(congregation.update.getCall(0).args[0]).to.eql({ name: updateName })
+      expect(congregation.update.calledWith({ name: updateName }))
     })
     it('should return a failure if findById throws an error', async function () {
       const id = 'testId'
@@ -199,7 +200,7 @@ describe('admin congregations routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
-        expect(findByIdStub.getCall(0).args[0]).to.eql(id)
+        expect(findByIdStub.calledWith(id))
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
@@ -231,6 +232,63 @@ describe('admin congregations routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(500)
         expect(response.body).to.eql({ message: 'No modifiable congregation property was provided.' })
+      }
+    })
+    it('should return a failure if update fails', async function () {
+      const id = 'testId'
+      const updateName = 'testCongregationNameUpdate'
+      const congregation = { id }
+      congregation.update = sandbox.stub().returns(false)
+
+      sandbox.stub(Congregation, 'findById').resolves(congregation)
+
+      try {
+        await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+          .send({ name: updateName })
+      } catch ({response}) {
+        expect(response.status).to.equal(500)
+        expect(response.body).to.eql({ message: 'Failed to update the congregation.' })
+      }
+    })
+  })
+  describe('DELETE /:id', function () {
+    it('should set the status as deleted', async function () {
+      const id = 'testId'
+      const congregation = { id }
+      congregation.update = sandbox.stub().returns(true)
+
+      sandbox.stub(Congregation, 'findById').resolves(congregation)
+
+      const response = await chai.request(app).delete(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+
+      expect(congregation.update.calledWith(CONGREGATION_STATUS.DELETED))
+      expect(response.status).to.equal(200)
+      expect(response.body).to.eql({ message: 'Congregation was deleted.' })
+    })
+    it('should return a failure if findById throws an error', async function () {
+      const id = 'testId'
+      const findByIdStub = sandbox.stub(Congregation, 'findById').throws(new Error())
+
+      try {
+        await chai.request(app).delete(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      } catch ({response}) {
+        expect(response.status).to.equal(404)
+        expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
+        expect(findByIdStub.getCall(0).args[0]).to.eql(id)
+      }
+    })
+    it('should return a failure if delete fails', async function () {
+      const id = 'testId'
+      const congregation = { id }
+      congregation.update = sandbox.stub().returns(false)
+
+      sandbox.stub(Congregation, 'findById').resolves(congregation)
+
+      try {
+        await chai.request(app).delete(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      } catch ({response}) {
+        expect(response.status).to.equal(500)
+        expect(response.body).to.eql({ message: 'Failed to delete the congregation.' })
       }
     })
   })
