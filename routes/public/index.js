@@ -12,12 +12,12 @@ router.get('/status', async function (req, res, next) {
 })
 
 router.post('/register', async function (req, res, next) {
-  if (!req.body.email
-    || !req.body.confirm_email
-    || !req.body.password
-    || !req.body.confirm_password
-    || !req.body.first_name
-    || !req.body.last_name) {
+  if (!req.body.email ||
+    !req.body.confirm_email ||
+    !req.body.password ||
+    !req.body.confirm_password ||
+    !req.body.first_name ||
+    !req.body.last_name) {
     return res.status(400).json({ message: 'All fields are required.' })
   }
 
