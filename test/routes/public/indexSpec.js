@@ -72,16 +72,16 @@ describe('index routes', function () {
   })
   describe('POST /public/register', async function () {
     const email = 'test@example.com'
-    const confirm_email = 'test@example.com'
+    const confirmEmail = 'test@example.com'
     const password = 'testPassword'
-    const confirm_password = 'testPassword'
-    const first_name = 'testFirstName'
-    const last_name = 'testLastName'
+    const confirmPassword = 'testPassword'
+    const firstName = 'testFirstName'
+    const lastName = 'testLastName'
 
     it('should fail if email is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ confirm_email, password, confirm_password, first_name, last_name })
+          .send({ confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -90,7 +90,7 @@ describe('index routes', function () {
     it('should fail if confirm email is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, password, confirm_password, first_name, last_name })
+          .send({ email, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -99,7 +99,7 @@ describe('index routes', function () {
     it('should fail if password is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email, confirm_password, first_name, last_name })
+          .send({ email, confirm_email: confirmEmail, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -108,7 +108,7 @@ describe('index routes', function () {
     it('should fail if confirm password is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email, password, first_name, last_name })
+          .send({ email, confirm_email: confirmEmail, password, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -117,7 +117,7 @@ describe('index routes', function () {
     it('should fail if first_name is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ confirm_email, password, confirm_password, last_name })
+          .send({ confirm_email: confirmEmail, password, confirm_password: confirmPassword, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -126,7 +126,7 @@ describe('index routes', function () {
     it('should fail if last_name is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ confirm_email, password, confirm_password, first_name })
+          .send({ confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -135,7 +135,7 @@ describe('index routes', function () {
     it('should fail if email and confirm email do not match', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: `not${confirm_email}`, password, confirm_password, first_name, last_name })
+          .send({ email, confirm_email: `not${confirmEmail}`, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Email fields do not match, try again.')
@@ -147,7 +147,7 @@ describe('index routes', function () {
 
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email, password, confirm_password: `not${confirm_password}`, first_name, last_name })
+          .send({ email, confirm_email: confirmEmail, password, confirm_password: `not${confirmPassword}`, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Password fields do not match, try again.')
@@ -158,7 +158,7 @@ describe('index routes', function () {
 
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email, password, confirm_password, first_name, last_name })
+          .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Email is already registered. Did you forget your login information?')
@@ -177,7 +177,7 @@ describe('index routes', function () {
       sandbox.stub(User, 'generateJwt').returns(token)
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email, password, confirm_password, first_name, last_name })
+          .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(200)
         expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
