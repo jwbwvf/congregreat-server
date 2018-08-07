@@ -9,7 +9,6 @@ const publicKey = fs.readFileSync(config.jwt.public)
 const privateKey = fs.readFileSync(config.jwt.private)
 const passphrase = config.jwt.passphrase
 
-
 const iterations = 1000
 const size = 16
 const digest = 'SHA256'
@@ -53,13 +52,13 @@ module.exports = function (sequelize, DataTypes) {
     },
     firstName: {
       type: DataTypes.STRING,
-      field: 'first_name',
-      defaultValue: ''
+      allowNull: false,
+      field: 'first_name'
     },
     lastName: {
       type: DataTypes.STRING,
-      field: 'last_name',
-      defaultValue: ''
+      allowNull: false,
+      field: 'last_name'
     }
   }, {})
 
