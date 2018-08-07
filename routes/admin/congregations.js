@@ -1,45 +1,38 @@
 var express = require('express')
 var router = express.Router()
 var Congregation = require('../../models').Congregation
-var uuid = require('uuid')
+const uuid = require('uuid')
 const { CONGREGATION_STATUS } = require('../../common/status')
 
 router.get('/', async function (req, res, next) {
-  let congregations
   try {
-    congregations = await Congregation.findAll({
-      attributes: ['id', 'name', 'status']
-    })
+    const congregations = await Congregation.findAll({attributes: ['id', 'name', 'status']})
+    res.status(200).json(congregations)
   } catch (error) {
     res.status(404).json({ message: 'Unable to find all congregations.' })
   }
-
-  res.status(200).json(congregations)
 })
 
 router.post('/', async function (req, res, next) {
   const id = uuid.v4()
   const name = req.body.name
   const status = CONGREGATION_STATUS.NEW
-  let congregation
+
   try {
-    congregation = await Congregation.create({id, name, status})
+    const congregation = await Congregation.create({id, name, status})
+    res.status(200).json(congregation)
   } catch (error) {
     res.status(409).json({ message: 'Unable to create congregation.' })
   }
-
-  res.status(200).json(congregation)
 })
 
 router.get('/:id', async function (req, res, next) {
-  let congregation
   try {
-    congregation = await Congregation.findById(req.params.id)
+    const congregation = await Congregation.findById(req.params.id, {attributes: ['id', 'name', 'status']})
+    res.status(200).json(congregation)
   } catch (error) {
     res.status(404).json({ message: 'Unable to find congregation by id.' })
   }
-
-  res.status(200).json(congregation)
 })
 
 router.patch('/:id', async function (req, res, next) {
