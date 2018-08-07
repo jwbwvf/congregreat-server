@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
-const uuidv = require('uuid')
+const uuid = require('uuid')
 const app = require('../../../app')
 const config = require('../../../common/config')
 const Congregation = require('../../../models').Congregation
@@ -89,7 +89,7 @@ describe('admin congregations routes', function () {
       const id = 'testId'
 
       const findByIdStub = sandbox.stub(Congregation, 'findById').throws(new Error())
-      sandbox.stub(uuidv, 'v4').returns(id)
+      sandbox.stub(uuid, 'v4').returns(id)
 
       try {
         await chai.request(app).get(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
@@ -127,7 +127,7 @@ describe('admin congregations routes', function () {
       const congregation = { id, name, status }
 
       const createStub = sandbox.stub(Congregation, 'create').resolves(congregation)
-      sandbox.stub(uuidv, 'v4').returns(id)
+      sandbox.stub(uuid, 'v4').returns(id)
 
       const response = await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`)
         .send({ id, name })
@@ -142,7 +142,7 @@ describe('admin congregations routes', function () {
       const status = 'new'
 
       const createStub = sandbox.stub(Congregation, 'create').throws(new Error())
-      sandbox.stub(uuidv, 'v4').returns(id)
+      sandbox.stub(uuid, 'v4').returns(id)
 
       try {
         await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
