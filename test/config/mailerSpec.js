@@ -3,21 +3,22 @@
 const nodemailer = require('nodemailer')
 const config = require('../../common/config')
 const sinon = require('sinon')
+const faker = require('faker')
 const mailer = require('../../common/mailer')
 const chai = require('chai')
 const expect = chai.expect
 
 describe('mailer', function () {
   let sandbox, transportStub, consoleStub
-  config.smtp.host = 'testHost'
-  config.smtp.port = 'testPort'
+  config.smtp.host = faker.internet.ip()
+  config.smtp.port = faker.random.number()
   config.smtp.secure = 'false'
-  config.smtp.auth.user = 'testAuthUser'
-  config.smtp.auth.pass = 'testAuthPass'
-  const firstName = 'testFirstName'
-  const lastName = 'testLastName'
-  const email = 'testEmail@example.com'
-  const token = 'testToken'
+  config.smtp.auth.user = faker.name.findName()
+  config.smtp.auth.pass = faker.internet.password()
+  const firstName = faker.name.findName()
+  const lastName = faker.name.findName()
+  const email = faker.internet.email()
+  const token = faker.lorem.word()
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
     transportStub = sandbox.stub()

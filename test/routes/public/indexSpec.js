@@ -4,8 +4,10 @@ const {JsonWebTokenError} = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
+const faker = require('faker')
 const passport = require('passport')
 const mailer = require('../../../common/mailer')
+const {USER_STATUS} = require('../../../common/status')
 const app = require('../../../app')
 const User = require('../../../models').User
 const expect = chai.expect
@@ -25,7 +27,7 @@ describe('index routes', function () {
   describe('POST /public/login', function () {
     it('should fail if email is missing', function () {
       chai.request(app).post('/public/login')
-        .send({ password: '12345678' })
+        .send({ password: faker.internet.password() })
         .end(function (error, response, body) {
           assert(error)
           expect(response.status).to.equal(400)
@@ -34,7 +36,7 @@ describe('index routes', function () {
     })
     it('should fail if password is missing', function () {
       chai.request(app).post('/public/login')
-        .send({ email: 'test@example.com' })
+        .send({ email: faker.internet.email() })
         .end(function (error, response, body) {
           assert(error)
           expect(response.status).to.equal(400)
@@ -45,7 +47,7 @@ describe('index routes', function () {
       sandbox.stub(passport, 'authenticate').yields(null, null, {message: 'Incorrect username or password.'})
 
       chai.request(app).post('/public/login')
-        .send({ email: 'test@example.com', password: '12345678' })
+        .send({ email: faker.internet.email(), password: faker.internet.password() })
         .end(function (error, response, body) {
           assert(error)
           expect(response.status).to.equal(400)
@@ -53,16 +55,17 @@ describe('index routes', function () {
         })
     })
     it('should return the user and a token on success', function () {
-      const id = 'testId'
-      const email = 'test@example.com'
-      const token = 'testToken'
+      const id = faker.random.uuid()
+      const email = faker.internet.email()
+      const password = faker.internet.password()
+      const token = faker.random.alphaNumeric()
       const user = {id: id}
 
       sandbox.stub(passport, 'authenticate').yields(null, user, null)
       sandbox.stub(User, 'generateJwt').returns(token)
 
       chai.request(app).post('/public/login')
-        .send({ email: email, password: '12345678' })
+        .send({ email, password })
         .end(function (error, response, body) {
           assert(!error)
           expect(response.status).to.equal(200)
@@ -71,12 +74,12 @@ describe('index routes', function () {
     })
   })
   describe('POST /public/register', async function () {
-    const email = 'test@example.com'
-    const confirmEmail = 'test@example.com'
-    const password = 'testPassword'
-    const confirmPassword = 'testPassword'
-    const firstName = 'testFirstName'
-    const lastName = 'testLastName'
+    const email = faker.internet.email()
+    const confirmEmail = email
+    const password = faker.internet.password()
+    const confirmPassword = password
+    const firstName = faker.name.findName()
+    const lastName = faker.name.findName()
 
     it('should fail if email is missing', async function () {
       try {
@@ -154,7 +157,7 @@ describe('index routes', function () {
       }
     })
     it('should fail if email is already registered', async function () {
-      sandbox.stub(User, 'findOne').resolves({ id: 'testId', email: 'test@example.com' })
+      sandbox.stub(User, 'findOne').resolves({ id: faker.random.uuid(), email: faker.internet.email() })
 
       try {
         await chai.request(app).post('/public/register')
@@ -165,33 +168,32 @@ describe('index routes', function () {
       }
     })
     it('should return the new user and a token on success', async function () {
-      const id = 'testId'
-      const salt = 'testSalt'
-      const hash = 'testHash'
-      const token = 'testToken'
+      const id = faker.random.uuid()
+      const salt = faker.random.alphaNumeric()
+      const hash = faker.random.alphaNumeric()
+      const token = faker.random.alphaNumeric()
 
       sandbox.stub(User, 'findOne').resolves(null)
-      sandbox.stub(User, 'create').resolves({id, email, salt, hash})
+      const createStub = sandbox.stub(User, 'create').resolves({id, email, salt, hash})
       sandbox.stub(User, 'getSalt').returns(salt)
       sandbox.stub(User, 'getHash').returns(hash)
       sandbox.stub(User, 'generateJwt').returns(token)
       const sendMailStub = sandbox.stub(mailer, 'sendMail')
       sendMailStub.resolves()
 
-      try {
-        await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
-      } catch ({response}) {
-        expect(response.status).to.equal(200)
-        expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
-        // TODO expect on params for create to match fields we use on create
-      }
+      const response = await chai.request(app).post('/public/register')
+        .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+
+      expect(response.status).to.equal(200)
+      expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
+      const status = USER_STATUS.NEW
+      expect(createStub.getCall(0).calledWith({id, email, salt, hash, status, firstName, lastName}))
     })
   })
   describe('PUT /public/confirm/', function () {
     it('should fail if the token is invalid', async function () {
       const consoleStub = sandbox.stub(console, 'error')
-      const errorMessage = 'test error message'
+      const errorMessage = faker.lorem.sentence()
       sandbox.stub(User, 'verifyJwt').throws(new JsonWebTokenError(errorMessage))
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
@@ -205,7 +207,7 @@ describe('index routes', function () {
       const userStub = sandbox.stub()
       userStub.isVerified = () => false
       const consoleStub = sandbox.stub(console, 'error')
-      const errorMessage = 'test error message'
+      const errorMessage = faker.lorem.sentence()
       sandbox.stub(User, 'verifyJwt').throws(new Error(errorMessage))
       sandbox.stub(User, 'findOne').resolves(userStub)
 
@@ -245,8 +247,8 @@ describe('index routes', function () {
       }
     })
     it('should return the user successfuly confirmed their email', async function () {
-      const generatedToken = 'testGeneratedToken'
-      const id = 'testId'
+      const generatedToken = faker.random.alphaNumeric()
+      const id = faker.random.uuid()
       const userStub = sandbox.stub()
       userStub.id = id
       userStub.isVerified = () => false
@@ -262,8 +264,8 @@ describe('index routes', function () {
       expect(response.body).to.eql({ message: `The user's email has been verified, please login.` })
     })
     it('should return the user failed to confirmed their email', async function () {
-      const generatedToken = 'testGeneratedToken'
-      const id = 'testId'
+      const generatedToken = faker.random.alphaNumeric()
+      const id = faker.random.uuid()
       const userStub = sandbox.stub()
       userStub.id = id
       userStub.isVerified = () => false
@@ -292,7 +294,7 @@ describe('index routes', function () {
       }
     })
     it('should fail for an email that has not been registered', async function () {
-      const email = 'test@example.com'
+      const email = faker.internet.email()
 
       sandbox.stub(User, 'findOne').resolves(null)
 
@@ -307,7 +309,7 @@ describe('index routes', function () {
     it('should fail for a user that has already verified their email', async function () {
       const userStub = sandbox.stub()
       userStub.isVerified = () => true
-      const email = 'test@example.com'
+      const email = faker.internet.email()
 
       sandbox.stub(User, 'findOne').resolves(userStub)
 
@@ -320,11 +322,11 @@ describe('index routes', function () {
       }
     })
     it('should send a new token in an email', async function () {
-      const email = 'test@example.com'
+      const email = faker.internet.email()
       const userStub = sandbox.stub()
       userStub.isVerified = () => false
       userStub.email = email
-      const token = 'testToken'
+      const token = faker.random.alphaNumeric()
 
       sandbox.stub(User, 'findOne').resolves(userStub)
       sandbox.stub(User, 'generateJwt').returns(token)

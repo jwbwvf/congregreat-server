@@ -2,15 +2,18 @@
 
 const passport = require('passport')
 const sinon = require('sinon')
+const faker = require('faker')
 const User = require('../../models').User
 const chai = require('chai')
 const expect = chai.expect
 const assert = chai.assert
 
 describe('passport', function () {
-  let sandbox
+  let sandbox, email, password
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
+    email = faker.internet.email()
+    password = faker.internet.password()
   })
 
   afterEach(function () {
@@ -19,9 +22,7 @@ describe('passport', function () {
 
   describe('use LocalStrategy', function () {
     it('returns false if user is not found', function (done) {
-      const email = 'testEmail@example.com'
-      const password = 'testPassword'
-      const req = {body: {email: email, password: password}}
+      const req = {body: {email, password}}
       const res = {}
       sandbox.stub(User, 'findOne').resolves(null)
       passport.authenticate('local', function (err, user, info) {
@@ -32,9 +33,7 @@ describe('passport', function () {
       })(req, res)
     })
     it('returns false if the password is invalid', function (done) {
-      const email = 'testEmail@example.com'
-      const password = 'testPassword'
-      const req = {body: {email: email, password: password}}
+      const req = {body: {email, password}}
       const res = {}
       const userStub = sandbox.stub()
       userStub.validPassword = password => false
@@ -48,9 +47,7 @@ describe('passport', function () {
       })(req, res)
     })
     it('returns false if the user has not verified their email', function (done) {
-      const email = 'testEmail@example.com'
-      const password = 'testPassword'
-      const req = {body: {email: email, password: password}}
+      const req = {body: {email, password}}
       const res = {}
       const userStub = sandbox.stub()
       userStub.validPassword = password => true
@@ -64,13 +61,11 @@ describe('passport', function () {
       })(req, res)
     })
     it('returns the user on successful authentication', function (done) {
-      const email = 'testEmail@example.com'
-      const password = 'testPassword'
-      const req = {body: {email: email, password: password}}
+      const req = {body: {email, password}}
       const res = {}
       const userStub = sandbox.stub()
-      userStub.hash = 'testHash'
-      userStub.salt = 'testSalt'
+      userStub.hash = faker.random.alphaNumeric()
+      userStub.salt = faker.random.alphaNumeric()
       userStub.isVerified = () => true
       userStub.validPassword = password => true
       sandbox.stub(User, 'findOne').resolves(userStub)
@@ -84,9 +79,7 @@ describe('passport', function () {
       })(req, res)
     })
     it('returns false if an exception is caught', function (done) {
-      const email = 'testEmail@example.com'
-      const password = 'testPassword'
-      const req = {body: {email: email, password: password}}
+      const req = {body: {email, password}}
       const res = {}
       const userStub = sandbox.stub()
       userStub.validPassword = password => true
