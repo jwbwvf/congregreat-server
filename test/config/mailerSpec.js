@@ -8,7 +8,7 @@ const chai = require('chai')
 const expect = chai.expect
 
 describe('mailer', function () {
-  let sandbox, transportStub
+  let sandbox, transportStub, consoleStub
   config.smtp.host = 'testHost'
   config.smtp.port = 'testPort'
   config.smtp.secure = 'false'
@@ -22,6 +22,7 @@ describe('mailer', function () {
     sandbox = sinon.sandbox.create()
     transportStub = sandbox.stub()
     sandbox.stub(nodemailer, 'createTransport').returns(transportStub)
+    consoleStub = sandbox.stub(console, 'log')
   })
 
   afterEach(function () {
@@ -30,7 +31,7 @@ describe('mailer', function () {
 
   describe('sendMail', function () {
     it('sends the correct message', async function () {
-      transportStub.sendMail = sandbox.spy()
+      transportStub.sendMail = sandbox.stub()
       await mailer.sendMail({firstName, lastName}, email, token)
       const message = transportStub.sendMail.getCall(0).args[0]
       expect(message.to).to.equal(`${firstName} ${lastName} <${email}>`)
@@ -42,12 +43,11 @@ describe('mailer', function () {
     })
 
     it('logs any error messages', async function () {
-      const logSpy = sandbox.spy(console, 'log')
       const message = 'test error message'
       transportStub.sendMail = sandbox.stub()
       transportStub.sendMail.rejects(new Error(message))
       await mailer.sendMail({firstName, lastName}, email, token)
-      expect(logSpy.getCall(0).args[0]).to.equal(message)
+      expect(consoleStub.getCall(0).calledWith(message))
     })
   })
 })

@@ -175,21 +175,28 @@ describe('index routes', function () {
       sandbox.stub(User, 'getSalt').returns(salt)
       sandbox.stub(User, 'getHash').returns(hash)
       sandbox.stub(User, 'generateJwt').returns(token)
+      const sendMailStub = sandbox.stub(mailer, 'sendMail')
+      sendMailStub.resolves()
+
       try {
         await chai.request(app).post('/public/register')
           .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(200)
         expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
+        // TODO expect on params for create to match fields we use on create
       }
     })
   })
   describe('PUT /public/confirm/', function () {
     it('should fail if the token is invalid', async function () {
-      sandbox.stub(User, 'verifyJwt').throws(new JsonWebTokenError())
+      const consoleStub = sandbox.stub(console, 'error')
+      const errorMessage = 'test error message'
+      sandbox.stub(User, 'verifyJwt').throws(new JsonWebTokenError(errorMessage))
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
+        expect(consoleStub.getCall(0).calledWith(errorMessage))
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal(`The token is invalid.`)
       }
@@ -197,13 +204,15 @@ describe('index routes', function () {
     it('should fail if the token is already expired', async function () {
       const userStub = sandbox.stub()
       userStub.isVerified = () => false
-
-      sandbox.stub(User, 'verifyJwt').throws(new Error())
+      const consoleStub = sandbox.stub(console, 'error')
+      const errorMessage = 'test error message'
+      sandbox.stub(User, 'verifyJwt').throws(new Error(errorMessage))
       sandbox.stub(User, 'findOne').resolves(userStub)
 
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
+        expect(consoleStub.getCall(0).calledWith(errorMessage))
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal(`The token is invalid.`)
       }
