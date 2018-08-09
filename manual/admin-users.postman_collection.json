@@ -1,0 +1,132 @@
+{
+	"id": "da294d60-daf2-4dcc-abe7-5ad8c5de7884",
+	"name": "admin/users",
+	"description": "routes that hit the end point admin/users",
+	"auth": null,
+	"events": null,
+	"variables": [],
+	"order": [
+		"8a419cde-8b7b-4f4c-92bf-9fd84fb0dafe",
+		"2ff0ed2b-c38a-45a8-92b7-b087ebd781eb",
+		"009dedc8-576e-4b7e-9872-61902bad1ed6",
+		"7adc3dda-1fba-49b8-9206-fad1820d25b6"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "009dedc8-576e-4b7e-9872-61902bad1ed6",
+			"name": "localhost:3000/admin/users/:id",
+			"url": "localhost:3000/admin/users/5f651eef-1272-48b5-97b9-97fdb3a9175e",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				}
+			],
+			"method": "PATCH",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBhZjMyNy1hZGUwLTQ3MjYtOGY0Yy01Y2ViNTY5ZWUzMmEiLCJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImlhdCI6MTUzMzYxMjM0OSwiZXhwIjoxNTMzNzg1MTQ5fQ.OXXCzkGZmkLfMKkmrGOg8IOg7RvP8K72usxcGqboclZwNgUZsKebqtdDU39ppANvgkEyAySv0uPpKdDEYTYjGi9WaqIXn364RHTnBM5EyOMZ9tkbWLPZg9LDvFrwha1lhz12JG6_gm1ATBGInMgxYoEZ-sqwNgkLh_s24LyCepGvc1TankRnwb34-u3FHZ4Z3YeWX-g5SbYofqWtMgzeZNVJ5c8juw_v5inf5dbfkPyMXZYJFJX8XtQrds8RtpQclGbPAxrUsktIb3UYa6ojNv1hzliiQv1f1XXIGuXl8Yvw3uRECTfsU4rcluZRXeuLrPxnza3wwFGDbc8boGQd_Dc_J-ptJXjQgqyG7yIToHAlGH41E9H5d_JQPGMh5cTb8IKqc6jqOORX9aPElQEvW1LbO2HIzCo14zC3-CLy9qFxoKyeAW4LIvn8owAGteQ-F_tufBuY1dxF3HLnXSvDZM_mho2DRnQEkoPcsS62rPSLLJoxMRYFQQES2VqwTYAw36nLNwvPuop7FZaqw58m05_9Kj2i4PeBLe0DV8yaGj3shKpIi9dxSJH4i_NIGJq_pQXDoL6E_FGLaZ0egLl03PQmOFo3HjTPKonREIJoLajywARdoj2MR_5h18YVIO-8hCPxVC1_9QOia6OfhnSWAQqx1oMGFhQ7RNT719PzNpw"
+					}
+				],
+				"type": "bearer"
+			},
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"email\": \"testNewEmail@email.com\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "2ff0ed2b-c38a-45a8-92b7-b087ebd781eb",
+			"name": "localhost:3000/admin/users/:id",
+			"url": "localhost:3000/admin/users/5f651eef-1272-48b5-97b9-97fdb3a9175e",
+			"description": "",
+			"data": null,
+			"dataMode": "params",
+			"headerData": [],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBhZjMyNy1hZGUwLTQ3MjYtOGY0Yy01Y2ViNTY5ZWUzMmEiLCJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImlhdCI6MTUzMzYxMjM0OSwiZXhwIjoxNTMzNzg1MTQ5fQ.OXXCzkGZmkLfMKkmrGOg8IOg7RvP8K72usxcGqboclZwNgUZsKebqtdDU39ppANvgkEyAySv0uPpKdDEYTYjGi9WaqIXn364RHTnBM5EyOMZ9tkbWLPZg9LDvFrwha1lhz12JG6_gm1ATBGInMgxYoEZ-sqwNgkLh_s24LyCepGvc1TankRnwb34-u3FHZ4Z3YeWX-g5SbYofqWtMgzeZNVJ5c8juw_v5inf5dbfkPyMXZYJFJX8XtQrds8RtpQclGbPAxrUsktIb3UYa6ojNv1hzliiQv1f1XXIGuXl8Yvw3uRECTfsU4rcluZRXeuLrPxnza3wwFGDbc8boGQd_Dc_J-ptJXjQgqyG7yIToHAlGH41E9H5d_JQPGMh5cTb8IKqc6jqOORX9aPElQEvW1LbO2HIzCo14zC3-CLy9qFxoKyeAW4LIvn8owAGteQ-F_tufBuY1dxF3HLnXSvDZM_mho2DRnQEkoPcsS62rPSLLJoxMRYFQQES2VqwTYAw36nLNwvPuop7FZaqw58m05_9Kj2i4PeBLe0DV8yaGj3shKpIi9dxSJH4i_NIGJq_pQXDoL6E_FGLaZ0egLl03PQmOFo3HjTPKonREIJoLajywARdoj2MR_5h18YVIO-8hCPxVC1_9QOia6OfhnSWAQqx1oMGFhQ7RNT719PzNpw"
+					}
+				],
+				"type": "bearer"
+			},
+			"events": [],
+			"folder": null,
+			"headers": "",
+			"pathVariables": {}
+		},
+		{
+			"id": "7adc3dda-1fba-49b8-9206-fad1820d25b6",
+			"name": "localhost:3000/admin/users/:id",
+			"url": "localhost:3000/admin/users/5f651eef-1272-48b5-97b9-97fdb3a9175e",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				}
+			],
+			"method": "DELETE",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBhZjMyNy1hZGUwLTQ3MjYtOGY0Yy01Y2ViNTY5ZWUzMmEiLCJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImlhdCI6MTUzMzYxMjM0OSwiZXhwIjoxNTMzNzg1MTQ5fQ.OXXCzkGZmkLfMKkmrGOg8IOg7RvP8K72usxcGqboclZwNgUZsKebqtdDU39ppANvgkEyAySv0uPpKdDEYTYjGi9WaqIXn364RHTnBM5EyOMZ9tkbWLPZg9LDvFrwha1lhz12JG6_gm1ATBGInMgxYoEZ-sqwNgkLh_s24LyCepGvc1TankRnwb34-u3FHZ4Z3YeWX-g5SbYofqWtMgzeZNVJ5c8juw_v5inf5dbfkPyMXZYJFJX8XtQrds8RtpQclGbPAxrUsktIb3UYa6ojNv1hzliiQv1f1XXIGuXl8Yvw3uRECTfsU4rcluZRXeuLrPxnza3wwFGDbc8boGQd_Dc_J-ptJXjQgqyG7yIToHAlGH41E9H5d_JQPGMh5cTb8IKqc6jqOORX9aPElQEvW1LbO2HIzCo14zC3-CLy9qFxoKyeAW4LIvn8owAGteQ-F_tufBuY1dxF3HLnXSvDZM_mho2DRnQEkoPcsS62rPSLLJoxMRYFQQES2VqwTYAw36nLNwvPuop7FZaqw58m05_9Kj2i4PeBLe0DV8yaGj3shKpIi9dxSJH4i_NIGJq_pQXDoL6E_FGLaZ0egLl03PQmOFo3HjTPKonREIJoLajywARdoj2MR_5h18YVIO-8hCPxVC1_9QOia6OfhnSWAQqx1oMGFhQ7RNT719PzNpw"
+					}
+				],
+				"type": "bearer"
+			},
+			"events": [],
+			"folder": null,
+			"rawModeData": "",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "8a419cde-8b7b-4f4c-92bf-9fd84fb0dafe",
+			"name": "localhost:3000/admin/users",
+			"url": "localhost:3000/admin/users",
+			"description": "",
+			"data": null,
+			"dataMode": "params",
+			"headerData": [],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": {
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTBhZjMyNy1hZGUwLTQ3MjYtOGY0Yy01Y2ViNTY5ZWUzMmEiLCJlbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsImlhdCI6MTUzMzYxMjM0OSwiZXhwIjoxNTMzNzg1MTQ5fQ.OXXCzkGZmkLfMKkmrGOg8IOg7RvP8K72usxcGqboclZwNgUZsKebqtdDU39ppANvgkEyAySv0uPpKdDEYTYjGi9WaqIXn364RHTnBM5EyOMZ9tkbWLPZg9LDvFrwha1lhz12JG6_gm1ATBGInMgxYoEZ-sqwNgkLh_s24LyCepGvc1TankRnwb34-u3FHZ4Z3YeWX-g5SbYofqWtMgzeZNVJ5c8juw_v5inf5dbfkPyMXZYJFJX8XtQrds8RtpQclGbPAxrUsktIb3UYa6ojNv1hzliiQv1f1XXIGuXl8Yvw3uRECTfsU4rcluZRXeuLrPxnza3wwFGDbc8boGQd_Dc_J-ptJXjQgqyG7yIToHAlGH41E9H5d_JQPGMh5cTb8IKqc6jqOORX9aPElQEvW1LbO2HIzCo14zC3-CLy9qFxoKyeAW4LIvn8owAGteQ-F_tufBuY1dxF3HLnXSvDZM_mho2DRnQEkoPcsS62rPSLLJoxMRYFQQES2VqwTYAw36nLNwvPuop7FZaqw58m05_9Kj2i4PeBLe0DV8yaGj3shKpIi9dxSJH4i_NIGJq_pQXDoL6E_FGLaZ0egLl03PQmOFo3HjTPKonREIJoLajywARdoj2MR_5h18YVIO-8hCPxVC1_9QOia6OfhnSWAQqx1oMGFhQ7RNT719PzNpw"
+					}
+				],
+				"type": "bearer"
+			},
+			"events": [],
+			"folder": null,
+			"headers": "",
+			"pathVariables": {}
+		}
+	]
+}

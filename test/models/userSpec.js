@@ -1,14 +1,26 @@
-/* global describe it */
+/* global describe it beforeEach afterEach */
 
 const fs = require('fs')
 const User = require('../../models').User
 const jwt = require('jsonwebtoken')
 const config = require('../../common/config')
+const {USER_STATUS} = require('../../common/status')
+const sinon = require('sinon')
+const faker = require('faker')
 const chai = require('chai')
 const expect = chai.expect
 const assert = chai.assert
 
 describe('User', function () {
+  let sandbox
+  beforeEach(function () {
+    sandbox = sinon.sandbox.create()
+  })
+
+  afterEach(function () {
+    sandbox.restore()
+  })
+
   const hex = /[0-9A-Fa-f]{16}/g
   const publicKey = fs.readFileSync(config.jwt.public)
   const privateKey = fs.readFileSync(config.jwt.private)
@@ -50,10 +62,24 @@ describe('User', function () {
       assert(!user.validPassword(notPassword))
     })
   })
+  describe('isVerified', function () {
+    it('returns true if the users status is verified', function () {
+      const user = new User()
+      user.status = USER_STATUS.VERIFIED
+
+      assert(user.isVerified())
+    })
+    it('returns false if the users status is not verified', function () {
+      const user = new User()
+      user.status = USER_STATUS.UNVERIFIED
+
+      assert(!user.isVerified())
+    })
+  })
   describe('generateJwt', function () {
     it('encodes a token that includes the id and email', function () {
-      const userId = 'testId'
-      const email = 'testEmail@example.com'
+      const userId = faker.random.uuid()
+      const email = faker.internet.email()
       const token = User.generateJwt(userId, email)
 
       const decodedToken = jwt.verify(token, publicKey, { algorithm: 'RS512' })
@@ -62,18 +88,27 @@ describe('User', function () {
       assert(decodedToken.exp !== null)
     })
     it('throws an error if the userId is not passed as parameters', function () {
-      const email = 'testEmail@example.com'
+      const email = faker.internet.email()
       assert.throws(() => { User.generateJwt(null, email) }, Error, 'Missing required parameter to generateJwt.')
     })
     it('throws an error if the email is not passed as parameters', function () {
-      const userId = 'testId'
+      const userId = faker.random.uuid()
       assert.throws(() => { User.generateJwt(userId, null) }, Error, 'Missing required parameter to generateJwt.')
+    })
+    it('logs the error if sign throws an error', function () {
+      const consoleStub = sandbox.stub(console, 'error')
+      const errorMessage = faker.lorem.sentence()
+      sandbox.stub(jwt, 'sign').throws(new Error(errorMessage))
+      const userId = faker.random.uuid()
+      const email = faker.internet.email()
+      User.generateJwt(userId, email)
+      expect(consoleStub.getCall(0).calledWith(errorMessage))
     })
   })
   describe('verifyJwt', function () {
     it('returns the decoded token', function () {
-      const id = 'testId'
-      const email = 'testEmail@example.com'
+      const id = faker.random.uuid()
+      const email = faker.internet.email()
 
       const token = jwt.sign({
         id: id,

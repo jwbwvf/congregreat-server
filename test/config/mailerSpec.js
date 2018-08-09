@@ -3,25 +3,27 @@
 const nodemailer = require('nodemailer')
 const config = require('../../common/config')
 const sinon = require('sinon')
+const faker = require('faker')
 const mailer = require('../../common/mailer')
 const chai = require('chai')
 const expect = chai.expect
 
 describe('mailer', function () {
-  let sandbox, transportStub
-  config.smtp.host = 'testHost'
-  config.smtp.port = 'testPort'
+  let sandbox, transportStub, consoleStub
+  config.smtp.host = faker.internet.ip()
+  config.smtp.port = faker.random.number()
   config.smtp.secure = 'false'
-  config.smtp.auth.user = 'testAuthUser'
-  config.smtp.auth.pass = 'testAuthPass'
-  const firstName = 'testFirstName'
-  const lastName = 'testLastName'
-  const email = 'testEmail@example.com'
-  const token = 'testToken'
+  config.smtp.auth.user = faker.name.findName()
+  config.smtp.auth.pass = faker.internet.password()
+  const firstName = faker.name.findName()
+  const lastName = faker.name.findName()
+  const email = faker.internet.email()
+  const token = faker.lorem.word()
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
     transportStub = sandbox.stub()
     sandbox.stub(nodemailer, 'createTransport').returns(transportStub)
+    consoleStub = sandbox.stub(console, 'log')
   })
 
   afterEach(function () {
@@ -30,7 +32,7 @@ describe('mailer', function () {
 
   describe('sendMail', function () {
     it('sends the correct message', async function () {
-      transportStub.sendMail = sandbox.spy()
+      transportStub.sendMail = sandbox.stub()
       await mailer.sendMail({firstName, lastName}, email, token)
       const message = transportStub.sendMail.getCall(0).args[0]
       expect(message.to).to.equal(`${firstName} ${lastName} <${email}>`)
@@ -42,12 +44,11 @@ describe('mailer', function () {
     })
 
     it('logs any error messages', async function () {
-      const logSpy = sandbox.spy(console, 'log')
       const message = 'test error message'
       transportStub.sendMail = sandbox.stub()
       transportStub.sendMail.rejects(new Error(message))
       await mailer.sendMail({firstName, lastName}, email, token)
-      expect(logSpy.getCall(0).args[0]).to.equal(message)
+      expect(consoleStub.getCall(0).calledWith(message))
     })
   })
 })

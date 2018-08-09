@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
-const uuidv = require('uuid')
+const faker = require('faker')
+const uuid = require('uuid')
 const app = require('../../../app')
 const config = require('../../../common/config')
 const Congregation = require('../../../models').Congregation
@@ -31,8 +32,8 @@ describe('admin congregations routes', function () {
   })
   describe('GET /congregations', function () {
     it('should return all congregations', async function () {
-      const congregationOne = { id: 'testIdOne', name: 'testCongregationNameOne' }
-      const congregationTwo = { id: 'testIdTwo', name: 'testCongregationNameTwo' }
+      const congregationOne = { id: faker.random.uuid(), name: faker.name.findName() }
+      const congregationTwo = { id: faker.random.uuid(), name: faker.name.findName() }
       const congregations = [congregationOne, congregationTwo]
 
       const findAllStub = sandbox.stub(Congregation, 'findAll').resolves(congregations)
@@ -40,7 +41,7 @@ describe('admin congregations routes', function () {
       const response = await chai.request(app).get('/admin/congregations').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregations)
-      expect(findAllStub.getCall(0).args[0]).to.eql({ attributes: ['id', 'name', 'status'] })
+      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] }))
     })
     it('should return a failure if findAll throws an error', async function () {
       const findAllStub = sandbox.stub(Congregation, 'findAll').throws(new Error())
@@ -50,7 +51,7 @@ describe('admin congregations routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find all congregations.' })
-        expect(findAllStub.getCall(0).args[0]).to.eql({ attributes: ['id', 'name', 'status'] })
+        expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] }))
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
@@ -74,29 +75,29 @@ describe('admin congregations routes', function () {
     })
   })
   describe('GET /:id', function () {
-    it('should return all congregations', async function () {
-      const id = 'testId'
-      const congregation = { id, name: 'testCongregationName' }
+    it('should return congregation by id', async function () {
+      const id = faker.random.uuid()
+      const congregation = { id, name: faker.name.findName() }
 
       const findByIdStub = sandbox.stub(Congregation, 'findById').resolves(congregation)
 
       const response = await chai.request(app).get(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
-      expect(findByIdStub.getCall(0).args[0]).to.eql(id)
+      expect(findByIdStub.getCall(0).calledWith(id))
     })
     it('should return a failure if findById throws an error', async function () {
-      const id = 'testId'
+      const id = faker.random.uuid()
 
       const findByIdStub = sandbox.stub(Congregation, 'findById').throws(new Error())
-      sandbox.stub(uuidv, 'v4').returns(id)
+      sandbox.stub(uuid, 'v4').returns(id)
 
       try {
         await chai.request(app).get(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
-        expect(findByIdStub.getCall(0).args[0]).to.eql(id)
+        expect(findByIdStub.getCall(0).calledWith(id))
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
@@ -121,35 +122,35 @@ describe('admin congregations routes', function () {
   })
   describe('POST /', function () {
     it('should return the new congregations', async function () {
-      const id = 'testId'
-      const name = 'testCongregationName'
-      const status = 'new'
+      const id = faker.random.uuid()
+      const name = faker.name.findName()
+      const status = CONGREGATION_STATUS.NEW
       const congregation = { id, name, status }
 
       const createStub = sandbox.stub(Congregation, 'create').resolves(congregation)
-      sandbox.stub(uuidv, 'v4').returns(id)
+      sandbox.stub(uuid, 'v4').returns(id)
 
       const response = await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`)
         .send({ id, name })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
-      expect(createStub.getCall(0).args[0]).to.eql({id, name, status})
+      expect(createStub.getCall(0).calledWith({id, name, status}))
     })
     it('should return a failure if create throws an error', async function () {
-      const id = 'testId'
-      const name = 'testCongregationName'
-      const status = 'new'
+      const id = faker.random.uuid()
+      const name = faker.name.findName()
+      const status = CONGREGATION_STATUS.NEW
 
       const createStub = sandbox.stub(Congregation, 'create').throws(new Error())
-      sandbox.stub(uuidv, 'v4').returns(id)
+      sandbox.stub(uuid, 'v4').returns(id)
 
       try {
         await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
       } catch ({response}) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'Unable to create congregation.' })
-        expect(createStub.getCall(0).args[0]).to.eql({id, name, status})
+        expect(createStub.getCall(0).calledWith({id, name, status}))
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
@@ -174,9 +175,9 @@ describe('admin congregations routes', function () {
   })
   describe('PATCH /:id', function () {
     it('should update the congregation with new name', async function () {
-      const id = 'testId'
-      const name = 'testCongregationName'
-      const updateName = 'testCongregationNameUpdate'
+      const id = faker.random.uuid()
+      const name = faker.name.findName()
+      const updateName = faker.name.findName()
       const congregation = { id, name }
       congregation.update = sandbox.stub().returns(true)
 
@@ -187,12 +188,12 @@ describe('admin congregations routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Congregation was updated.' })
-      expect(findByIdStub.getCall(0).args[0]).to.equal(id)
+      expect(findByIdStub.getCall(0).calledWith(id))
       expect(congregation.update.calledWith({ name: updateName }))
     })
     it('should return a failure if findById throws an error', async function () {
-      const id = 'testId'
-      const updateName = 'testCongregationNameUpdate'
+      const id = faker.random.uuid()
+      const updateName = faker.name.findName()
       const findByIdStub = sandbox.stub(Congregation, 'findById').throws(new Error())
 
       try {
@@ -223,8 +224,8 @@ describe('admin congregations routes', function () {
       }
     })
     it('should return a failure if no modifiable congregation property is provided', async function () {
-      const id = 'testId'
-      const updateId = 'testIdUpdate'
+      const id = faker.random.uuid()
+      const updateId = faker.random.uuid()
 
       try {
         await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
@@ -235,8 +236,8 @@ describe('admin congregations routes', function () {
       }
     })
     it('should return a failure if update fails', async function () {
-      const id = 'testId'
-      const updateName = 'testCongregationNameUpdate'
+      const id = faker.random.uuid()
+      const updateName = faker.name.findName()
       const congregation = { id }
       congregation.update = sandbox.stub().returns(false)
 
@@ -253,7 +254,7 @@ describe('admin congregations routes', function () {
   })
   describe('DELETE /:id', function () {
     it('should set the status as deleted', async function () {
-      const id = 'testId'
+      const id = faker.random.uuid()
       const congregation = { id }
       congregation.update = sandbox.stub().returns(true)
 
@@ -266,7 +267,7 @@ describe('admin congregations routes', function () {
       expect(response.body).to.eql({ message: 'Congregation was deleted.' })
     })
     it('should return a failure if findById throws an error', async function () {
-      const id = 'testId'
+      const id = faker.random.uuid()
       const findByIdStub = sandbox.stub(Congregation, 'findById').throws(new Error())
 
       try {
@@ -274,11 +275,11 @@ describe('admin congregations routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
-        expect(findByIdStub.getCall(0).args[0]).to.eql(id)
+        expect(findByIdStub.getCall(0).calledWith(id))
       }
     })
     it('should return a failure if delete fails', async function () {
-      const id = 'testId'
+      const id = faker.random.uuid()
       const congregation = { id }
       congregation.update = sandbox.stub().returns(false)
 

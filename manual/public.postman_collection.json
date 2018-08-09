@@ -1,0 +1,114 @@
+{
+	"id": "351c9465-4249-425e-925b-f68a7577bcd5",
+	"name": "public",
+	"description": "routes that hit the public end points",
+	"auth": null,
+	"events": null,
+	"variables": [],
+	"order": [
+		"72532b4c-14f9-47b7-a2b6-ce17dbca855e",
+		"d5b0e4cb-c7ca-4959-9269-6bb9913c8d31",
+		"751f444a-e85c-42f6-a8aa-456472fdd0aa",
+		"891aa840-92c7-409a-99fe-176ccb6ac257"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "72532b4c-14f9-47b7-a2b6-ce17dbca855e",
+			"name": "localhost:3000/public/register",
+			"url": "localhost:3000/public/register",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"email\": \"test1@email.com\",\n\t\"confirm_email\": \"test1@email.com\",\n\t\"password\": \"12345678\",\n\t\"confirm_password\": \"12345678\",\n\t\"first_name\": \"testFirstName\",\n\t\"last_name\": \"testLastName\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "751f444a-e85c-42f6-a8aa-456472fdd0aa",
+			"name": "localhost:3000/public/confirm",
+			"url": "localhost:3000/public/confirm",
+			"description": "confirm is to validate the users email address",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"token\": \"https://stackoverflow.com/questions/12276046/nodejs-express-how-to-secure-a-url\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "891aa840-92c7-409a-99fe-176ccb6ac257",
+			"name": "localhost:3000/public/resend",
+			"url": "localhost:3000/public/resend",
+			"description": "resend the confirmation email",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"email\": \"test@email.com\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "d5b0e4cb-c7ca-4959-9269-6bb9913c8d31",
+			"name": "localhost:3000/public/login",
+			"url": "localhost:3000/public/login",
+			"description": "",
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": ""
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": [],
+			"folder": null,
+			"rawModeData": "{\n\t\"email\": \"test1@email.com\",\n\t\"password\": \"12345678\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		}
+	]
+}

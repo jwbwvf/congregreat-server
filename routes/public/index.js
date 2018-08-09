@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const uuidv4 = require('uuid/v4')
+const uuid = require('uuid/v4')
 const passport = require('passport')
 const User = require('../../models').User
 const mailer = require('../../common/mailer')
@@ -35,7 +35,7 @@ router.post('/register', async function (req, res, next) {
       return res.status(400).json({ message: 'Password fields do not match, try again.' })
     }
 
-    const id = uuidv4()
+    const id = uuid()
     const email = req.body.email
     const firstName = req.body.first_name
     const lastName = req.body.last_name
