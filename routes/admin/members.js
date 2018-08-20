@@ -14,9 +14,10 @@ router.get('/', async function (req, res, next) {
       attributes: ['id', 'first_name', 'last_name', 'email']
     })
   } catch (error) {
-    res.status(404).json({ message: 'Unable to find all members.' })
+    return res.status(404).json({ message: 'Unable to find all members.' })
   }
-  res.status(200).json(members)
+
+  return res.status(200).json(members)
 })
 
 /**
@@ -27,9 +28,9 @@ router.get('/:id', async function (req, res, next) {
     const member = await Member.findById(req.params.id, {
       attributes: ['id', 'email', 'first_name', 'last_name', 'congregation_id', 'status']
     })
-    res.status(200).json(member)
+    return res.status(200).json(member)
   } catch (error) {
-    res.status(404).json({ message: 'Unable to find member by id.' })
+    return res.status(404).json({ message: 'Unable to find member by id.' })
   }
 })
 
@@ -44,9 +45,10 @@ router.get('/congregations/:id', async function (req, res, next) {
       attributes: ['id', 'first_name', 'last_name', 'email']
     })
   } catch (error) {
-    res.status(404).json({ message: 'Unable to find all members of the congregation.' })
+    return res.status(404).json({ message: 'Unable to find all members of the congregation.' })
   }
-  res.status(200).json(members)
+
+  return res.status(200).json(members)
 })
 
 /**
@@ -79,9 +81,9 @@ router.post('/', async function (req, res, next) {
     const congregationId = req.body.congregation_id
     const member = await Member.create({id, email, firstName, lastName, status, congregationId})
 
-    res.status(200).json({ message: `Member ${member.firstName} ${member.lastName} was added.` })
+    return res.status(200).json({ message: `Member ${member.firstName} ${member.lastName} was added.` })
   } catch (error) {
-    res.status(409).json({ message: 'Unable to create member.' })
+    return res.status(409).json({ message: 'Unable to create member.' })
   }
 })
 
@@ -109,9 +111,9 @@ router.patch('/:id', async function (req, res, next) {
 
   const response = await member.update(fields)
   if (response) {
-    res.status(200).json({ message: 'Member was updated.' })
+    return res.status(200).json({ message: 'Member was updated.' })
   } else {
-    res.status(500).json({ message: 'Failed to update the member.' })
+    return res.status(500).json({ message: 'Failed to update the member.' })
   }
 })
 
@@ -129,9 +131,9 @@ router.delete('/:id', async function (req, res, next) {
 
   const response = await member.update({ status: MEMBER_STATUS.DELETED })
   if (response) {
-    res.status(200).json({ message: 'Member was deleted.' })
+    return res.status(200).json({ message: 'Member was deleted.' })
   } else {
-    res.status(500).json({ message: 'Failed to delete the member.' })
+    return res.status(500).json({ message: 'Failed to delete the member.' })
   }
 })
 module.exports = router

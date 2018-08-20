@@ -70,9 +70,9 @@ router.post('/register', async function (req, res, next) {
 
     mailer.sendMail(firstName, lastName, email, token)
 
-    res.status(200).json({ message: 'Please check your email to verify your account.' })
+    return res.status(200).json({ message: 'Please check your email to verify your account.' })
   } catch (error) {
-    res.status(400).send(error)
+    return res.status(400).send(error)
   };
 })
 
@@ -122,12 +122,12 @@ router.put('/confirm', async function (req, res, next) {
     // it was someone hitting this service trying to get back a token by guessing confirmation tokens
     const response = await user.update({ status: USER_STATUS.VERIFIED })
     if (response) {
-      res.status(200).json({ message: `The user's email has been verified, please login.` })
+      return res.status(200).json({ message: `The user's email has been verified, please login.` })
     } else {
-      res.status(500).json({ message: 'Unable to verify email at this time, please try again.' })
+      return res.status(500).json({ message: 'Unable to verify email at this time, please try again.' })
     }
   } catch (error) {
-    res.status(400).send(error)
+    return res.status(400).send(error)
   }
 })
 
@@ -169,9 +169,9 @@ router.post('/resend', async function (req, res, next) {
     const { firstName, lastName } = user.Member
     mailer.sendMail(firstName, lastName, email, token)
 
-    res.status(200).json({ message: 'Email has been resent.  Please check your email to verify your account.' })
+    return res.status(200).json({ message: 'Email has been resent.  Please check your email to verify your account.' })
   } catch (error) {
-    res.status(400).send(error)
+    return res.status(400).send(error)
   }
 })
 
