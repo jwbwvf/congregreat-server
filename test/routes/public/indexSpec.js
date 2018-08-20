@@ -7,9 +7,9 @@ const sinon = require('sinon')
 const faker = require('faker')
 const passport = require('passport')
 const mailer = require('../../../common/mailer')
-const {USER_STATUS} = require('../../../common/status')
+const {USER_STATUS, MEMBER_STATUS} = require('../../../common/status')
 const app = require('../../../app')
-const User = require('../../../models').User
+const { User, Member } = require('../../../models')
 const expect = chai.expect
 const assert = chai.assert
 
@@ -164,7 +164,21 @@ describe('index routes', function () {
           .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
-        expect(response.body.message).to.equal('Email is already registered. Did you forget your login information?')
+        expect(response.body.message).to.equal(
+          'Email is already registered. Did you forget your login information? Have you checked your email for a confirmation link?'
+        )
+      }
+    })
+    it('should fail if the user is not a member of a congregation', async function () {
+      sandbox.stub(User, 'findOne').resolves(null)
+      sandbox.stub(Member, 'findOne').resolves(null)
+
+      try {
+        await chai.request(app).post('/public/register')
+          .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+      } catch ({response}) {
+        expect(response.status).to.equal(400)
+        expect(response.body).to.eql({ message: 'Unable to register at this time.  Check with your congregation to make sure they have added you as a member.' })
       }
     })
     it('should return the new user and a token on success', async function () {
@@ -172,8 +186,11 @@ describe('index routes', function () {
       const salt = faker.random.alphaNumeric()
       const hash = faker.random.alphaNumeric()
       const token = faker.random.alphaNumeric()
-
+      const memberId = faker.random.alphaNumeric()
+      const memberStatus = MEMBER_STATUS.ACTIVE
       sandbox.stub(User, 'findOne').resolves(null)
+      sandbox.stub(Member, 'findOne').resolves({id: memberId, status: memberStatus})
+
       const createStub = sandbox.stub(User, 'create').resolves({id, email, salt, hash})
       sandbox.stub(User, 'getSalt').returns(salt)
       sandbox.stub(User, 'getHash').returns(hash)
@@ -321,11 +338,29 @@ describe('index routes', function () {
         expect(response.body.message).to.equal(`The user's email has already been verified.`)
       }
     })
+    it('should fail for a user that does not belong to a congregation', async function () {
+      const userStub = sandbox.stub()
+      userStub.isVerified = () => false
+      const email = faker.internet.email()
+
+      sandbox.stub(User, 'findOne').resolves(userStub)
+
+      try {
+        await chai.request(app).post('/public/resend')
+          .send({email: email})
+      } catch ({response}) {
+        expect(response.status).to.equal(400)
+        expect(response.body.message).to.equal(
+          'Unable to resend at this time.  Check with your congregation to make sure they have added you as a member.'
+        )
+      }
+    })
     it('should send a new token in an email', async function () {
       const email = faker.internet.email()
       const userStub = sandbox.stub()
       userStub.isVerified = () => false
       userStub.email = email
+      userStub.Member = {firstName: faker.name.findName(), lastName: faker.name.findName()}
       const token = faker.random.alphaNumeric()
 
       sandbox.stub(User, 'findOne').resolves(userStub)
@@ -340,9 +375,10 @@ describe('index routes', function () {
       expect(response.body.message).to.equal('Email has been resent.  Please check your email to verify your account.')
 
       const args = sendMailStub.getCall(0).args
-      expect(args[0]).to.equal(userStub)
-      expect(args[1]).to.equal(email)
-      expect(args[2]).to.equal(token)
+      expect(args[0]).to.equal(userStub.Member.firstName)
+      expect(args[1]).to.equal(userStub.Member.lastName)
+      expect(args[2]).to.equal(email)
+      expect(args[3]).to.equal(token)
     })
   })
   describe('GET /public/status', function () {

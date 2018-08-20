@@ -38,7 +38,6 @@ app.use(expressjwt({
 }))
 
 app.use('/public', require('./routes/public/index'))
-app.use('/users', require('./routes/users'))
 
 // admin sub app
 var admin = express()
@@ -46,9 +45,11 @@ app.use('/admin', admin)
 
 var adminCongregations = require('./routes/admin/congregations')
 var adminUsers = require('./routes/admin/users')
+var adminMembers = require('./routes/admin/members')
 
 admin.use('/congregations', adminCongregations)
 admin.use('/users', adminUsers)
+admin.use('/members', adminMembers)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
