@@ -49,24 +49,15 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false,
       field: 'updated_at'
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: 'first_name'
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: 'last_name'
     }
   }, {})
-
   User.associate = function (models) {
-    User.belongsTo(models.Congregation, {
+    User.belongsTo(models.Member, {
       foreignKey: {
-        name: 'congregationId',
-        field: 'congregation_id'
+        name: 'memberId',
+        field: 'member_id',
+        allowNull: false,
+        unique: true
       }
     })
   }

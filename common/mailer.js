@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const config = require('../common/config')
 
-const sendMail = async ({firstName, lastName}, email, token) => {
+const sendMail = async (firstName, lastName, email, token) => {
 // Create a SMTP transporter object
   const transporter = nodemailer.createTransport({
     host: config.smtp.host,

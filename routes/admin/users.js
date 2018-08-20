@@ -7,7 +7,7 @@ router.get('/', async function (req, res, next) {
   let users
   try {
     users = await User.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'email', 'congregation_id', 'status']
+      attributes: ['id', 'email', 'member_id', 'status']
     })
   } catch (error) {
     res.status(404).json({ message: 'Unable to find all users.' })
@@ -18,7 +18,7 @@ router.get('/', async function (req, res, next) {
 router.get('/:id', async function (req, res, next) {
   try {
     const user = await User.findById(req.params.id, {
-      attributes: ['id', 'first_name', 'last_name', 'email', 'congregation_id', 'status']
+      attributes: ['id', 'email', 'member_id', 'status']
     })
     res.status(200).json(user)
   } catch (error) {
@@ -27,9 +27,7 @@ router.get('/:id', async function (req, res, next) {
 })
 
 router.patch('/:id', async function (req, res, next) {
-  if (!req.body.first_name &&
-      !req.body.last_name &&
-      !req.body.email) {
+  if (!req.body.email) {
     return res.status(500).json({ message: 'No modifiable user property was provided.' })
   }
 
@@ -41,8 +39,6 @@ router.patch('/:id', async function (req, res, next) {
   }
 
   const fields = {}
-  if (req.body.first_name) fields.firstName = req.body.first_name
-  if (req.body.last_name) fields.lastName = req.body.last_name
   if (req.body.email) fields.email = req.body.email
 
   const response = await user.update(fields)

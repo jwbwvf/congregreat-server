@@ -1,14 +1,32 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-  var Congregation = sequelize.define('Congregation', {
+  var Member = sequelize.define('Member', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       allowNull: false
     },
-    name: {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'first_name'
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'last_name'
+    },
+    email: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        isEmail: true
+      }
+    },
+    status: {
+      type: DataTypes.STRING,
       allowNull: false
     },
     createdAt: {
@@ -20,15 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
       field: 'updated_at'
-    },
-    status: {
-      allowNull: false,
-      type: DataTypes.STRING
     }
   }, {})
-
-  Congregation.associate = function (models) {
-    Congregation.hasMany(models.Member, {
+  Member.associate = function (models) {
+    Member.belongsTo(models.Congregation, {
       foreignKey: {
         name: 'congregationId',
         field: 'congregation_id',
@@ -36,6 +49,5 @@ module.exports = (sequelize, DataTypes) => {
       }
     })
   }
-
-  return Congregation
+  return Member
 }

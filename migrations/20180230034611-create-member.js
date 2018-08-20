@@ -1,29 +1,31 @@
 'use strict'
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('Members', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID
       },
-      email: {
+      firstName: {
         allowNull: false,
-        unique: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'last_name'
+      },
+      lastName: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        field: 'first_name'
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
+        unique: true
       },
       status: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      hash: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      salt: {
-        allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -35,19 +37,18 @@ module.exports = {
         type: Sequelize.DATE,
         field: 'updated_at'
       },
-      memberId: {
+      congregationId: {
         type: Sequelize.UUID,
-        field: 'member_id',
-        allowNull: false,
-        unique: true,
+        field: 'congregation_id',
         references: {
-          model: 'Members',
-          key: 'id'
+          model: 'Congregations',
+          key: 'id',
+          allowNull: false
         }
       }
     })
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Users')
+    return queryInterface.dropTable('Members')
   }
 }

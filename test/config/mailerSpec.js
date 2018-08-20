@@ -33,7 +33,7 @@ describe('mailer', function () {
   describe('sendMail', function () {
     it('sends the correct message', async function () {
       transportStub.sendMail = sandbox.stub()
-      await mailer.sendMail({firstName, lastName}, email, token)
+      await mailer.sendMail(firstName, lastName, email, token)
       const message = transportStub.sendMail.getCall(0).args[0]
       expect(message.to).to.equal(`${firstName} ${lastName} <${email}>`)
       expect(message.html).to.contain(token)
