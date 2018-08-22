@@ -54,4 +54,6 @@ jdbc:mysql://gr8admin:<password>@localhost:5306/congregreat
 ```
 
 ## Environment Variables
-__JWT_SECRET__ Used to Sign and Verify jsonwebtokens.
+JWT_PASSPHRASE Passphrase used to Sign and Verify jsonwebtokens.
+JWT_PRIVATE Path to the private pem file used to Sign and Verify jsonwebtokens.
+JWT_PUBLIC Path to the public pem file used to Sign and Verify jsonwebtokens.

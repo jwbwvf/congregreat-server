@@ -73,7 +73,7 @@ router.post('/register', async function (req, res, next) {
     return res.status(200).json({ message: 'Please check your email to verify your account.' })
   } catch (error) {
     return res.status(400).send(error)
-  };
+  }
 })
 
 router.post('/login', function (req, res, next) {
