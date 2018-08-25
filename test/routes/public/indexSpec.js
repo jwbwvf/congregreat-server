@@ -59,7 +59,9 @@ describe('index routes', function () {
       const email = faker.internet.email()
       const password = faker.internet.password()
       const token = faker.random.alphaNumeric()
-      const user = {id: id}
+      const memberId = faker.random.uuid()
+      const congregationId = faker.random.uuid()
+      const user = {id, email, memberId, Member: {congregationId}}
 
       sandbox.stub(passport, 'authenticate').yields(null, user, null)
       sandbox.stub(User, 'generateJwt').returns(token)

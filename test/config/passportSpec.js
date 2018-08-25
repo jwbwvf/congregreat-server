@@ -85,9 +85,9 @@ describe('passport', function () {
       userStub.validPassword = password => true
       sandbox.stub(User, 'findOne').throws({message: 'test exception thrown'})
       passport.authenticate('local', function (err, user, info) {
-        expect(err.message).to.equal('test exception thrown')
+        expect(info.message).to.equal('test exception thrown')
         if (user) done(user)
-        if (info) done(info)
+        if (err) done(err)
         done()
       })(req, res)
     })
