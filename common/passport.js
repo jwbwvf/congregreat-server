@@ -1,33 +1,45 @@
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
-var User = require('../models').User
+const {User, Member} = require('../models')
+const Sequelize = require('sequelize')
 
 passport.use(new LocalStrategy({ usernameField: 'email' },
-  function (username, password, done) {
-    User.findOne({ where: { email: username } })
-      .then(user => {
-        if (!user) {
-          return done(null, false, {
-            message: 'Incorrect username or password.'
-          })
-        }
-
-        if (!user.validPassword(password)) {
-          return done(null, false, {
-            message: 'Incorrect username or password.'
-          })
-        }
-
-        if (!user.isVerified()) {
-          return done(null, false, {
-            message: 'User has not verified their email.'
-          })
-        }
-
-        user.hash = ''
-        user.salt = ''
-        return done(null, user)
+  async function (username, password, done) {
+    try {
+      const user = await User.findOne({
+        where: { email: username },
+        attributes: ['id', 'email', 'status', 'memberId', 'hash', 'salt'],
+        include: [{
+          model: Member,
+          where: { id: Sequelize.col('User.member_id') },
+          attributes: ['congregationId'],
+          required: false
+        }]
       })
+      if (!user) {
+        return done(null, false, {
+          message: 'Incorrect username or password.'
+        })
+      }
+
+      if (!user.validPassword(password)) {
+        return done(null, false, {
+          message: 'Incorrect username or password.'
+        })
+      }
+
+      if (!user.isVerified()) {
+        return done(null, false, {
+          message: 'User has not verified their email.'
+        })
+      }
+
+      user.hash = ''
+      user.salt = ''
+      return done(null, user)
+    } catch (error) {
+      return (done(null, false, {message: error.message}))
+    }
   })
 )
 

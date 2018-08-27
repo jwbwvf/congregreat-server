@@ -82,15 +82,17 @@ module.exports = function (sequelize, DataTypes) {
     return this.status === USER_STATUS.VERIFIED
   }
 
-  User.generateJwt = function (userId, email, expirationInDays = 2) {
+  User.generateJwt = function (userId, email, memberId, congregationId, expirationInDays = 2) {
     if (!userId || !email) {
       throw new Error('Missing required parameter to generateJwt.')
     }
 
     try {
       return jwt.sign({
-        userId: userId,
-        email: email
+        userId,
+        email,
+        memberId,
+        congregationId
       }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: `${expirationInDays}d` })
     } catch (error) {
       console.error(error)

@@ -42,7 +42,7 @@ router.post('/register', async function (req, res, next) {
 
     const member = await Member.findOne({
       where: { email: req.body.email },
-      attributes: ['id', 'status']
+      attributes: ['id', 'congregation_id', 'status']
     })
     if (!member) {
       return res.status(400).json({
@@ -52,13 +52,11 @@ router.post('/register', async function (req, res, next) {
     // TODO do we check status as a rule for anyone trying to registered, like don't let deleted members register
 
     const id = uuid()
-    const email = req.body.email
-    const firstName = req.body.first_name
-    const lastName = req.body.last_name
+    const {email, first_name: firstName, last_name: lastName} = req.body
     let salt = User.getSalt()
     let hash = User.getHash(salt, req.body.password)
     const status = USER_STATUS.UNVERIFIED
-    const memberId = member.id
+    const {id: memberId, congregationId} = member
     const user = await User.create({id, email, salt, hash, status, memberId})
     salt = ''
     hash = ''
@@ -66,7 +64,7 @@ router.post('/register', async function (req, res, next) {
     user.salt = ''
 
     // generate token that expires in half a day
-    const token = User.generateJwt(user.id, user.email, 0.5)
+    const token = User.generateJwt(id, email, memberId, congregationId, 0.5)
 
     mailer.sendMail(firstName, lastName, email, token)
 
@@ -89,7 +87,9 @@ router.post('/login', function (req, res, next) {
     req.logIn(user, function (err) {
       if (err) { return next(err) }
 
-      const token = User.generateJwt(user.id, user.email)
+      const {id, email, memberId} = user
+      const {congregationId} = user.Member
+      const token = User.generateJwt(id, email, memberId, congregationId)
 
       const userResponse = (({id}) => ({id}))(user)
       return res.status(200).json({ 'user': userResponse, 'token': token })
@@ -143,7 +143,7 @@ router.post('/resend', async function (req, res, next) {
       include: [{
         model: Member,
         where: { id: Sequelize.col('User.member_id') },
-        attributes: ['id', 'firstName', 'lastName', 'email', 'status'],
+        attributes: ['id', 'firstName', 'lastName', 'email', 'congregation_id', 'status'],
         required: false
       }]
     })
@@ -164,7 +164,8 @@ router.post('/resend', async function (req, res, next) {
 
     // generate token that expires in half a day
     const { id, email } = user
-    const token = User.generateJwt(id, email, 0.5)
+    const { id: memberId, congregationId } = user.Member
+    const token = User.generateJwt(id, email, memberId, congregationId, 0.5)
 
     const { firstName, lastName } = user.Member
     mailer.sendMail(firstName, lastName, email, token)
