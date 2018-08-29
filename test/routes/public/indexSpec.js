@@ -10,6 +10,8 @@ const mailer = require('../../../common/mailer')
 const {USER_STATUS, MEMBER_STATUS} = require('../../../common/status')
 const app = require('../../../app')
 const { User, Member } = require('../../../models')
+const Token = require('../../../common/token')
+const Security = require('../../../common/security')
 const expect = chai.expect
 const assert = chai.assert
 
@@ -64,7 +66,7 @@ describe('index routes', function () {
       const user = {id, email, memberId, Member: {congregationId}}
 
       sandbox.stub(passport, 'authenticate').yields(null, user, null)
-      sandbox.stub(User, 'generateJwt').returns(token)
+      sandbox.stub(Token, 'generateToken').returns(token)
 
       chai.request(app).post('/public/login')
         .send({ email, password })
@@ -148,7 +150,7 @@ describe('index routes', function () {
     })
     it('should fail if password and confirm password do not match', async function () {
       sandbox.stub(User, 'findOne').resolves(null)
-      sandbox.stub(User, 'verifyJwt').returns('123456')
+      sandbox.stub(Token, 'verifyToken').returns('123456')
 
       try {
         await chai.request(app).post('/public/register')
@@ -194,9 +196,9 @@ describe('index routes', function () {
       sandbox.stub(Member, 'findOne').resolves({id: memberId, status: memberStatus})
 
       const createStub = sandbox.stub(User, 'create').resolves({id, email, salt, hash})
-      sandbox.stub(User, 'getSalt').returns(salt)
-      sandbox.stub(User, 'getHash').returns(hash)
-      sandbox.stub(User, 'generateJwt').returns(token)
+      sandbox.stub(Security, 'generateSalt').returns(salt)
+      sandbox.stub(Security, 'generateHash').returns(hash)
+      sandbox.stub(Token, 'generateToken').returns(token)
       const sendMailStub = sandbox.stub(mailer, 'sendMail')
       sendMailStub.resolves()
 
@@ -213,7 +215,7 @@ describe('index routes', function () {
     it('should fail if the token is invalid', async function () {
       const consoleStub = sandbox.stub(console, 'error')
       const errorMessage = faker.lorem.sentence()
-      sandbox.stub(User, 'verifyJwt').throws(new JsonWebTokenError(errorMessage))
+      sandbox.stub(Token, 'verifyToken').throws(new JsonWebTokenError(errorMessage))
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
       } catch ({response}) {
@@ -223,11 +225,11 @@ describe('index routes', function () {
       }
     })
     it('should fail if the token is already expired', async function () {
+      const consoleStub = sandbox.stub(console, 'error')
       const userStub = sandbox.stub()
       userStub.isVerified = () => false
-      const consoleStub = sandbox.stub(console, 'error')
       const errorMessage = faker.lorem.sentence()
-      sandbox.stub(User, 'verifyJwt').throws(new Error(errorMessage))
+      sandbox.stub(Token, 'verifyToken').throws(new Error(errorMessage))
       sandbox.stub(User, 'findOne').resolves(userStub)
 
       try {
@@ -235,13 +237,13 @@ describe('index routes', function () {
       } catch ({response}) {
         expect(consoleStub.getCall(0).calledWith(errorMessage))
         expect(response.status).to.equal(400)
-        expect(response.body.message).to.equal(`The token is invalid.`)
+        expect(response.body.message).to.equal('The token is invalid.')
       }
     })
     it('should fail if the user does not exist', async function () {
       const token = {id: 1}
 
-      sandbox.stub(User, 'verifyJwt').returns(token)
+      sandbox.stub(Token, 'verifyToken').returns(token)
       sandbox.stub(User, 'findOne').resolves(null)
 
       try {
@@ -255,7 +257,7 @@ describe('index routes', function () {
       const userStub = sandbox.stub()
       userStub.isVerified = () => true
 
-      sandbox.stub(User, 'verifyJwt').returns({})
+      sandbox.stub(Token, 'verifyToken').returns({})
       sandbox.stub(User, 'findOne').resolves(userStub)
 
       try {
@@ -273,9 +275,9 @@ describe('index routes', function () {
       userStub.isVerified = () => false
       userStub.update = () => true
 
-      sandbox.stub(User, 'verifyJwt').returns({})
+      sandbox.stub(Token, 'verifyToken').returns({})
       sandbox.stub(User, 'findOne').resolves(userStub)
-      sandbox.stub(User, 'generateJwt').returns(generatedToken)
+      sandbox.stub(Token, 'generateToken').returns(generatedToken)
 
       const response = await chai.request(app).put(`/public/confirm`).send('12345678')
 
@@ -290,9 +292,9 @@ describe('index routes', function () {
       userStub.isVerified = () => false
       userStub.update = () => false
 
-      sandbox.stub(User, 'verifyJwt').returns({})
+      sandbox.stub(Token, 'verifyToken').returns({})
       sandbox.stub(User, 'findOne').resolves(userStub)
-      sandbox.stub(User, 'generateJwt').returns(generatedToken)
+      sandbox.stub(Token, 'generateToken').returns(generatedToken)
 
       try {
         await chai.request(app).put(`/public/confirm`).send('12345678')
@@ -366,7 +368,7 @@ describe('index routes', function () {
       const token = faker.random.alphaNumeric()
 
       sandbox.stub(User, 'findOne').resolves(userStub)
-      sandbox.stub(User, 'generateJwt').returns(token)
+      sandbox.stub(Token, 'generateToken').returns(token)
       const sendMailStub = sandbox.stub(mailer, 'sendMail')
       sendMailStub.resolves()
 

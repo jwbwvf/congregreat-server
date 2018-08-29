@@ -3,7 +3,8 @@
 const passport = require('passport')
 const sinon = require('sinon')
 const faker = require('faker')
-const User = require('../../models').User
+const { User } = require('../../models')
+const Security = require('../../common/security')
 const chai = require('chai')
 const expect = chai.expect
 const assert = chai.assert
@@ -36,8 +37,10 @@ describe('passport', function () {
       const req = {body: {email, password}}
       const res = {}
       const userStub = sandbox.stub()
-      userStub.validPassword = password => false
+      sandbox.stub(Security, 'isPasswordValid').returns(false)
       userStub.isVerified = () => true
+      userStub.salt = faker.random.alphaNumeric(16)
+      userStub.hash = faker.random.alphaNumeric(16)
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {
         if (err) done(err)
@@ -50,7 +53,9 @@ describe('passport', function () {
       const req = {body: {email, password}}
       const res = {}
       const userStub = sandbox.stub()
-      userStub.validPassword = password => true
+      userStub.salt = faker.random.alphaNumeric(16)
+      userStub.hash = faker.random.alphaNumeric(16)
+      sandbox.stub(Security, 'isPasswordValid').returns(true)
       userStub.isVerified = () => false
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {
@@ -67,7 +72,7 @@ describe('passport', function () {
       userStub.hash = faker.random.alphaNumeric()
       userStub.salt = faker.random.alphaNumeric()
       userStub.isVerified = () => true
-      userStub.validPassword = password => true
+      sandbox.stub(Security, 'isPasswordValid').returns(true)
       sandbox.stub(User, 'findOne').resolves(userStub)
       passport.authenticate('local', function (err, user, info) {
         if (err) done(err)
@@ -81,8 +86,7 @@ describe('passport', function () {
     it('returns false if an exception is caught', function (done) {
       const req = {body: {email, password}}
       const res = {}
-      const userStub = sandbox.stub()
-      userStub.validPassword = password => true
+      sandbox.stub(Security, 'isPasswordValid').returns(true)
       sandbox.stub(User, 'findOne').throws({message: 'test exception thrown'})
       passport.authenticate('local', function (err, user, info) {
         expect(info.message).to.equal('test exception thrown')

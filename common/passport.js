@@ -1,6 +1,7 @@
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
-const {User, Member} = require('../models')
+const { User, Member } = require('../models')
+const Security = require('../common/security')
 const Sequelize = require('sequelize')
 
 passport.use(new LocalStrategy({ usernameField: 'email' },
@@ -22,7 +23,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
         })
       }
 
-      if (!user.validPassword(password)) {
+      if (!Security.isPasswordValid(password, user.salt, user.hash)) {
         return done(null, false, {
           message: 'Incorrect username or password.'
         })
