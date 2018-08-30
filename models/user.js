@@ -1,17 +1,6 @@
 'use strict'
 
-const crypto = require('crypto')
-const jwt = require('jsonwebtoken')
-const config = require('../common/config')
 const { USER_STATUS } = require('../common/status')
-const fs = require('fs')
-const publicKey = fs.readFileSync(config.jwt.public)
-const privateKey = fs.readFileSync(config.jwt.private)
-const passphrase = config.jwt.passphrase
-
-const iterations = 1000
-const size = 16
-const digest = 'SHA256'
 
 module.exports = function (sequelize, DataTypes) {
   var User = sequelize.define('User', {
@@ -60,43 +49,15 @@ module.exports = function (sequelize, DataTypes) {
         unique: true
       }
     })
-  }
-
-  User.verifyJwt = function (token) {
-    return jwt.verify(token, publicKey, { algorithm: 'RS512' })
-  }
-
-  User.getSalt = function () {
-    return crypto.randomBytes(16).toString('hex')
-  }
-  User.getHash = function (salt, password) {
-    return crypto.pbkdf2Sync(password, salt, iterations, size, digest).toString('hex')
-  }
-
-  User.prototype.validPassword = function (password) {
-    const hash = crypto.pbkdf2Sync(password, this.salt, iterations, size, digest).toString('hex')
-    return this.hash === hash
+    User.belongsToMany(models.Role,
+      {
+        through: models.UserRole
+      }
+    )
   }
 
   User.prototype.isVerified = function () {
     return this.status === USER_STATUS.VERIFIED
-  }
-
-  User.generateJwt = function (userId, email, memberId, congregationId, expirationInDays = 2) {
-    if (!userId || !email) {
-      throw new Error('Missing required parameter to generateJwt.')
-    }
-
-    try {
-      return jwt.sign({
-        userId,
-        email,
-        memberId,
-        congregationId
-      }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: `${expirationInDays}d` })
-    } catch (error) {
-      console.error(error)
-    }
   }
 
   return User
