@@ -66,7 +66,7 @@ router.post('/register', async function (req, res, next) {
     user.salt = ''
 
     // generate token that expires in half a day
-    const token = Token.generateToken(id, email, memberId, congregationId, 0.5)
+    const token = Token.generateToken({ id, email, memberId, congregationId }, 0.5)
 
     mailer.sendMail(firstName, lastName, email, token)
 
@@ -91,7 +91,7 @@ router.post('/login', function (req, res, next) {
 
       const {id, email, memberId} = user
       const {congregationId} = user.Member
-      const token = Token.generateToken(id, email, memberId, congregationId)
+      const token = Token.generateToken({ id, email, memberId, congregationId })
 
       const userResponse = (({id}) => ({id}))(user)
       return res.status(200).json({ 'user': userResponse, 'token': token })
@@ -167,7 +167,7 @@ router.post('/resend', async function (req, res, next) {
     // generate token that expires in half a day
     const { id, email } = user
     const { id: memberId, congregationId } = user.Member
-    const token = Token.generateToken(id, email, memberId, congregationId, 0.5)
+    const token = Token.generateToken({ id, email, memberId, congregationId }, 0.5)
 
     const { firstName, lastName } = user.Member
     mailer.sendMail(firstName, lastName, email, token)
