@@ -14,19 +14,17 @@ router.get('/status', async function (req, res, next) {
   return res.status(200).json({ status: 'online' })
 })
 
-// TODO rework how registration works since we expect somone who has already been entered into the
-// system as a member to be able to register as a user.
 router.post('/register', async function (req, res, next) {
   if (!req.body.email ||
-    !req.body.confirm_email ||
+    !req.body.confirmEmail ||
     !req.body.password ||
-    !req.body.confirm_password ||
-    !req.body.first_name ||
-    !req.body.last_name) {
+    !req.body.confirmPassword ||
+    !req.body.firstName ||
+    !req.body.lastName) {
     return res.status(400).json({ message: 'All fields are required.' })
   }
 
-  if (req.body.email !== req.body.confirm_email) {
+  if (req.body.email !== req.body.confirmEmail) {
     return res.status(400).json({ message: 'Email fields do not match, try again.' })
   }
 
@@ -38,7 +36,7 @@ router.post('/register', async function (req, res, next) {
       })
     }
 
-    if (req.body.password !== req.body.confirm_password) {
+    if (req.body.password !== req.body.confirmPassword) {
       return res.status(400).json({ message: 'Password fields do not match, try again.' })
     }
 
@@ -54,7 +52,7 @@ router.post('/register', async function (req, res, next) {
     // TODO do we check status as a rule for anyone trying to registered, like don't let deleted members register
 
     const id = uuid()
-    const {email, first_name: firstName, last_name: lastName} = req.body
+    const {email, firstName, lastName} = req.body
     let salt = Security.generateSalt()
     let hash = Security.generateHash(salt, req.body.password)
     const status = USER_STATUS.UNVERIFIED

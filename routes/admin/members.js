@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const uuid = require('uuid/v4')
-const Member = require('../../models').Member
+const {Member} = require('../../models')
 const {MEMBER_STATUS} = require('../../common/status')
 
 /**
@@ -53,17 +53,17 @@ router.get('/congregations/:id', async function (req, res, next) {
 
 /**
  * Add a member.
- * first_name, last_name, email, and congregation_id are required.
+ * firstName, lastName, email, and congregationId are required.
  * Returns an error if the member already exists(email).
  */
 router.post('/', async function (req, res, next) {
-  if (!req.body.first_name ||
-    !req.body.last_name ||
+  if (!req.body.firstName ||
+    !req.body.lastName ||
     !req.body.email) {
     return res.status(409).json({ message: 'All fields are required.' })
   }
 
-  if (!req.body.congregation_id) {
+  if (!req.body.congregationId) {
     return res.status(409).json({ message: 'All members must be added to a congregation. Congregation id is missing.' })
   }
 
@@ -74,11 +74,8 @@ router.post('/', async function (req, res, next) {
 
   try {
     const id = uuid()
-    const email = req.body.email
-    const firstName = req.body.first_name
-    const lastName = req.body.last_name
     const status = MEMBER_STATUS.ACTIVE
-    const congregationId = req.body.congregation_id
+    const { email, firstName, lastName, congregationId } = req.body
     const member = await Member.create({id, email, firstName, lastName, status, congregationId})
 
     return res.status(200).json({ message: `Member ${member.firstName} ${member.lastName} was added.` })
@@ -91,8 +88,8 @@ router.post('/', async function (req, res, next) {
  * Update a member by id.
  */
 router.patch('/:id', async function (req, res, next) {
-  if (!req.body.first_name &&
-      !req.body.last_name &&
+  if (!req.body.firstName &&
+      !req.body.lastName &&
       !req.body.email) {
     return res.status(500).json({ message: 'No modifiable member property was provided.' })
   }
@@ -105,8 +102,8 @@ router.patch('/:id', async function (req, res, next) {
   }
 
   const fields = {}
-  if (req.body.first_name) fields.firstName = req.body.first_name
-  if (req.body.last_name) fields.lastName = req.body.last_name
+  if (req.body.firstName) fields.firstName = req.body.firstName
+  if (req.body.lastName) fields.lastName = req.body.lastName
   if (req.body.email) fields.email = req.body.email
 
   const response = await member.update(fields)

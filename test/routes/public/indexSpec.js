@@ -88,7 +88,7 @@ describe('index routes', function () {
     it('should fail if email is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+          .send({ confirmEmail, password, confirmPassword, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -97,7 +97,7 @@ describe('index routes', function () {
     it('should fail if confirm email is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+          .send({ email, password, confirmPassword, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -106,7 +106,7 @@ describe('index routes', function () {
     it('should fail if password is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: confirmEmail, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+          .send({ email, confirmEmail, confirmPassword, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -115,25 +115,25 @@ describe('index routes', function () {
     it('should fail if confirm password is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: confirmEmail, password, first_name: firstName, last_name: lastName })
+          .send({ email, confirmEmail, password, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
       }
     })
-    it('should fail if first_name is missing', async function () {
+    it('should fail if firstName is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ confirm_email: confirmEmail, password, confirm_password: confirmPassword, last_name: lastName })
+          .send({ confirmEmail, password, confirmPassword, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
       }
     })
-    it('should fail if last_name is missing', async function () {
+    it('should fail if lastName is missing', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName })
+          .send({ confirmEmail, password, confirmPassword, firstName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('All fields are required.')
@@ -142,7 +142,7 @@ describe('index routes', function () {
     it('should fail if email and confirm email do not match', async function () {
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: `not${confirmEmail}`, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+          .send({ email, confirmEmail: `not${confirmEmail}`, password, confirmPassword, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Email fields do not match, try again.')
@@ -154,7 +154,7 @@ describe('index routes', function () {
 
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: confirmEmail, password, confirm_password: `not${confirmPassword}`, first_name: firstName, last_name: lastName })
+          .send({ email, confirmEmail, password, confirmPassword: `not${confirmPassword}`, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal('Password fields do not match, try again.')
@@ -165,7 +165,7 @@ describe('index routes', function () {
 
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+          .send({ email, confirmEmail, password, confirmPassword, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body.message).to.equal(
@@ -179,7 +179,7 @@ describe('index routes', function () {
 
       try {
         await chai.request(app).post('/public/register')
-          .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+          .send({ email, confirmEmail, password, confirmPassword, firstName, lastName })
       } catch ({response}) {
         expect(response.status).to.equal(400)
         expect(response.body).to.eql({ message: 'Unable to register at this time.  Check with your congregation to make sure they have added you as a member.' })
@@ -203,7 +203,7 @@ describe('index routes', function () {
       sendMailStub.resolves()
 
       const response = await chai.request(app).post('/public/register')
-        .send({ email, confirm_email: confirmEmail, password, confirm_password: confirmPassword, first_name: firstName, last_name: lastName })
+        .send({ email, confirmEmail, password, confirmPassword, firstName, lastName })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })

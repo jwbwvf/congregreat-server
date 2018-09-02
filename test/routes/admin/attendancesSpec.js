@@ -45,8 +45,8 @@ describe('admin attendances routes', function () {
 
       const response = await chai.request(app).post('/admin/attendances/').set('Authorization', `Bearer ${token}`)
         .send({
-          member_id: memberId,
-          congregation_id: congregationId
+          memberId,
+          congregationId
         })
 
       expect(response.status).to.equal(200)
@@ -64,8 +64,8 @@ describe('admin attendances routes', function () {
       try {
         await chai.request(app).post('/admin/attendances/').set('Authorization', `Bearer ${token}`)
           .send({
-            member_id: memberId,
-            congregation_id: congregationId
+            memberId,
+            congregationId
           })
       } catch ({response}) {
         expect(response.status).to.equal(409)
@@ -90,6 +90,28 @@ describe('admin attendances routes', function () {
       } catch ({response}) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
+      }
+    })
+    it('should should fail if memberId is not provided', async function () {
+      try {
+        await chai.request(app).post('/admin/attendances/').set('Authorization', `Bearer ${token}`)
+          .send({
+            congregationId: faker.random.uuid()
+          })
+      } catch ({response}) {
+        expect(response.status).to.equal(409)
+        expect(response.body.message).to.equal('All fields are required.')
+      }
+    })
+    it('should should fail if congregationId is not provided', async function () {
+      try {
+        await chai.request(app).post('/admin/attendances/').set('Authorization', `Bearer ${token}`)
+          .send({
+            memberId: faker.random.uuid()
+          })
+      } catch ({response}) {
+        expect(response.status).to.equal(409)
+        expect(response.body.message).to.equal('All fields are required.')
       }
     })
   })

@@ -208,10 +208,10 @@ describe('admin members routes', function () {
       const response = await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
         .send({
           id,
-          first_name: firstName,
-          last_name: lastName,
+          firstName,
+          lastName,
           email,
-          congregation_id: congregationId
+          congregationId
         })
 
       expect(response.status).to.equal(200)
@@ -234,10 +234,10 @@ describe('admin members routes', function () {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
           .send({
             id,
-            first_name: firstName,
-            last_name: lastName,
+            firstName,
+            lastName,
             email,
-            congregation_id: congregationId
+            congregationId
           })
       } catch ({response}) {
         expect(response.status).to.equal(409)
@@ -258,8 +258,8 @@ describe('admin members routes', function () {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
           .send({
             id,
-            first_name: firstName,
-            last_name: lastName,
+            firstName,
+            lastName,
             email
           })
       } catch ({response}) {
@@ -277,7 +277,7 @@ describe('admin members routes', function () {
       // missing first name
       try {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
-          .send({id, last_name: lastName, email, congregationId
+          .send({id, lastName, email, congregationId
           })
       } catch ({response}) {
         expect(response.status).to.equal(409)
@@ -286,7 +286,7 @@ describe('admin members routes', function () {
       // missing last name
       try {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
-          .send({id, first_name: lastName, email, congregationId
+          .send({id, firstName, email, congregationId
           })
       } catch ({response}) {
         expect(response.status).to.equal(409)
@@ -295,7 +295,7 @@ describe('admin members routes', function () {
       // missing email
       try {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
-          .send({id, first_name: firstName, last_name: lastName, congregationId
+          .send({id, firstName, lastName, congregationId
           })
       } catch ({response}) {
         expect(response.status).to.equal(409)
@@ -316,10 +316,10 @@ describe('admin members routes', function () {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
           .send({
             id,
-            first_name: firstName,
-            last_name: lastName,
+            firstName,
+            lastName,
             email,
-            congregation_id: congregationId
+            congregationId
           })
       } catch ({response}) {
         expect(response.status).to.equal(409)
@@ -359,12 +359,12 @@ describe('admin members routes', function () {
       const findByIdStub = sandbox.stub(Member, 'findById').resolves(member)
 
       const response = await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
-        .send({ first_name: updateFirstName, last_name: updateLastName, email: updateEmail })
+        .send({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Member was updated.' })
       expect(findByIdStub.getCall(0).calledWith(id))
-      expect(member.update.calledWith({ first_name: updateFirstName, last_name: updateLastName, email: updateEmail }))
+      expect(member.update.calledWith({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail }))
     })
     it('should return a failure if findById throws an error', async function () {
       const id = faker.random.uuid()
@@ -373,7 +373,7 @@ describe('admin members routes', function () {
 
       try {
         await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
-          .send({ first_name: updateName })
+          .send({ firstName: updateName })
       } catch ({response}) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find member by id.' })
@@ -421,7 +421,7 @@ describe('admin members routes', function () {
 
       try {
         await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
-          .send({ first_name: updateName })
+          .send({ firstName: updateName })
       } catch ({response}) {
         expect(response.status).to.equal(500)
         expect(response.body).to.eql({ message: 'Failed to update the member.' })

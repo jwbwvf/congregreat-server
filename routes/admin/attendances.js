@@ -4,6 +4,10 @@ const { Attendance } = require('../../models')
 const uuid = require('uuid')
 
 router.post('/', async function (req, res, next) {
+  if (!req.body.memberId || !req.body.congregationId) {
+    return res.status(409).json({ message: 'All fields are required.' })
+  }
+
   const id = uuid.v4()
   const { memberId, congregationId } = req.body
 

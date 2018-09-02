@@ -147,7 +147,7 @@ describe('admin users routes', function () {
       const findByIdStub = sandbox.stub(User, 'findById').resolves(user)
 
       const response = await chai.request(app).patch(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`)
-        .send({ first_name: updateFirstName, last_name: updateLastName, email: updateEmail })
+        .send({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'User was updated.' })
