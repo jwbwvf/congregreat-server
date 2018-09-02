@@ -28,7 +28,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"member_id\":\"63cc9004-bdca-4b4d-bda9-378785bb6239\",\n\t\"congregation_id\": \"1\"\n}"
+					"raw": "{\n\t\"memberId\":\"63cc9004-bdca-4b4d-bda9-378785bb6239\",\n\t\"congregationId\": \"1\"\n}"
 				},
 				"url": {
 					"raw": "localhost:3000/admin/attendances",
@@ -57,7 +57,7 @@
 						}
 					]
 				},
-				"method": "POST",
+				"method": "DELETE",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -66,17 +66,18 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"memberId\":\"63cc9004-bdca-4b4d-bda9-378785bb6239\",\n\t\"congregationId\": \"1\"\n}"
+					"raw": "{\n\t\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/admin/attendances",
+					"raw": "localhost:3000/admin/attendances/fc545a9c-c029-417e-ab44-923a777d148d",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
 						"admin",
-						"attendances"
+						"attendances",
+						"fc545a9c-c029-417e-ab44-923a777d148d"
 					]
 				}
 			},
