@@ -79,7 +79,7 @@ describe('admin members routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/members')
       } catch ({response}) {
@@ -129,7 +129,7 @@ describe('admin members routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/members')
       } catch ({response}) {
@@ -337,7 +337,7 @@ describe('admin members routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/members')
       } catch ({response}) {
@@ -350,19 +350,21 @@ describe('admin members routes', function () {
     it('should update the congregation with new name', async function () {
       const id = faker.random.uuid()
       const firstName = faker.name.findName()
-      const updateName = faker.name.findName()
+      const updateFirstName = faker.name.findName()
+      const updateLastName = faker.name.findName()
+      const updateEmail = faker.internet.email()
       const member = { id, firstName }
       member.update = sandbox.stub().returns(true)
 
       const findByIdStub = sandbox.stub(Member, 'findById').resolves(member)
 
       const response = await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
-        .send({ first_name: updateName })
+        .send({ first_name: updateFirstName, last_name: updateLastName, email: updateEmail })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Member was updated.' })
       expect(findByIdStub.getCall(0).calledWith(id))
-      expect(member.update.calledWith({ first_name: updateName }))
+      expect(member.update.calledWith({ first_name: updateFirstName, last_name: updateLastName, email: updateEmail }))
     })
     it('should return a failure if findById throws an error', async function () {
       const id = faker.random.uuid()
@@ -389,7 +391,7 @@ describe('admin members routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).patch('/admin/members/1')
       } catch ({response}) {

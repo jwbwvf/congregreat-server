@@ -79,7 +79,7 @@ describe('admin users routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/users')
       } catch ({response}) {
@@ -124,7 +124,7 @@ describe('admin users routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/users')
       } catch ({response}) {
@@ -178,7 +178,7 @@ describe('admin users routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).patch('/admin/users/1')
       } catch ({response}) {

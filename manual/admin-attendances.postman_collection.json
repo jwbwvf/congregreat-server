@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "c7b167ab-8a85-4494-9f25-8150e75317e7",
+		"name": "admin/attendances",
+		"description": "routes that hit the end point admin/attendances",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "add attendance",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg2ZmZhMzg0LWI2OTctNDYyMi1hZGQ4LWM1ZmY2YTdiYzI3YyIsImVtYWlsIjoiamFzb24uYnJhZHlAZXhhbXBsZS5jb20iLCJtZW1iZXJJZCI6IjYzY2M5MDA0LWJkY2EtNGI0ZC1iZGE5LTM3ODc4NWJiNjIzOSIsImNvbmdyZWdhdGlvbklkIjoiMSIsImlhdCI6MTUzNTY5MzQ4MSwiZXhwIjoxNTM1ODY2MjgxfQ.UQcIFzg3A1a-wROZbgVu2Un24SfP8uhVtyrUIfS1tk9qZcquoF09bJiQJ56HxDv78Wx4eAvKFzkccSEm3hjN6fgjw80HY2mEmAtXExc41RjKBMa1ysNT4-8kSRBWpHH-b1jJwcLkhqe0M4BTSZqTeDttRf7fGuCoHDL0c_WOYv2aBGyBWSJayl58D4KwI2NU3gO-kkr3C9QZLKGcgzi3h5PBCt3s4lY0Ptk9iL4gRCPInk2JaUVA2KiST4JCranFqQ3XI1Ri7E0x1j1VQD7DraxTrNiJd8FwWhbtIB7AdLgKa7GvkkQvOXRLH7aSN7f64JK4LQZUS5dwrARXgrMpzR2Vd57FWzX2_zUrOePq2SUzFNiGc49wHqn0sfiuVKUAnLQHMfxCAUYvL2ynJZNZehAovtYttzG13rxQQwxpjUBDOweOz00KpFshIqPshcg_7vzS_ME6ZOmuDBozfc9Hm-hmshYTrH03cvdobov018aEwXgbynCBPVYT64g9_F9FXcdqg5nAbBL_iP8YVV1KeILLpiT46Xr8Ftg3PTwANi9SfnbnAQfJIkmzNvnm5hiKl-rGVNMNPg4iCWVJZdm90hXsGJ0RrPY9O4UwfWHsKI5_ReBu6UM0O1ORIbgwZrbgrEI2W0CoSLJcrRc7oco9nGUqxaFlSZA-wj_5u6-nCJU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"member_id\":\"63cc9004-bdca-4b4d-bda9-378785bb6239\",\n\t\"congregation_id\": \"1\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/admin/attendances",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"attendances"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete attendance",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg2ZmZhMzg0LWI2OTctNDYyMi1hZGQ4LWM1ZmY2YTdiYzI3YyIsImVtYWlsIjoiamFzb24uYnJhZHlAZXhhbXBsZS5jb20iLCJtZW1iZXJJZCI6IjYzY2M5MDA0LWJkY2EtNGI0ZC1iZGE5LTM3ODc4NWJiNjIzOSIsImNvbmdyZWdhdGlvbklkIjoiMSIsImlhdCI6MTUzNTY5MzQ4MSwiZXhwIjoxNTM1ODY2MjgxfQ.UQcIFzg3A1a-wROZbgVu2Un24SfP8uhVtyrUIfS1tk9qZcquoF09bJiQJ56HxDv78Wx4eAvKFzkccSEm3hjN6fgjw80HY2mEmAtXExc41RjKBMa1ysNT4-8kSRBWpHH-b1jJwcLkhqe0M4BTSZqTeDttRf7fGuCoHDL0c_WOYv2aBGyBWSJayl58D4KwI2NU3gO-kkr3C9QZLKGcgzi3h5PBCt3s4lY0Ptk9iL4gRCPInk2JaUVA2KiST4JCranFqQ3XI1Ri7E0x1j1VQD7DraxTrNiJd8FwWhbtIB7AdLgKa7GvkkQvOXRLH7aSN7f64JK4LQZUS5dwrARXgrMpzR2Vd57FWzX2_zUrOePq2SUzFNiGc49wHqn0sfiuVKUAnLQHMfxCAUYvL2ynJZNZehAovtYttzG13rxQQwxpjUBDOweOz00KpFshIqPshcg_7vzS_ME6ZOmuDBozfc9Hm-hmshYTrH03cvdobov018aEwXgbynCBPVYT64g9_F9FXcdqg5nAbBL_iP8YVV1KeILLpiT46Xr8Ftg3PTwANi9SfnbnAQfJIkmzNvnm5hiKl-rGVNMNPg4iCWVJZdm90hXsGJ0RrPY9O4UwfWHsKI5_ReBu6UM0O1ORIbgwZrbgrEI2W0CoSLJcrRc7oco9nGUqxaFlSZA-wj_5u6-nCJU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"memberId\":\"63cc9004-bdca-4b4d-bda9-378785bb6239\",\n\t\"congregationId\": \"1\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/admin/attendances",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"attendances"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "52c4c57c-608a-47a3-a1ff-f70785a27d46",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "8fd12443-2cb0-4e48-a111-1d1ddf371d06",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
