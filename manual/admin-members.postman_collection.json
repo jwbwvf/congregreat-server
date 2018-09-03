@@ -8,6 +8,16 @@
 		{
 			"name": "add member",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4NmZmYTM4NC1iNjk3LTQ2MjItYWRkOC1jNWZmNmE3YmMyN2MiLCJlbWFpbCI6Imphc29uLmJyYWR5QGV4YW1wbGUuY29tIiwibWVtYmVySWQiOiI2M2NjOTAwNC1iZGNhLTRiNGQtYmRhOS0zNzg3ODViYjYyMzkiLCJjb25ncmVnYXRpb25JZCI6IjEiLCJpYXQiOjE1MzUwNzk2ODMsImV4cCI6MTUzNTI1MjQ4M30.icdBX6tGEcE6ikLK-qn371n_eGuUBxb5UI3qCwsBgma3MzkUb93qlaVlAMSxQ34Yts7l3cRAzhZPKAh_oLoX2CH8QNsrsYRNhf5PndxEwemmV0cn8_SqPPO6fAdDnr7vbiDbV2H5FWjtJdzqG5eBsqoIPgWhlfHpE-6jSgaRymLBMiijwB35KzXDo9RWWUeEX5IBkgHaCfOFTEtC9VaLEn-zydpcF0bL8moKlTwW7ucTUfMSzdUu1eCHFwP5rfeskYc3PgZV7t_ENTbCi0P4w2LCi9hupRDLX6RxIc7HGJb4TacAKkOCczVuoKmXBvbQI1tpl_GhUqPQqggVAzGKXfiR37BJulzoMk58TLjmgCy30jusmTVkCbkysRBADpbJNVlDeCYAwwJBoGIt2mP8z0fDtLpO-CEFw1sG7BSEpNebsRxr--xke7TtN1tweRa6USXLESPaucOz70jkXdZcUmUc9ldhPzeZSh34JbUTSbkCxVM_bbcVYGd4HMLlg68rJnbul5JuagrK4uGPcZe_LDQqWbddUdVbikrDUkKtb7VwEnZGdp3iNLDwUw1_Bd5_IJayMOQHtJUZ6c8rXAeNwOFug-Nbx9bj3nTS6d8Wtln0pZOBb78m3s5CyFyCget5UIeBDlpI0DhBGJHG4QKb8ppK7f9qlK5caQep_vw9zXM",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -17,7 +27,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"first_name\": \"Jason\",\n\t\"last_name\": \"Brady\",\n\t\"email\": \"jason.brady@example.com\",\n\t\"congregation_id\" : 1\n}"
+					"raw": "{\n\t\"firstName\": \"Bruno\",\n\t\"lastName\": \"Brady\",\n\t\"email\": \"bruno.brady@example.com\",\n\t\"congregationId\" : 1,\n\t\"role\": \"member\"\n}"
 				},
 				"url": {
 					"raw": "localhost:3000/admin/members",
@@ -37,6 +47,16 @@
 		{
 			"name": "get all members",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg2ZmZhMzg0LWI2OTctNDYyMi1hZGQ4LWM1ZmY2YTdiYzI3YyIsImVtYWlsIjoiamFzb24uYnJhZHlAZXhhbXBsZS5jb20iLCJtZW1iZXJJZCI6IjYzY2M5MDA0LWJkY2EtNGI0ZC1iZGE5LTM3ODc4NWJiNjIzOSIsImNvbmdyZWdhdGlvbklkIjoiMSIsImlhdCI6MTUzNTY5MzQ4MSwiZXhwIjoxNTM1ODY2MjgxfQ.UQcIFzg3A1a-wROZbgVu2Un24SfP8uhVtyrUIfS1tk9qZcquoF09bJiQJ56HxDv78Wx4eAvKFzkccSEm3hjN6fgjw80HY2mEmAtXExc41RjKBMa1ysNT4-8kSRBWpHH-b1jJwcLkhqe0M4BTSZqTeDttRf7fGuCoHDL0c_WOYv2aBGyBWSJayl58D4KwI2NU3gO-kkr3C9QZLKGcgzi3h5PBCt3s4lY0Ptk9iL4gRCPInk2JaUVA2KiST4JCranFqQ3XI1Ri7E0x1j1VQD7DraxTrNiJd8FwWhbtIB7AdLgKa7GvkkQvOXRLH7aSN7f64JK4LQZUS5dwrARXgrMpzR2Vd57FWzX2_zUrOePq2SUzFNiGc49wHqn0sfiuVKUAnLQHMfxCAUYvL2ynJZNZehAovtYttzG13rxQQwxpjUBDOweOz00KpFshIqPshcg_7vzS_ME6ZOmuDBozfc9Hm-hmshYTrH03cvdobov018aEwXgbynCBPVYT64g9_F9FXcdqg5nAbBL_iP8YVV1KeILLpiT46Xr8Ftg3PTwANi9SfnbnAQfJIkmzNvnm5hiKl-rGVNMNPg4iCWVJZdm90hXsGJ0RrPY9O4UwfWHsKI5_ReBu6UM0O1ORIbgwZrbgrEI2W0CoSLJcrRc7oco9nGUqxaFlSZA-wj_5u6-nCJU",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {},
@@ -78,6 +98,16 @@
 		{
 			"name": "update member",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4NmZmYTM4NC1iNjk3LTQ2MjItYWRkOC1jNWZmNmE3YmMyN2MiLCJlbWFpbCI6Imphc29uLmJyYWR5QGV4YW1wbGUuY29tIiwibWVtYmVySWQiOiI2M2NjOTAwNC1iZGNhLTRiNGQtYmRhOS0zNzg3ODViYjYyMzkiLCJjb25ncmVnYXRpb25JZCI6IjEiLCJpYXQiOjE1MzUxNzEyOTksImV4cCI6MTUzNTM0NDA5OX0.ftG4L2QPUdazfgKXgo2ZJ9BA9v9YjFel2YGj1KvdQcyOHqm2REQSwPZpAg6tb-VNDLGU0B1J_gUZTtHwZLOqHoHMvUQWgt29XboU9VxnEuAUinRXxh9s9EqFtOJq8XJiQR3exBUUh9NkhETq9lyhX5-Lb1UhSYQJkP2E0iToZnps4H0iiJZvHL5CHDeVzZ-B45humTtIS2Js5W5uVg0PjuPJPoE93iNPe9gwCI8K6YvYkFen5EHSumnxiYo-0ID88fKcajTfIvblvfYxsgv1xzC-TivCY63zcmDU7op41JA6-wSxU9eaHmJwH8rNczqedRRkFxJiFSUl8pXsqZrOAwoqlmbHSIW4uLV_8GkWOi3qkIu8SzT3MrdBcViMT7ssIj4HqeprSmSU5qgxA5De7ZEYHRRnd11zN4RX4uPEatreM1bMbBd7NsDfwIkgpvqIj7xknM8Mzhz4rcxbiAR4BRkfHYF2MTFwSPJZIGqScJN6--bpRMWDCB9752Kr0OXO03D1Byi1m2Vp38SOgQQJJ4-Jl064nqa5HYfSQqMwx_58emnVWdGgN-9KGgR3aUlvtyuSPs6TK58Hbtq7vNWqITYTMMuJZXaPuq4NFyKCG5lTQbddkF1sKuIieB-hI9eHQODTKFO1YlmcXlD9IGj8HmNy3tGLHkYKOUx7DiG_9Kk",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PATCH",
 				"header": [
 					{
@@ -87,10 +117,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"first_name\": \"Jayson\"\n}"
+					"raw": "{\n\t\"firstName\": \"testFirstNameUpdated\"\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/admin/members/63cc9004-bdca-4b4d-bda9-378785bb6239",
+					"raw": "localhost:3000/admin/members/69d325cb-2dfe-473a-a94c-6164910542cf",
 					"host": [
 						"localhost"
 					],
@@ -98,7 +128,7 @@
 					"path": [
 						"admin",
 						"members",
-						"63cc9004-bdca-4b4d-bda9-378785bb6239"
+						"69d325cb-2dfe-473a-a94c-6164910542cf"
 					]
 				}
 			},

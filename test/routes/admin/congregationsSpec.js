@@ -65,7 +65,7 @@ describe('admin congregations routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/congregations')
       } catch ({response}) {
@@ -111,7 +111,7 @@ describe('admin congregations routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/congregations')
       } catch ({response}) {
@@ -164,7 +164,7 @@ describe('admin congregations routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/congregations')
       } catch ({response}) {
@@ -215,7 +215,7 @@ describe('admin congregations routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).patch('/admin/congregations/1')
       } catch ({response}) {

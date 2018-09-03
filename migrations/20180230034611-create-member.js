@@ -27,6 +27,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      congregationId: {
+        type: Sequelize.UUID,
+        field: 'congregation_id',
+        references: {
+          model: 'Congregations',
+          key: 'id',
+          allowNull: false
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -36,15 +45,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
         field: 'updated_at'
-      },
-      congregationId: {
-        type: Sequelize.UUID,
-        field: 'congregation_id',
-        references: {
-          model: 'Congregations',
-          key: 'id',
-          allowNull: false
-        }
       }
     })
   },

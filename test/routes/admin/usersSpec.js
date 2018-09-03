@@ -79,7 +79,7 @@ describe('admin users routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/users')
       } catch ({response}) {
@@ -124,7 +124,7 @@ describe('admin users routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/users')
       } catch ({response}) {
@@ -147,7 +147,7 @@ describe('admin users routes', function () {
       const findByIdStub = sandbox.stub(User, 'findById').resolves(user)
 
       const response = await chai.request(app).patch(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`)
-        .send({ first_name: updateFirstName, last_name: updateLastName, email: updateEmail })
+        .send({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'User was updated.' })
@@ -178,7 +178,7 @@ describe('admin users routes', function () {
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
-    it('should should fail for unauthorized if no token is not provided', async function () {
+    it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).patch('/admin/users/1')
       } catch ({response}) {

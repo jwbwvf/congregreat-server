@@ -46,10 +46,12 @@ app.use('/admin', admin)
 var adminCongregations = require('./routes/admin/congregations')
 var adminUsers = require('./routes/admin/users')
 var adminMembers = require('./routes/admin/members')
+var adminAttendances = require('./routes/admin/attendances')
 
 admin.use('/congregations', adminCongregations)
 admin.use('/users', adminUsers)
 admin.use('/members', adminMembers)
+admin.use('/attendances', adminAttendances)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
