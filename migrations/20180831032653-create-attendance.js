@@ -7,18 +7,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID
       },
-      congregationId: {
-        type: Sequelize.UUID,
-        field: 'congregation_id',
-        references: {
-          model: 'Congregations',
-          key: 'id',
-          allowNull: false
-        }
-      },
       memberId: {
         type: Sequelize.UUID,
-        field: 'member_id',
         references: {
           model: 'Members',
           key: 'id',

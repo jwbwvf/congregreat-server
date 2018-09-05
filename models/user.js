@@ -31,20 +31,17 @@ module.exports = function (sequelize, DataTypes) {
     },
     createdAt: {
       type: DataTypes.DATE,
-      allowNull: false,
-      field: 'created_at'
+      allowNull: false
     },
     updatedAt: {
       type: DataTypes.DATE,
-      allowNull: false,
-      field: 'updated_at'
+      allowNull: false
     }
   }, {})
   User.associate = function (models) {
     User.belongsTo(models.Member, {
       foreignKey: {
         name: 'memberId',
-        field: 'member_id',
         allowNull: false,
         unique: true
       }

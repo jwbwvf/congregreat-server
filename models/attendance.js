@@ -9,27 +9,23 @@ module.exports = (sequelize, DataTypes) => {
     },
     createdAt: {
       type: DataTypes.DATE,
-      allowNull: false,
-      field: 'created_at'
+      allowNull: false
     },
     updatedAt: {
       type: DataTypes.DATE,
-      allowNull: false,
-      field: 'updated_at'
+      allowNull: false
     }
   }, {})
   Attendance.associate = function (models) {
     Attendance.belongsTo(models.Member, {
       foreignKey: {
         name: 'memberId',
-        field: 'member_id',
         allowNull: false
       }
     })
     Attendance.belongsTo(models.Congregation, {
       foreignKey: {
         name: 'congregationId',
-        field: 'congregation_id',
         allowNull: false
       }
     })

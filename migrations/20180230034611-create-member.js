@@ -9,13 +9,11 @@ module.exports = {
       },
       firstName: {
         allowNull: false,
-        type: Sequelize.STRING,
-        field: 'last_name'
+        type: Sequelize.STRING
       },
       lastName: {
         allowNull: false,
-        type: Sequelize.STRING,
-        field: 'first_name'
+        type: Sequelize.STRING
       },
       email: {
         type: Sequelize.STRING,
@@ -29,7 +27,6 @@ module.exports = {
       },
       congregationId: {
         type: Sequelize.UUID,
-        field: 'congregation_id',
         references: {
           model: 'Congregations',
           key: 'id',
@@ -38,13 +35,11 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        field: 'created_at'
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        field: 'updated_at'
+        type: Sequelize.DATE
       }
     })
   },

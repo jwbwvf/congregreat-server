@@ -11,7 +11,7 @@ router.get('/', async function (req, res, next) {
   let members
   try {
     members = await Member.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'email']
+      attributes: ['id', 'firstName', 'lastName', 'email']
     })
   } catch (error) {
     return res.status(404).json({ message: 'Unable to find all members.' })
@@ -26,7 +26,7 @@ router.get('/', async function (req, res, next) {
 router.get('/:id', async function (req, res, next) {
   try {
     const member = await Member.findById(req.params.id, {
-      attributes: ['id', 'email', 'first_name', 'last_name', 'congregation_id', 'status']
+      attributes: ['id', 'email', 'firstName', 'lastName', 'congregationId', 'status']
     })
     return res.status(200).json(member)
   } catch (error) {
@@ -42,7 +42,7 @@ router.get('/congregations/:id', async function (req, res, next) {
   try {
     members = await Member.findAll({
       where: { congregationId: req.params.id },
-      attributes: ['id', 'first_name', 'last_name', 'email']
+      attributes: ['id', 'firstName', 'lastName', 'email']
     })
   } catch (error) {
     return res.status(404).json({ message: 'Unable to find all members of the congregation.' })

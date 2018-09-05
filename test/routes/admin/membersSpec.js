@@ -52,7 +52,7 @@ describe('admin members routes', function () {
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(members)
       expect(findAllStub.getCall(0).calledWith({
-        attributes: ['id', 'first_name', 'last_name', 'email']
+        attributes: ['id', 'firstName', 'lastName', 'email']
       }))
     })
     it('should return a failure if findAll throws an error', async function () {
@@ -64,7 +64,7 @@ describe('admin members routes', function () {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find all members.' })
         expect(findAllStub.getCall(0).calledWith({
-          attributes: ['id', 'first_name', 'last_name', 'email']
+          attributes: ['id', 'firstName', 'lastName', 'email']
         }))
       }
     })
@@ -171,7 +171,7 @@ describe('admin members routes', function () {
       expect(response.body).to.eql([memberOne, memberThree])
       expect(findAllStub.getCall(0).calledWith({
         where: { congregationId },
-        attributes: ['id', 'first_name', 'last_name', 'email']
+        attributes: ['id', 'firstName', 'lastName', 'email']
       }))
     })
     it('gets all members of a congregation', async function () {
