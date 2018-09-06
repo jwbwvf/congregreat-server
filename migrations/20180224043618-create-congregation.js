@@ -12,19 +12,17 @@ module.exports = {
         unique: true,
         type: Sequelize.STRING
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'created_at'
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'updated_at'
-      },
       status: {
         allowNull: false,
         type: Sequelize.STRING
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       }
     })
   },

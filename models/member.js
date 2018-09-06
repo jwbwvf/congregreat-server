@@ -8,13 +8,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstName: {
       type: DataTypes.STRING,
-      allowNull: false,
-      field: 'first_name'
+      allowNull: false
     },
     lastName: {
       type: DataTypes.STRING,
-      allowNull: false,
-      field: 'last_name'
+      allowNull: false
     },
     email: {
       type: DataTypes.STRING,
@@ -31,20 +29,17 @@ module.exports = (sequelize, DataTypes) => {
     },
     createdAt: {
       type: DataTypes.DATE,
-      allowNull: false,
-      field: 'created_at'
+      allowNull: false
     },
     updatedAt: {
       type: DataTypes.DATE,
-      allowNull: false,
-      field: 'updated_at'
+      allowNull: false
     }
   }, {})
   Member.associate = function (models) {
     Member.belongsTo(models.Congregation, {
       foreignKey: {
         name: 'congregationId',
-        field: 'congregation_id',
         allowNull: false
       }
     })

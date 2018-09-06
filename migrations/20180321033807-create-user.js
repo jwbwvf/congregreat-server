@@ -25,25 +25,22 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'created_at'
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'updated_at'
-      },
       memberId: {
         type: Sequelize.UUID,
-        field: 'member_id',
         allowNull: false,
         unique: true,
         references: {
           model: 'Members',
           key: 'id'
         }
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       }
     })
   },

@@ -11,19 +11,17 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       allowNull: false
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'created_at'
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'updated_at'
-    },
     status: {
       allowNull: false,
       type: DataTypes.STRING
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false
     }
   }, {})
 
@@ -31,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
     Congregation.hasMany(models.Member, {
       foreignKey: {
         name: 'congregationId',
-        field: 'congregation_id',
         allowNull: false
       }
     })

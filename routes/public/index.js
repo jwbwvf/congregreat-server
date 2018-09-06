@@ -42,7 +42,7 @@ router.post('/register', async function (req, res, next) {
 
     const member = await Member.findOne({
       where: { email: req.body.email },
-      attributes: ['id', 'congregation_id', 'status']
+      attributes: ['id', 'congregationId', 'status']
     })
     if (!member) {
       return res.status(400).json({
@@ -143,7 +143,7 @@ router.post('/resend', async function (req, res, next) {
       include: [{
         model: Member,
         where: { id: Sequelize.col('User.member_id') },
-        attributes: ['id', 'firstName', 'lastName', 'email', 'congregation_id', 'status'],
+        attributes: ['id', 'firstName', 'lastName', 'email', 'congregationId', 'status'],
         required: false
       }]
     })

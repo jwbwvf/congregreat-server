@@ -146,7 +146,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"first_name\": \"Jayson\"\n}"
+					"raw": "{\n\t\"firstName\": \"Jayson\"\n}"
 				},
 				"url": {
 					"raw": "localhost:3000/admin/members/63cc9004-bdca-4b4d-bda9-378785bb6239",
