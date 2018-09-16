@@ -1,6 +1,6 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-  var Congregation = sequelize.define('Congregation', {
+  var Event = sequelize.define('Event', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -8,37 +8,38 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false
     },
-    status: {
-      allowNull: false,
-      type: DataTypes.STRING
-    },
-    createdAt: {
-      type: DataTypes.DATE,
+    startDate: {
+      type: DataTypes.DATEONLY,
       allowNull: false
     },
-    updatedAt: {
-      type: DataTypes.DATE,
+    endDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: false
+    },
+    startTime: {
+      type: DataTypes.TIME,
+      allowNull: false
+    },
+    endTime: {
+      type: DataTypes.TIME,
       allowNull: false
     }
   }, {})
-
-  Congregation.associate = function (models) {
-    Congregation.hasMany(models.Member, {
+  Event.associate = function (models) {
+    Event.belongsTo(models.Congregation, {
       foreignKey: {
         name: 'congregationId',
         allowNull: false
       }
     })
-    Congregation.hasMany(models.Event, {
+    Event.hasMany(models.Attendance, {
       foreignKey: {
-        name: 'congregationId',
+        name: 'eventId',
         allowNull: false
       }
     })
   }
-
-  return Congregation
+  return Event
 }

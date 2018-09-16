@@ -15,6 +15,14 @@ module.exports = {
           allowNull: false
         }
       },
+      eventId: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'Event',
+          key: 'id',
+          allowNull: false
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
