@@ -43,6 +43,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       }
     })
+    Member.hasMany(models.Attendance, {
+      foreignKey: {
+        name: 'memberId',
+        allowNull: false
+      }
+    })
   }
   return Member
 }

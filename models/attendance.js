@@ -23,9 +23,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       }
     })
-    Attendance.belongsTo(models.Congregation, {
+    Attendance.belongsTo(models.Event, {
       foreignKey: {
-        name: 'congregationId',
+        name: 'eventId',
         allowNull: false
       }
     })
