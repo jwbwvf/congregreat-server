@@ -142,7 +142,7 @@ router.post('/resend', async function (req, res, next) {
       attributes: ['id', 'email', 'status', 'memberId'],
       include: [{
         model: Member,
-        where: { id: Sequelize.col('User.member_id') },
+        where: { id: Sequelize.col('User.memberId') },
         attributes: ['id', 'firstName', 'lastName', 'email', 'congregationId', 'status'],
         required: false
       }]
