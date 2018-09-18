@@ -6,7 +6,9 @@
     "start": "node ./bin/www",
     "start-dev": "DB_HOSTNAME=${DB_HOSTNAME:-localhost} NODE_ENV=${NODE_ENV:-development} nodemon ./bin/www",
     "test": "NODE_ENV=test standard && nyc --reporter=html --reporter=text mocha --recursive --exit",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "seed": "node_modules/.bin/sequelize db:seed:all",
+    "seed-undo": "node_modules/.bin/sequelize db:seed:undo:all"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
