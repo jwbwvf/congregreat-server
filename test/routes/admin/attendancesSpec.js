@@ -33,11 +33,11 @@ describe('admin attendances routes', function () {
     it('should return the new attendance record', async function () {
       const id = faker.random.uuid()
       const memberId = faker.random.uuid()
-      const congregationId = faker.random.uuid()
+      const eventId = faker.random.uuid()
       const attendance = {
         id,
         memberId,
-        congregationId
+        eventId
       }
 
       const createStub = sandbox.stub(Attendance, 'create').resolves(attendance)
@@ -46,17 +46,17 @@ describe('admin attendances routes', function () {
       const response = await chai.request(app).post('/admin/attendances/').set('Authorization', `Bearer ${token}`)
         .send({
           memberId,
-          congregationId
+          eventId
         })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(attendance)
-      expect(createStub.getCall(0).calledWith({id, memberId, congregationId}))
+      expect(createStub.getCall(0).calledWith({id, memberId, eventId}))
     })
     it('should return a failure if create throws an error', async function () {
       const id = faker.random.uuid()
       const memberId = faker.random.uuid()
-      const congregationId = faker.random.uuid()
+      const eventId = faker.random.uuid()
 
       const createStub = sandbox.stub(Attendance, 'create').throws(new Error())
       sandbox.stub(uuid, 'v4').returns(id)
@@ -65,12 +65,12 @@ describe('admin attendances routes', function () {
         await chai.request(app).post('/admin/attendances/').set('Authorization', `Bearer ${token}`)
           .send({
             memberId,
-            congregationId
+            eventId
           })
       } catch ({response}) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'Unable to add attendance record.' })
-        expect(createStub.getCall(0).calledWith({id, memberId, congregationId}))
+        expect(createStub.getCall(0).calledWith({id, memberId, eventId}))
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
