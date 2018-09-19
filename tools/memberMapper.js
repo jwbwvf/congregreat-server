@@ -38,18 +38,14 @@ const mappingConfig = {
   }
 }
 
-const map = (importMemberObject, mappingConfig) => {
-  const object = {}
-  const objectKeys = Object.keys(mappingConfig)
-  objectKeys.forEach(objectKey => {
-    object[objectKey] = {}
-    const propertyKeys = Object.keys(mappingConfig[objectKey])
-    propertyKeys.forEach(propertyKey => {
-      object[objectKey][propertyKey] = importMemberObject[mappingConfig[objectKey][propertyKey]]
-    })
-  })
-
-  return object
+const map = (mapperConfig, importMemberObject) => {
+  return Object.keys(mapperConfig).reduce((mapper, mapperKey) => ({
+    ...mapper,
+    [mapperKey]: Object.keys(mapperConfig[mapperKey]).reduce((child, childKey) => ({
+      ...child,
+      [childKey]: importMemberObject[mapperConfig[mapperKey][childKey]]
+    }), {})
+  }), {})
 }
 
 const result = map(importMemberObject, mappingConfig)
