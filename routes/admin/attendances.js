@@ -4,15 +4,15 @@ const { Attendance } = require('../../models')
 const uuid = require('uuid')
 
 router.post('/', async function (req, res, next) {
-  if (!req.body.memberId || !req.body.congregationId) {
+  if (!req.body.memberId || !req.body.eventId) {
     return res.status(409).json({ message: 'All fields are required.' })
   }
 
   const id = uuid.v4()
-  const { memberId, congregationId } = req.body
+  const { memberId, eventId } = req.body
 
   try {
-    const attendance = await Attendance.create({ id, memberId, congregationId })
+    const attendance = await Attendance.create({ id, memberId, eventId })
     return res.status(200).json(attendance)
   } catch (error) {
     return res.status(409).json({ message: 'Unable to add attendance record.' })

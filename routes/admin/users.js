@@ -7,7 +7,7 @@ router.get('/', async function (req, res, next) {
   let users
   try {
     users = await User.findAll({
-      attributes: ['id', 'email', 'member_id', 'status']
+      attributes: ['id', 'email', 'memberId', 'status']
     })
   } catch (error) {
     return res.status(404).json({ message: 'Unable to find all users.' })
@@ -18,7 +18,7 @@ router.get('/', async function (req, res, next) {
 router.get('/:id', async function (req, res, next) {
   try {
     const user = await User.findById(req.params.id, {
-      attributes: ['id', 'email', 'member_id', 'status']
+      attributes: ['id', 'email', 'memberId', 'status']
     })
     return res.status(200).json(user)
   } catch (error) {

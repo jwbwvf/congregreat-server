@@ -12,7 +12,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
         attributes: ['id', 'email', 'status', 'memberId', 'hash', 'salt'],
         include: [{
           model: Member,
-          where: { id: Sequelize.col('User.member_id') },
+          where: { id: Sequelize.col('User.memberId') },
           attributes: ['congregationId'],
           required: false
         }]

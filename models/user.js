@@ -46,11 +46,11 @@ module.exports = function (sequelize, DataTypes) {
         unique: true
       }
     })
-    User.belongsToMany(models.Role,
-      {
-        through: models.UserRole
-      }
-    )
+    // User.belongsToMany(models.Role,
+    //   {
+    //     through: models.UserRole
+    //   }
+    // )
   }
 
   User.prototype.isVerified = function () {
