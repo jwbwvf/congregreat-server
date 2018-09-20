@@ -13,7 +13,6 @@ const { User, Member } = require('../../../models')
 const Token = require('../../../common/token')
 const Security = require('../../../common/security')
 const expect = chai.expect
-const assert = chai.assert
 
 chai.use(chaiHttp)
 
@@ -30,8 +29,8 @@ describe('index routes', function () {
     it('should fail if email is missing', function () {
       chai.request(app).post('/public/login')
         .send({ password: faker.internet.password() })
-        .end(function (error, response, body) {
-          assert(error)
+        .end(function (error, response) {
+          expect(error).to.equal(null)
           expect(response.status).to.equal(400)
           expect(response.body.message).to.equal('All fields are required.')
         })
@@ -40,7 +39,7 @@ describe('index routes', function () {
       chai.request(app).post('/public/login')
         .send({ email: faker.internet.email() })
         .end(function (error, response, body) {
-          assert(error)
+          expect(error).to.equal(null)
           expect(response.status).to.equal(400)
           expect(response.body.message).to.equal('All fields are required.')
         })
@@ -51,7 +50,7 @@ describe('index routes', function () {
       chai.request(app).post('/public/login')
         .send({ email: faker.internet.email(), password: faker.internet.password() })
         .end(function (error, response, body) {
-          assert(error)
+          expect(error).to.equal(null)
           expect(response.status).to.equal(400)
           expect(response.body.message).to.equal('Incorrect username or password.')
         })
@@ -71,7 +70,7 @@ describe('index routes', function () {
       chai.request(app).post('/public/login')
         .send({ email, password })
         .end(function (error, response, body) {
-          assert(!error)
+          expect(error).to.equal(null)
           expect(response.status).to.equal(200)
           expect(response.body).to.eql({ 'user': { id: id }, 'token': token })
         })
