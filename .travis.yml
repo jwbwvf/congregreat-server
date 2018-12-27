@@ -1,4 +1,47 @@
-Node_js:
-8
+language: node_js
+node_js:
+  - "stable"
 
-after_success: npm run coverage
+#before_install:
+#  - npm install
+#  - npm run coverage
+
+install:
+  - npm install --quiet
+  #- npm run test
+
+cache:
+  directories:
+    - node_modules
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    local_dir: dpl_cd_upload
+    skip_cleanup: true
+    bucket: codedeploy-congregreat-api
+    region: us-east-1
+    on: &2
+      repo: drewsmith/congregreat-server
+      all_branches: true
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: codedeploy-congregreat-api
+    key: latest.zip
+    bundle_type: zip
+    application: congregreat-api
+    deployment_group: congregreat-api-deployment-group
+    region: us-east-1
+    on: *2
+
+script:
+  - zip -q -r latest *
+  - mkdir -p dpl_cd_upload
+  - mv latest.zip dpl_cd_upload/latest.zip
+
+notifications:
+  email:
+    - andrew.j.smith.jr@gmail.com
+    - jwbwvf@gmail.com

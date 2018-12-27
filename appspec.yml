@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/api/
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+hooks:
+  AfterInstall:
+    - location: scripts/npm-install.sh
+      runas: ubuntu
+      timeout: 300
+  ApplicationStop:
+    - location: scripts/stop-api.sh
+      runas: ubuntu
+      timeout: 300
+  ApplicationStart:
+    - location: scripts/start-api.sh
+      runas: ubuntu
+      timeout: 60
