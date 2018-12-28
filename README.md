@@ -25,7 +25,7 @@ docker run --name congregreat-db \
   -e MYSQL_USER=gr8admin \
   -e MYSQL_DATABASE=congregreat \
   -v mysql-data:/var/lib/mysql \
-  -d mysql
+  -d mysql:5.7
 ```
 
 connect via cli
@@ -54,6 +54,13 @@ jdbc:mysql://gr8admin:<password>@localhost:5306/congregreat
 ```
 
 ## Environment Variables
-JWT_PASSPHRASE Passphrase used to Sign and Verify jsonwebtokens.
-JWT_PRIVATE Path to the private pem file used to Sign and Verify jsonwebtokens.
-JWT_PUBLIC Path to the public pem file used to Sign and Verify jsonwebtokens.
+
+* JWT_PASSPHRASE - Passphrase used to Sign and Verify jsonwebtokens.
+* JWT_PRIVATE - Path to the private pem file used to Sign and Verify jsonwebtokens.
+* JWT_PUBLIC - Path to the public pem file used to Sign and Verify jsonwebtokens.
+
+## Populate local db
+
+`npm run seed` - runs the up commands in `/seeders/*`
+
+`npm run seed-undo` - runs the delete commands in the `/seeders/*`

@@ -1,5 +1,6 @@
 const path = require('path');
 
 module.exports = {
-  'config': path.resolve('common', 'config.js')
+  'config': path.resolve('common', 'config.js'),
+  'seeders-path': path.resolve('', 'seeders')
 }
