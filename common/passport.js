@@ -12,9 +12,9 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
         attributes: ['id', 'email', 'status', 'memberId', 'hash', 'salt'],
         include: [{
           model: Member,
-          where: { id: Sequelize.col('User.memberId') },
           attributes: ['congregationId'],
-          required: false
+          // creates inner join when true, left outer join when false
+          required: true
         }]
       })
       if (!user) {

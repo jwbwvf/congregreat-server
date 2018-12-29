@@ -86,7 +86,9 @@ router.post('/login', function (req, res, next) {
     }
     req.logIn(user, function (err) {
       if (err) { return next(err) }
-
+      if (!user.Member) {
+        return next(new Error('User does not contain a valid congregation membership.'))
+      }
       const {id, email, memberId} = user
       const {congregationId} = user.Member
       const token = Token.generateToken({ id, email, memberId, congregationId })
