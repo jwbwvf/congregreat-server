@@ -2,14 +2,14 @@ const express = require('express')
 const router = express.Router()
 
 const {
-  findAll,
-  find,
+  getAll,
+  getById,
   update,
   softDelete
 } = require('../../controllers/user')
 
-router.get('/', findAll)
-router.get('/:id', find)
+router.get('/', getAll)
+router.get('/:id', getById)
 router.patch('/:id', update)
 router.delete('/:id', softDelete)
 
