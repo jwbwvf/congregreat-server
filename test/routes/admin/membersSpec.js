@@ -60,7 +60,7 @@ describe('admin members routes', function () {
 
       try {
         await chai.request(app).get(`/admin/members/`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find all members.' })
         expect(findAllStub.getCall(0).calledWith({
@@ -74,7 +74,7 @@ describe('admin members routes', function () {
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
         await chai.request(app).get('/admin/members').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -82,7 +82,7 @@ describe('admin members routes', function () {
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/members')
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -112,7 +112,7 @@ describe('admin members routes', function () {
 
       try {
         await chai.request(app).get(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find member by id.' })
         expect(findByIdStub.getCall(0).calledWith(id))
@@ -124,7 +124,7 @@ describe('admin members routes', function () {
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
         await chai.request(app).get('/admin/members').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -132,7 +132,7 @@ describe('admin members routes', function () {
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/members')
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -180,7 +180,7 @@ describe('admin members routes', function () {
 
       try {
         await chai.request(app).get(`/admin/members/congregations/${congregationId}`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(404)
         expect(response.body.message).to.equal('Unable to find all members of the congregation.')
       }
@@ -216,7 +216,7 @@ describe('admin members routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: `Member ${firstName} ${lastName} was added.` })
-      expect(createStub.getCall(0).calledWith({id, email, firstName, lastName, status, congregationId}))
+      expect(createStub.getCall(0).calledWith({ id, email, firstName, lastName, status, congregationId }))
     })
     it('should return a failure if create throws an error', async function () {
       const id = faker.random.uuid()
@@ -239,10 +239,10 @@ describe('admin members routes', function () {
             email,
             congregationId
           })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'Unable to create member.' })
-        expect(createStub.getCall(0).calledWith({id, email, firstName, lastName, status, congregationId}))
+        expect(createStub.getCall(0).calledWith({ id, email, firstName, lastName, status, congregationId }))
       }
     })
     it('should return a failure if there is no congregation provided', async function () {
@@ -262,7 +262,7 @@ describe('admin members routes', function () {
             lastName,
             email
           })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'All members must be added to a congregation. Congregation id is missing.' })
       }
@@ -277,27 +277,27 @@ describe('admin members routes', function () {
       // missing first name
       try {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
-          .send({id, lastName, email, congregationId
+          .send({ id, lastName, email, congregationId
           })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'All fields are required.' })
       }
       // missing last name
       try {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
-          .send({id, firstName, email, congregationId
+          .send({ id, firstName, email, congregationId
           })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'All fields are required.' })
       }
       // missing email
       try {
         await chai.request(app).post('/admin/members/').set('Authorization', `Bearer ${token}`)
-          .send({id, firstName, lastName, congregationId
+          .send({ id, firstName, lastName, congregationId
           })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'All fields are required.' })
       }
@@ -309,7 +309,7 @@ describe('admin members routes', function () {
       const email = faker.internet.email()
       const congregationId = faker.random.alphaNumeric()
 
-      sandbox.stub(Member, 'findOne').resolves({id: faker.random.uuid()})
+      sandbox.stub(Member, 'findOne').resolves({ id: faker.random.uuid() })
       sandbox.stub(uuid, 'v4').returns(id)
 
       try {
@@ -321,7 +321,7 @@ describe('admin members routes', function () {
             email,
             congregationId
           })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'A member already exists with this email.' })
       }
@@ -332,7 +332,7 @@ describe('admin members routes', function () {
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
         await chai.request(app).get('/admin/members').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -340,31 +340,27 @@ describe('admin members routes', function () {
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).get('/admin/members')
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
   })
   describe('PATCH /:id', function () {
-    it('should update the congregation with new name', async function () {
+    it('should update the member with new name', async function () {
       const id = faker.random.uuid()
-      const firstName = faker.name.findName()
       const updateFirstName = faker.name.findName()
       const updateLastName = faker.name.findName()
       const updateEmail = faker.internet.email()
-      const member = { id, firstName }
-      member.update = sandbox.stub().returns(true)
 
-      const findByIdStub = sandbox.stub(Member, 'findById').resolves(member)
+      const updateStub = sandbox.stub(Member, 'update').resolves()
 
       const response = await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
         .send({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Member was updated.' })
-      expect(findByIdStub.getCall(0).calledWith(id))
-      expect(member.update.calledWith({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail }))
+      expect(updateStub.getCall(0).calledWith({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail }))
     })
     it('should return a failure if findById throws an error', async function () {
       const id = faker.random.uuid()
@@ -374,7 +370,7 @@ describe('admin members routes', function () {
       try {
         await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
           .send({ firstName: updateName })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find member by id.' })
         expect(findByIdStub.calledWith(id))
@@ -386,7 +382,7 @@ describe('admin members routes', function () {
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
         await chai.request(app).patch('/admin/members/1').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -394,7 +390,7 @@ describe('admin members routes', function () {
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
         await chai.request(app).patch('/admin/members/1')
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -406,7 +402,7 @@ describe('admin members routes', function () {
       try {
         await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
           .send({ id: updateId })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(500)
         expect(response.body).to.eql({ message: 'No modifiable member property was provided.' })
       }
@@ -422,7 +418,7 @@ describe('admin members routes', function () {
       try {
         await chai.request(app).patch(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
           .send({ firstName: updateName })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(500)
         expect(response.body).to.eql({ message: 'Failed to update the member.' })
       }
@@ -431,27 +427,27 @@ describe('admin members routes', function () {
   describe('DELETE /:id', function () {
     it('should set the status as deleted', async function () {
       const id = faker.random.uuid()
-      const member = { id }
-      member.update = sandbox.stub().returns(true)
 
-      sandbox.stub(Member, 'findById').resolves(member)
+      const updateStub = sandbox.stub(Member, 'update').resolves()
 
       const response = await chai.request(app).delete(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
 
-      expect(member.update.calledWith(MEMBER_STATUS.DELETED))
+      const fields = { status: MEMBER_STATUS.DELETED }
+      const options = { where: { id } }
+
+      expect(updateStub.calledWith(fields, options))
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Member was deleted.' })
     })
-    it('should return a failure if findById throws an error', async function () {
+    it('should return a failure if update throws an error', async function () {
       const id = faker.random.uuid()
-      const findByIdStub = sandbox.stub(Member, 'findById').throws(new Error())
+      sandbox.stub(Member, 'update').throws(new Error())
 
       try {
         await chai.request(app).delete(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find member by id.' })
-        expect(findByIdStub.getCall(0).calledWith(id))
       }
     })
     it('should return a failure if delete fails', async function () {
@@ -463,7 +459,7 @@ describe('admin members routes', function () {
 
       try {
         await chai.request(app).delete(`/admin/members/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(500)
         expect(response.body).to.eql({ message: 'Failed to delete the member.' })
       }

@@ -141,30 +141,32 @@ describe('admin users routes', function () {
       const updateLastName = faker.name.findName()
       const updateEmail = faker.internet.email()
 
-      const user = { id, firstName, lastName, email }
-      user.update = sandbox.stub().returns(true)
-
-      const findByIdStub = sandbox.stub(User, 'findById').resolves(user)
+      const updateStub = sandbox.stub(User, 'update').resolves()
 
       const response = await chai.request(app).patch(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`)
         .send({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail })
 
+      const fields = {firstName: updateFirstName, lastName: updateLastName, email: updateEmail}
+      const options = {where: {id}}
+
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'User was updated.' })
-      expect(findByIdStub.getCall(0).calledWith(id))
-      expect(user.update.calledWith({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail }))
+      expect(updateStub.calledWith(fields, options))
     })
-    it('should return a failure if findById throws an error', async function () {
+    it('should return a failure if update throws an error', async function () {
       const id = faker.random.uuid()
       const updateEmail = faker.internet.email()
-      const findByIdStub = sandbox.stub(User, 'findById').throws(new Error())
+      const updateStub = sandbox.stub(User, 'update').throws(new Error())
 
       try {
         await chai.request(app).patch(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`).send({ email: updateEmail })
       } catch ({response}) {
+        const fields = {email: updateEmail}
+        const options = {where: {id}}
+
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find user by id.' })
-        expect(findByIdStub.calledWith(id))
+        expect(updateStub.calledWith(fields, options))
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
@@ -198,62 +200,36 @@ describe('admin users routes', function () {
         expect(response.body).to.eql({ message: 'No modifiable user property was provided.' })
       }
     })
-    it('should return a failure if update fails', async function () {
-      const id = faker.random.uuid()
-      const updateEmail = faker.internet.email()
-      const user = { id }
-      user.update = sandbox.stub().returns(false)
-
-      sandbox.stub(User, 'findById').resolves(user)
-
-      try {
-        await chai.request(app).patch(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`)
-          .send({ email: updateEmail })
-      } catch ({response}) {
-        expect(response.status).to.equal(500)
-        expect(response.body).to.eql({ message: 'Failed to update the user.' })
-      }
-    })
   })
 
   describe('DELETE /:id', function () {
     it('should set the status as deleted', async function () {
       const id = faker.random.uuid()
-      const user = { id }
-      user.update = sandbox.stub().returns(true)
 
-      sandbox.stub(User, 'findById').resolves(user)
+      const updateStub = sandbox.stub(User, 'update').resolves()
 
       const response = await chai.request(app).delete(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`)
 
-      expect(user.update.calledWith(USER_STATUS.DELETED))
+      const fields = {status: USER_STATUS.DELETED}
+      const options = {where: {id}}
+
+      expect(updateStub.calledWith(fields, options))
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'User was deleted.' })
     })
-    it('should return a failure if findById throws an error', async function () {
+    it('should return a failure if update throws an error', async function () {
       const id = faker.random.uuid()
-      const findByIdStub = sandbox.stub(User, 'findById').throws(new Error())
+      const updateStub = sandbox.stub(User, 'update').throws(new Error())
 
       try {
         await chai.request(app).delete(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`)
       } catch ({response}) {
+        const fields = {status: USER_STATUS.DELETED}
+        const options = {where: {id}}
+
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find user by id.' })
-        expect(findByIdStub.getCall(0).calledWith(id))
-      }
-    })
-    it('should return a failure if delete fails', async function () {
-      const id = faker.random.uuid()
-      const user = { id }
-      user.update = sandbox.stub().returns(false)
-
-      sandbox.stub(User, 'findById').resolves(user)
-
-      try {
-        await chai.request(app).delete(`/admin/users/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
-        expect(response.status).to.equal(500)
-        expect(response.body).to.eql({ message: 'Failed to delete the user.' })
+        expect(updateStub.calledWith(fields, options))
       }
     })
   })
