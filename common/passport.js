@@ -2,7 +2,6 @@ var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 const { User, Member } = require('../models')
 const Security = require('../common/security')
-const Sequelize = require('sequelize')
 
 passport.use(new LocalStrategy({ usernameField: 'email' },
   async function (username, password, done) {

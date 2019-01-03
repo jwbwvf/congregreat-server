@@ -8,7 +8,7 @@ node_js:
 
 install:
   - npm install --quiet
-  #- npm run test
+  - npm run test
 
 cache:
   directories:
@@ -24,7 +24,7 @@ deploy:
     region: us-east-1
     on: &2
       repo: drewsmith/congregreat-server
-      all_branches: true
+      branch: master
   - provider: codedeploy
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY

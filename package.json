@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "start-dev": "DB_HOSTNAME=${DB_HOSTNAME:-localhost} NODE_ENV=${NODE_ENV:-development} nodemon ./bin/www",
-    "test": "NODE_ENV=test standard && nyc --reporter=html --reporter=text mocha --recursive --exit",
+    "test": "standard && nyc --reporter=html --reporter=text env JWT_PUBLIC=test/pems/public.pem JWT_PRIVATE=test/pems/private.pem JWT_PASSPHRASE=cgtest NODE_ENV=test mocha --recursive --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "seed": "node_modules/.bin/sequelize db:seed:all",
     "seed-undo": "node_modules/.bin/sequelize db:seed:undo:all"
