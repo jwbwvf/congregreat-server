@@ -4,7 +4,7 @@ const router = express.Router()
 const {
   create,
   destroy
-} = require('../../controllers/attendance')
+} = require('../controllers/attendance')
 
 router.post('/', create)
 router.delete('/:id', destroy)

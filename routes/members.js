@@ -8,7 +8,7 @@ const {
   getByCongregationId,
   update,
   softDelete
-} = require('../../controllers/member')
+} = require('../controllers/member')
 
 router.get('/', getAll)
 router.get('/:id', getById)

@@ -7,16 +7,16 @@ const chaiHttp = require('chai-http')
 const sinon = require('sinon')
 const faker = require('faker')
 const uuid = require('uuid')
-const app = require('../../../app')
-const config = require('../../../common/config')
-const Congregation = require('../../../models').Congregation
-const {CONGREGATION_STATUS} = require('../../../common/status')
+const app = require('../../app')
+const config = require('../../common/config')
+const Congregation = require('../../models').Congregation
+const { CONGREGATION_STATUS } = require('../../common/status')
 
 const expect = chai.expect
 
 chai.use(chaiHttp)
 
-describe('admin congregations routes', function () {
+describe('congregations routes', function () {
   let sandbox, token
   const privateKey = fs.readFileSync(config.jwt.private)
   const passphrase = config.jwt.passphrase
@@ -38,7 +38,7 @@ describe('admin congregations routes', function () {
 
       const findAllStub = sandbox.stub(Congregation, 'findAll').resolves(congregations)
 
-      const response = await chai.request(app).get('/admin/congregations').set('Authorization', `Bearer ${token}`)
+      const response = await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregations)
       expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] }))
@@ -47,8 +47,8 @@ describe('admin congregations routes', function () {
       const findAllStub = sandbox.stub(Congregation, 'findAll').throws(new Error())
 
       try {
-        await chai.request(app).get(`/admin/congregations/`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+        await chai.request(app).get(`/congregations/`).set('Authorization', `Bearer ${token}`)
+      } catch ({ response }) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find all congregations.' })
         expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] }))
@@ -59,16 +59,16 @@ describe('admin congregations routes', function () {
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
-        await chai.request(app).get('/admin/congregations').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+        await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
-        await chai.request(app).get('/admin/congregations')
-      } catch ({response}) {
+        await chai.request(app).get('/congregations')
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -81,7 +81,7 @@ describe('admin congregations routes', function () {
 
       const findByIdStub = sandbox.stub(Congregation, 'findById').resolves(congregation)
 
-      const response = await chai.request(app).get(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      const response = await chai.request(app).get(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
       expect(findByIdStub.getCall(0).calledWith(id))
@@ -93,8 +93,8 @@ describe('admin congregations routes', function () {
       sandbox.stub(uuid, 'v4').returns(id)
 
       try {
-        await chai.request(app).get(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+        await chai.request(app).get(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      } catch ({ response }) {
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
         expect(findByIdStub.getCall(0).calledWith(id))
@@ -105,16 +105,16 @@ describe('admin congregations routes', function () {
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
-        await chai.request(app).get('/admin/congregations').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+        await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
-        await chai.request(app).get('/admin/congregations')
-      } catch ({response}) {
+        await chai.request(app).get('/congregations')
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -130,12 +130,12 @@ describe('admin congregations routes', function () {
       const createStub = sandbox.stub(Congregation, 'create').resolves(congregation)
       sandbox.stub(uuid, 'v4').returns(id)
 
-      const response = await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`)
+      const response = await chai.request(app).post('/congregations/').set('Authorization', `Bearer ${token}`)
         .send({ id, name })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
-      expect(createStub.getCall(0).calledWith({id, name, status}))
+      expect(createStub.getCall(0).calledWith({ id, name, status }))
     })
     it('should return a failure if create throws an error', async function () {
       const id = faker.random.uuid()
@@ -146,11 +146,11 @@ describe('admin congregations routes', function () {
       sandbox.stub(uuid, 'v4').returns(id)
 
       try {
-        await chai.request(app).post('/admin/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
-      } catch ({response}) {
+        await chai.request(app).post('/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
+      } catch ({ response }) {
         expect(response.status).to.equal(409)
         expect(response.body).to.eql({ message: 'Unable to create congregation.' })
-        expect(createStub.getCall(0).calledWith({id, name, status}))
+        expect(createStub.getCall(0).calledWith({ id, name, status }))
       }
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
@@ -158,16 +158,16 @@ describe('admin congregations routes', function () {
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
-        await chai.request(app).get('/admin/congregations').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+        await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
-        await chai.request(app).get('/admin/congregations')
-      } catch ({response}) {
+        await chai.request(app).get('/congregations')
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -180,11 +180,11 @@ describe('admin congregations routes', function () {
 
       const updateStub = sandbox.stub(Congregation, 'update').resolves()
 
-      const response = await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      const response = await chai.request(app).patch(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
         .send({ name: updateName })
 
-      const fields = {name: updateName}
-      const options = {where: {id}}
+      const fields = { name: updateName }
+      const options = { where: { id } }
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Congregation was updated.' })
@@ -196,10 +196,10 @@ describe('admin congregations routes', function () {
       const updateStub = sandbox.stub(Congregation, 'update').throws(new Error())
 
       try {
-        await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`).send({ name: updateName })
-      } catch ({response}) {
-        const fields = {name: updateName}
-        const options = {where: {id}}
+        await chai.request(app).patch(`/congregations/${id}`).set('Authorization', `Bearer ${token}`).send({ name: updateName })
+      } catch ({ response }) {
+        const fields = { name: updateName }
+        const options = { where: { id } }
 
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
@@ -211,16 +211,16 @@ describe('admin congregations routes', function () {
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
       try {
-        await chai.request(app).patch('/admin/congregations/1').set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
+        await chai.request(app).patch('/congregations/1').set('Authorization', `Bearer ${token}`)
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
     })
     it('should should fail for unauthorized if token is not provided', async function () {
       try {
-        await chai.request(app).patch('/admin/congregations/1')
-      } catch ({response}) {
+        await chai.request(app).patch('/congregations/1')
+      } catch ({ response }) {
         expect(response.status).to.equal(401)
         expect(response.body.message).to.equal('Unauthorized.')
       }
@@ -230,9 +230,9 @@ describe('admin congregations routes', function () {
       const updateId = faker.random.uuid()
 
       try {
-        await chai.request(app).patch(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+        await chai.request(app).patch(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
           .send({ id: updateId })
-      } catch ({response}) {
+      } catch ({ response }) {
         expect(response.status).to.equal(500)
         expect(response.body).to.eql({ message: 'No modifiable congregation property was provided.' })
       }
@@ -244,10 +244,10 @@ describe('admin congregations routes', function () {
 
       const updateStub = sandbox.stub(Congregation, 'update').resolves()
 
-      const response = await chai.request(app).delete(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      const response = await chai.request(app).delete(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
 
-      const fields = {status: CONGREGATION_STATUS.DELETED}
-      const options = {where: {id}}
+      const fields = { status: CONGREGATION_STATUS.DELETED }
+      const options = { where: { id } }
 
       expect(updateStub.calledWith(fields, options))
       expect(response.status).to.equal(200)
@@ -258,10 +258,10 @@ describe('admin congregations routes', function () {
       const updateStub = sandbox.stub(Congregation, 'update').throws(new Error())
 
       try {
-        await chai.request(app).delete(`/admin/congregations/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({response}) {
-        const fields = {status: CONGREGATION_STATUS.DELETED}
-        const options = {where: {id}}
+        await chai.request(app).delete(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      } catch ({ response }) {
+        const fields = { status: CONGREGATION_STATUS.DELETED }
+        const options = { where: { id } }
 
         expect(response.status).to.equal(404)
         expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })

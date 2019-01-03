@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "0397b709-b819-45d5-9c1d-9ac7b71b9037",
-		"name": "admin/members",
+		"name": "members",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -30,13 +30,12 @@
 					"raw": "{\n\t\"firstName\": \"Bruno\",\n\t\"lastName\": \"Brady\",\n\t\"email\": \"bruno.brady@example.com\",\n\t\"congregationId\" : 1,\n\t\"role\": \"member\"\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/admin/members",
+					"raw": "localhost:3000/members",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"admin",
 						"members"
 					]
 				},
@@ -61,13 +60,12 @@
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "localhost:3000/admin/members",
+					"raw": "localhost:3000/members",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"admin",
 						"members"
 					]
 				}
@@ -81,13 +79,12 @@
 				"header": [],
 				"body": {},
 				"url": {
-					"raw": "localhost:3000/admin/members/69d325cb-2dfe-473a-a94c-6164910542cf",
+					"raw": "localhost:3000/members/69d325cb-2dfe-473a-a94c-6164910542cf",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"admin",
 						"members",
 						"69d325cb-2dfe-473a-a94c-6164910542cf"
 					]
@@ -120,13 +117,12 @@
 					"raw": "{\n\t\"firstName\": \"testFirstNameUpdated\"\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/admin/members/69d325cb-2dfe-473a-a94c-6164910542cf",
+					"raw": "localhost:3000/members/69d325cb-2dfe-473a-a94c-6164910542cf",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"admin",
 						"members",
 						"69d325cb-2dfe-473a-a94c-6164910542cf"
 					]
@@ -149,13 +145,12 @@
 					"raw": "{\n\t\"firstName\": \"Jayson\"\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/admin/members/63cc9004-bdca-4b4d-bda9-378785bb6239",
+					"raw": "localhost:3000/members/63cc9004-bdca-4b4d-bda9-378785bb6239",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"admin",
 						"members",
 						"63cc9004-bdca-4b4d-bda9-378785bb6239"
 					]
