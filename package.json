@@ -6,7 +6,6 @@
     "start": "node ./bin/www",
     "start-dev": "DB_HOSTNAME=${DB_HOSTNAME:-localhost} NODE_ENV=${NODE_ENV:-development} nodemon ./bin/www",
     "test": "standard && nyc --reporter=html --reporter=text env JWT_PUBLIC=test/pems/public.pem JWT_PRIVATE=test/pems/private.pem JWT_PASSPHRASE=cgtest NODE_ENV=test mocha --recursive --exit",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "seed": "node_modules/.bin/sequelize db:seed:all",
     "seed-undo": "node_modules/.bin/sequelize db:seed:undo:all"
   },
@@ -19,7 +18,7 @@
     "express-jwt": "^5.3.1",
     "handlebars": "^4.0.11",
     "jsonwebtoken": "^8.2.0",
-    "morgan": "~1.9.0",
+    "morgan": "^1.9.1",
     "mysql2": "^1.5.3",
     "nodemailer": "^4.6.4",
     "passport": "^0.4.0",
@@ -33,12 +32,15 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^4.2.0",
-    "coveralls": "^3.0.0",
     "faker": "^4.1.0",
     "mocha": "^5.0.4",
     "nodemon": "^1.18.3",
     "nyc": "^13.1.0",
+    "pre-push": "^0.1.1",
     "sinon": "^4.4.8",
     "standard": "^11.0.1"
-  }
+  },
+  "pre-push": [
+    "test"
+  ]
 }
