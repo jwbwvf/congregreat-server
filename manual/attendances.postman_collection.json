@@ -31,13 +31,12 @@
 					"raw": "{\n\t\"memberId\":\"63cc9004-bdca-4b4d-bda9-378785bb6239\",\n\t\"congregationId\": \"1\"\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/admin/attendances",
+					"raw": "localhost:3000/attendances",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"admin",
 						"attendances"
 					]
 				}
@@ -69,13 +68,12 @@
 					"raw": "{\n\t\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/admin/attendances/fc545a9c-c029-417e-ab44-923a777d148d",
+					"raw": "localhost:3000/attendances/fc545a9c-c029-417e-ab44-923a777d148d",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"admin",
 						"attendances",
 						"fc545a9c-c029-417e-ab44-923a777d148d"
 					]
