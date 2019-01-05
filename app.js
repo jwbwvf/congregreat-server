@@ -43,6 +43,7 @@ app.use('/congregations', require('./routes/congregations'))
 app.use('/users', require('./routes/users'))
 app.use('/members', require('./routes/members'))
 app.use('/attendances', require('./routes/attendances'))
+app.use('/roles', require('./routes/roles'))
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
