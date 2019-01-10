@@ -8,12 +8,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
+      allowNull: false,
+      unique: 'uniqueTag'
     },
     status: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: 'uniqueTag'
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -30,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
     updatedBy: {
       type: DataTypes.UUID,
       allowNull: false
+    },
+    permissions: {
+      type: DataTypes.JSON,
+      allowNull: false
     }
   }, {})
   Role.associate = function (models) {
@@ -38,12 +43,13 @@ module.exports = (sequelize, DataTypes) => {
     //     through: models.UserRole
     //   }
     // )
-    Role.belongsTo(models.Congregation, {
-      foreignKey: {
-        name: 'congregationId',
-        allowNull: false
-      }
-    })
+    // Role.belongsTo(models.Congregation, {
+    //   foreignKey: {
+    //     name: 'congregationId',
+    //     allowNull: false,
+    //     unique: 'uniqueTag'
+    //   }
+    // })
   }
   return Role
 }

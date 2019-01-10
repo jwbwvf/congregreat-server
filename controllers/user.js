@@ -31,6 +31,8 @@ const update = async (req, res) => {
   }
 
   try {
+    // TODO shouldn't allow updating user email, that is their username
+    // can't allow duplicates
     const fields = { email: req.body.email }
     const options = { where: { id: req.params.id } }
 

@@ -3,14 +3,38 @@
 const uuid = require('uuid/v4')
 const { Role } = require('../models')
 const { ROLE_STATUS } = require('../common/status')
+const Op = require('sequelize').Op
+const { entities } = require('../common/entities')
+const { actions } = require('../common/actions')
+
+const validatePermissions = (permissions) => {
+  // validate entities
+  if (!permissions || !Array.isArray(permissions.entities) || permissions.entities.size <= 0) {
+    throw new Error('The permissions are invalid since they do not contain any entities.')
+  }
+  permissions.entities.forEach(entity => {
+    if (!entities.includes(entity.name)) {
+      throw new Error(`The permissions are invalid since it includes an invalid entity: ${entity.name}`)
+    }
+    // validate actions
+    if (!Array.isArray(entity.actions) || entity.actions.size <= 0) {
+      throw new Error(`The permissions are invalid since there are no actions on the entity: ${entity.name}`)
+    }
+    entity.actions.forEach(action => {
+      if (!actions.includes(action)) {
+        throw new Error(`The permissions are invalid since ${entity.name} has an invalid action: ${action}`)
+      }
+    })
+  })
+}
 
 /**
  * Get all roles across all congregations.
  */
-const getAll = async function (req, res) {
+const getAll = async (req, res) => {
   try {
     const roles = await Role.findAll({
-      attributes: ['id', 'name', 'congregationId']
+      attributes: ['id', 'name', 'permissions', 'status']
     })
     return res.status(200).json(roles)
   } catch (error) {
@@ -21,10 +45,10 @@ const getAll = async function (req, res) {
 /**
  * Get a role by id.
  */
-const getById = async function (req, res) {
+const getById = async (req, res) => {
   try {
     const role = await Role.findById(req.params.id, {
-      attributes: ['id', 'name', 'congregationId']
+      attributes: ['id', 'name', 'permissions', 'status']
     })
     return res.status(200).json(role)
   } catch (error) {
@@ -33,29 +57,12 @@ const getById = async function (req, res) {
 }
 
 /**
- * Get all roles of a congregation.
- */
-const getByCongregationId = async function (req, res) {
-  try {
-    const roles = await Role.findAll({
-      where: { congregationId: req.params.id },
-      attributes: ['id', 'name']
-    })
-    return res.status(200).json(roles)
-  } catch (error) {
-    return res.status(404).json({ message: 'Unable to find all roles of the congregation.' })
-  }
-}
-
-/**
  * Add a role.
- * name, congregationId are required.
  * Returns an error if the role already exists.
  */
-const create = async function (req, res) {
-  if (!req.body.name ||
-    !req.body.congregationId) {
-    return res.status(409).json({ message: 'All fields are required.' })
+const create = async (req, res) => {
+  if (!req.body.name) {
+    return res.status(409).json({ message: 'Name is a required field.' })
   }
 
   const roleFound = await Role.findOne({ where: { name: req.body.name } })
@@ -66,9 +73,19 @@ const create = async function (req, res) {
   try {
     const id = uuid()
     const status = ROLE_STATUS.NEW
-    const { name, congregationId } = req.body
     const { id: userId } = req.user
-    const role = await Role.create({ id, name, congregationId, status, createdBy: userId, updatedBy: userId })
+    const { name, permissions } = req.body
+
+    validatePermissions(permissions)
+
+    const role = await Role.create({
+      id,
+      name,
+      permissions,
+      status,
+      createdBy: userId,
+      updatedBy: userId
+    })
 
     return res.status(200).json({ message: `Role ${role.name} was added.` })
   } catch (error) {
@@ -80,20 +97,22 @@ const create = async function (req, res) {
 /**
  * Update a role by id.
  */
-const update = async function (req, res) {
+const update = async (req, res) => {
   if (!req.body.name) {
     return res.status(500).json({ message: 'No modifiable role property was provided.' })
   }
 
   try {
-    const { name } = req.body
-    const roleFound = await Role.findOne({ where: { name } })
+    const { name, permissions } = req.body
+    const roleFound = await Role.findOne({ where: { name, status: { [Op.not]: ROLE_STATUS.DELETED } } })
     if (roleFound) {
       return res.status(409).json({ message: 'A role already exists with this name.' })
     }
 
+    validatePermissions(permissions)
+
     const { id: userId } = req.user
-    const fields = { name, updatedBy: userId }
+    const fields = { name, updatedBy: userId, permissions }
     const options = { where: { id: req.params.id } }
 
     const response = await Role.update(fields, options)
@@ -112,7 +131,7 @@ const update = async function (req, res) {
  * Delete role by id.
  * Soft delete.
  */
-const softDelete = async function (req, res) {
+const softDelete = async (req, res) => {
   try {
     const fields = { status: ROLE_STATUS.DELETED }
     const options = { where: { id: req.params.id } }
@@ -127,7 +146,6 @@ const softDelete = async function (req, res) {
 module.exports = {
   getAll,
   getById,
-  getByCongregationId,
   create,
   update,
   softDelete

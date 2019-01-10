@@ -3,7 +3,6 @@ const router = express.Router()
 const {
   getAll,
   getById,
-  getByCongregationId,
   create,
   update,
   softDelete
@@ -11,7 +10,6 @@ const {
 
 router.get('/', getAll)
 router.get('/:id', getById)
-router.get('/congregations/:id', getByCongregationId)
 router.post('/', create)
 router.patch('/:id', update)
 router.delete('/:id', softDelete)

@@ -8,15 +8,8 @@ module.exports = {
         type: Sequelize.UUID
       },
       name: {
+        allowNull: false,
         type: Sequelize.STRING
-      },
-      congregationId: {
-        type: Sequelize.UUID,
-        references: {
-          model: 'Congregations',
-          key: 'id',
-          allowNull: false
-        }
       },
       status: {
         allowNull: false,
@@ -37,6 +30,10 @@ module.exports = {
       updatedBy: {
         allowNull: false,
         type: Sequelize.UUID
+      },
+      permissions: {
+        allowNull: false,
+        type: Sequelize.JSON
       }
     })
   },
