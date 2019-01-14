@@ -1,20 +1,14 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-  var Role = sequelize.define('Role', {
+  var UserRole = sequelize.define('UserRole', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       allowNull: false
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: 'uniqueTag'
-    },
     status: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: 'uniqueTag'
+      allowNull: false
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -31,28 +25,21 @@ module.exports = (sequelize, DataTypes) => {
     updatedBy: {
       type: DataTypes.UUID,
       allowNull: false
-    },
-    permissions: {
-      type: DataTypes.JSON,
-      allowNull: false
     }
   }, {})
-  Role.associate = function (models) {
-    Role.belongsToMany(models.User, {
-      through: models.UserRole,
+  UserRole.associate = function (models) {
+    UserRole.belongsTo(models.User, {
+      foreignKey: {
+        name: 'userId',
+        allowNull: false
+      }
+    })
+    UserRole.belongsTo(models.Role, {
       foreignKey: {
         name: 'roleId',
         allowNull: false
       }
-    }
-    )
-    // Role.belongsTo(models.Congregation, {
-    //   foreignKey: {
-    //     name: 'congregationId',
-    //     allowNull: false,
-    //     unique: 'uniqueTag'
-    //   }
-    // })
+    })
   }
-  return Role
+  return UserRole
 }

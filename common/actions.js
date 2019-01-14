@@ -1,12 +1,21 @@
 'use strict'
 
+const CREATE = 'create'
+const READ = 'read'
+const UPDATE = 'update'
+const DELETE = 'delete'
+
 const actions = [
-  'create',
-  'read',
-  'update',
-  'delete'
+  CREATE,
+  READ,
+  UPDATE,
+  DELETE
 ]
 
 module.exports = {
-  actions
+  actions,
+  CREATE,
+  READ,
+  UPDATE,
+  DELETE
 }

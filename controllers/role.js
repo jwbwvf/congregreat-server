@@ -3,7 +3,6 @@
 const uuid = require('uuid/v4')
 const { Role } = require('../models')
 const { ROLE_STATUS } = require('../common/status')
-const Op = require('sequelize').Op
 const { entities } = require('../common/entities')
 const { actions } = require('../common/actions')
 
@@ -65,11 +64,6 @@ const create = async (req, res) => {
     return res.status(409).json({ message: 'Name is a required field.' })
   }
 
-  const roleFound = await Role.findOne({ where: { name: req.body.name } })
-  if (roleFound) {
-    return res.status(409).json({ message: 'A role already exists with this name.' })
-  }
-
   try {
     const id = uuid()
     const status = ROLE_STATUS.NEW
@@ -104,10 +98,6 @@ const update = async (req, res) => {
 
   try {
     const { name, permissions } = req.body
-    const roleFound = await Role.findOne({ where: { name, status: { [Op.not]: ROLE_STATUS.DELETED } } })
-    if (roleFound) {
-      return res.status(409).json({ message: 'A role already exists with this name.' })
-    }
 
     validatePermissions(permissions)
 
@@ -120,6 +110,7 @@ const update = async (req, res) => {
     if (response[0]) {
       return res.status(200).json({ message: 'Role was updated.' })
     }
+    console.error(`Failed to update the role with the following fields: ${JSON.stringify(fields)} and options: ${JSON.stringify(options)}`)
     return res.status(500).json({ message: 'Failed to update the role.' })
   } catch (error) {
     console.error(error)
@@ -139,6 +130,7 @@ const softDelete = async (req, res) => {
     await Role.update(fields, options)
     return res.status(200).json({ message: 'Role was deleted.' })
   } catch (error) {
+    console.error(error)
     return res.status(404).json({ message: 'Unable to find role by id.' })
   }
 }
