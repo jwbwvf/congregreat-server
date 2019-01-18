@@ -7,11 +7,23 @@ const { Role } = require('../models')
 const setUserPermissions = async (req, res, next) => {
   try {
     const { roleIds = [] } = req.user
-    const fields = { attributes: ['permissions'] }
-    const options = { where: { id: roleIds } }
-    const response = await Role.findAll(fields, options)
-    const { permissions = [] } = response[0] ? response[0] : []
-    req.user.permissions = permissions
+    const response = await Role.findAll({
+      attributes: ['name', 'permissions'],
+      where: { id: roleIds }
+    })
+    // since each role has it's own array of permissions combine them
+    const entities = response.flatMap(role => {
+      const { permissions = [] } = role
+      return permissions.entities
+    })
+    // since system admin allows users to view more than their own congregation it has
+    // to be set separately from the permissionss
+    const systemAdmin = response.find(role => role.name === 'system admin')
+    if (systemAdmin) {
+      req.user.systemAdmin = true
+    }
+
+    req.user.permissions = {entities}
     next()
   } catch (error) {
     console.error(error)

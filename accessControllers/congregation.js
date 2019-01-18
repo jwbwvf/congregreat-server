@@ -5,18 +5,22 @@ const { CONGREGATION } = require('../common/entities')
 
 const canAccess = action => {
   return (req, res, next) => {
-    const { congregationId, permissions } = req.user
-    // viewing own congregation
+    const { congregationId, permissions, systemAdmin = false } = req.user
+
+    // system admin has access to all entities with permissions to every action across all congregations
+    if (systemAdmin) {
+      return next()
+    }
+
+    // all members can read their own congregation
     if (action === READ && congregationId === req.params.id) {
       return next()
     }
 
-    // if the user doesn't have any permissions they are not authorized to take any actions on the congregation
+    // if the user has access to the entity and the permission to take the action and are part of the congregation then allow access
     if (permissions && permissions.entities && permissions.entities.length > 0) {
       const entity = permissions.entities.find(entity => entity.name === CONGREGATION)
-      if (entity.actions && entity.actions.includes(action)) {
-        // TODO how to tell if this is system admin with permissions to all vs non system admin with read permissions trying to read all
-        // should role system admin have all permissions defined or go by name of role
+      if (entity.actions && entity.actions.includes(action) && congregationId === req.params.id) {
         return next()
       }
     }
