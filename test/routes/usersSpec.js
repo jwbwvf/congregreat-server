@@ -6,21 +6,31 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
 const faker = require('faker')
-const app = require('../../app')
 const config = require('../../common/config')
 const { USER_STATUS } = require('../../common/status')
 const User = require('../../models').User
+const setUserPermissions = require('../../accessControllers/setUserPermissions')
 
 const expect = chai.expect
 
 chai.use(chaiHttp)
 
 describe('admin users routes', function () {
-  let sandbox, token, id, firstName, lastName, email, status, congregationId
+  let sandbox, token, id, firstName, lastName, email, status, congregationId, app
   const privateKey = fs.readFileSync(config.jwt.private)
   const passphrase = config.jwt.passphrase
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
+
+    sandbox.stub(setUserPermissions, 'setUserPermissions').callsFake(function (req, res, next) {
+      return next()
+    })
+
+    // in order to mock the middleware it has to be stubbed before app is included
+    // so it needs to be removed if it was already added by another test
+    delete require.cache[require.resolve('../../app')]
+    app = require('../../app')
+
     token = token = jwt.sign({
       id: 1
     }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: '1d' })

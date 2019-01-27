@@ -1,6 +1,7 @@
 'use strict'
 
 const { Role } = require('../models')
+const { USER_ROLE_STATUS } = require('../common/status')
 
 // middleware to set the permissions the logged in user has
 // this gets called prier to any of the protected (non public) routes
@@ -9,7 +10,7 @@ const setUserPermissions = async (req, res, next) => {
     const { roleIds = [] } = req.user
     const response = await Role.findAll({
       attributes: ['name', 'permissions'],
-      where: { id: roleIds }
+      where: { id: roleIds, status: USER_ROLE_STATUS.NEW }
     })
     // since each role has it's own array of permissions combine them
     const entities = response.flatMap(role => {

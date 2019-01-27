@@ -6,22 +6,32 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
 const faker = require('faker')
-const app = require('../../app')
 const uuid = require('uuid')
 const config = require('../../common/config')
 const { Member } = require('../../models')
 const { MEMBER_STATUS } = require('../../common/status')
+const setUserPermissions = require('../../accessControllers/setUserPermissions')
 
 const expect = chai.expect
 
 chai.use(chaiHttp)
 
 describe('members routes', function () {
-  let sandbox, token
+  let sandbox, token, app
   const privateKey = fs.readFileSync(config.jwt.private)
   const passphrase = config.jwt.passphrase
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
+
+    sandbox.stub(setUserPermissions, 'setUserPermissions').callsFake(function (req, res, next) {
+      return next()
+    })
+
+    // in order to mock the middleware it has to be stubbed before app is included
+    // so it needs to be removed if it was already added by another test
+    delete require.cache[require.resolve('../../app')]
+    app = require('../../app')
+
     token = jwt.sign({
       id: 1
     }, { key: privateKey, passphrase }, { algorithm: 'RS512', expiresIn: '1d' })
@@ -362,20 +372,6 @@ describe('members routes', function () {
       expect(response.body).to.eql({ message: 'Member was updated.' })
       expect(updateStub.getCall(0).calledWith({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail }))
     })
-    it('should return a failure if findById throws an error', async function () {
-      const id = faker.random.uuid()
-      const updateName = faker.name.findName()
-      const findByIdStub = sandbox.stub(Member, 'findById').throws(new Error())
-
-      try {
-        await chai.request(app).patch(`/members/${id}`).set('Authorization', `Bearer ${token}`)
-          .send({ firstName: updateName })
-      } catch ({ response }) {
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find member by id.' })
-        expect(findByIdStub.calledWith(id))
-      }
-    })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
         id: 1
@@ -410,10 +406,7 @@ describe('members routes', function () {
     it('should return a failure if update fails', async function () {
       const id = faker.random.uuid()
       const updateName = faker.name.findName()
-      const member = { id }
-      member.update = sandbox.stub().returns(false)
-
-      sandbox.stub(Member, 'findById').resolves(member)
+      sandbox.stub(Member, 'update').returns(false)
 
       try {
         await chai.request(app).patch(`/members/${id}`).set('Authorization', `Bearer ${token}`)
@@ -452,10 +445,7 @@ describe('members routes', function () {
     })
     it('should return a failure if delete fails', async function () {
       const id = faker.random.uuid()
-      const member = { id }
-      member.update = sandbox.stub().returns(false)
-
-      sandbox.stub(Member, 'findById').resolves(member)
+      sandbox.stub(Member, 'update').returns(false)
 
       try {
         await chai.request(app).delete(`/members/${id}`).set('Authorization', `Bearer ${token}`)
