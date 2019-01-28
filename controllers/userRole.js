@@ -74,7 +74,7 @@ const softDelete = async (req, res) => {
     return res.status(200).json({ message: 'UserRole was deleted.' })
   } catch (error) {
     console.error(error)
-    return res.status(404).json({ message: 'Unable to find userRole by id.' })
+    return res.status(500).json({ message: 'Unable to delete userRole.' })
   }
 }
 

@@ -1,6 +1,6 @@
 'use strict'
 
-const uuid = require('uuid/v4')
+const uuid = require('uuid')
 const { Member } = require('../models')
 const { MEMBER_STATUS } = require('../common/status')
 
@@ -21,7 +21,7 @@ const create = async (req, res) => {
   }
 
   try {
-    const id = uuid()
+    const id = uuid.v4()
     const status = MEMBER_STATUS.ACTIVE
     const { email, firstName, lastName, congregationId } = req.body
     const member = await Member.create({ id, email, firstName, lastName, status, congregationId })
@@ -81,7 +81,7 @@ const update = async (req, res) => {
     await Member.update(fields, options)
     return res.status(200).json({ message: 'Member was updated.' })
   } catch (error) {
-    return res.status(404).json({ message: 'Unable to find member by id.' })
+    return res.status(500).json({ message: 'Unable to update the member.' })
   }
 }
 const softDelete = async (req, res) => {
@@ -92,9 +92,10 @@ const softDelete = async (req, res) => {
     await Member.update(fields, options)
     return res.status(200).json({ message: 'Member was deleted.' })
   } catch (error) {
-    return res.status(404).json({ message: 'Unable to find member by id.' })
+    return res.status(500).json({ message: 'Unable to delete the member.' })
   }
 }
+
 module.exports = {
   create,
   getAll,

@@ -39,7 +39,7 @@ const update = async (req, res) => {
     await User.update(fields, options)
     return res.status(200).json({ message: 'User was updated.' })
   } catch (error) {
-    return res.status(404).json({ message: 'Unable to update user.' })
+    return res.status(500).json({ message: 'Unable to update user.' })
   }
 }
 
@@ -52,7 +52,7 @@ const softDelete = async (req, res) => {
     await User.update(fields, options)
     return res.status(200).json({ message: 'User was deleted.' })
   } catch (error) {
-    return res.status(404).json({ message: 'Unable to delete user.' })
+    return res.status(500).json({ message: 'Unable to delete user.' })
   }
 }
 

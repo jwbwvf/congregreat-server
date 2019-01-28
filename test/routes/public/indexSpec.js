@@ -5,6 +5,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const sinon = require('sinon')
 const faker = require('faker')
+const uuid = require('uuid')
 const passport = require('passport')
 const mailer = require('../../../common/mailer')
 const {USER_STATUS, MEMBER_STATUS} = require('../../../common/status')
@@ -161,10 +162,11 @@ describe('index routes', function () {
       const salt = faker.random.alphaNumeric()
       const hash = faker.random.alphaNumeric()
       const token = faker.random.alphaNumeric()
-      const memberId = faker.random.alphaNumeric()
+      const memberId = faker.random.uuid()
       const memberStatus = MEMBER_STATUS.ACTIVE
       sandbox.stub(User, 'findOne').resolves(null)
       sandbox.stub(Member, 'findOne').resolves({id: memberId, status: memberStatus})
+      sandbox.stub(uuid, 'v4').returns(id)
 
       const createStub = sandbox.stub(User, 'create').resolves({id, email, salt, hash})
       sandbox.stub(Security, 'generateSalt').returns(salt)
@@ -174,37 +176,36 @@ describe('index routes', function () {
       sendMailStub.resolves()
 
       const response = await chai.request(app).post('/public/register')
-        .send({ email, confirmEmail, password, confirmPassword, firstName, lastName })
+        .send({ email, confirmEmail, password, confirmPassword })
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
-      const status = USER_STATUS.NEW
-      expect(createStub.getCall(0).calledWith({id, email, salt, hash, status, firstName, lastName}))
+      const status = USER_STATUS.UNVERIFIED
+      expect(createStub.getCall(0).calledWith({id, email, salt, hash, status, memberId})).to.equal(true)
     })
   })
   describe('PUT /public/confirm/', function () {
     it('should fail if the token is invalid', async function () {
       const consoleStub = sandbox.stub(console, 'error')
       const errorMessage = faker.lorem.sentence()
-      sandbox.stub(Token, 'verifyToken').throws(new JsonWebTokenError(errorMessage))
+      const error = new JsonWebTokenError(errorMessage)
+      sandbox.stub(Token, 'verifyToken').throws(error)
 
       const response = await chai.request(app).put(`/public/confirm`).send('12345678')
 
-      expect(consoleStub.getCall(0).calledWith(errorMessage))
+      expect(consoleStub.getCall(0).calledWith(error)).to.equal(true)
       expect(response.status).to.equal(400)
       expect(response.body.message).to.equal(`The token is invalid.`)
     })
     it('should fail if the token is already expired', async function () {
       const consoleStub = sandbox.stub(console, 'error')
-      const userStub = sandbox.stub()
-      userStub.isVerified = () => false
       const errorMessage = faker.lorem.sentence()
-      sandbox.stub(Token, 'verifyToken').throws(new Error(errorMessage))
-      sandbox.stub(User, 'findOne').resolves(userStub)
+      const error = new Error(errorMessage)
+      sandbox.stub(Token, 'verifyToken').throws(error)
 
       const response = await chai.request(app).put(`/public/confirm`).send('12345678')
 
-      expect(consoleStub.getCall(0).calledWith(errorMessage))
+      expect(consoleStub.getCall(0).calledWith(error)).to.equal(true)
       expect(response.status).to.equal(400)
       expect(response.body.message).to.equal('The token is invalid.')
     })

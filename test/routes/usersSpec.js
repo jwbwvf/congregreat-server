@@ -65,37 +65,29 @@ describe('admin users routes', function () {
       const response = await chai.request(app).get('/users').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(users)
-      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'firstName', 'lastName', 'email', 'congregationId', 'status'] }))
+      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'email', 'memberId', 'status'] })).to.equal(true)
     })
     it('should return a failure if findAll throws an error', async function () {
       const findAllStub = sandbox.stub(User, 'findAll').throws(new Error())
 
-      try {
-        await chai.request(app).get(`/users/`).set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find all users.' })
-        expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'firstName', 'lastName', 'email', 'congregationId', 'status'] }))
-      }
+      const response = await chai.request(app).get(`/users/`).set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(404)
+      expect(response.body).to.eql({ message: 'Unable to find all users.' })
+      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'email', 'memberId', 'status'] })).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       var token = jwt.sign({
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
-      try {
-        await chai.request(app).get('/users').set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+
+      const response = await chai.request(app).get('/users').set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should should fail for unauthorized if token is not provided', async function () {
-      try {
-        await chai.request(app).get('/users')
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+      const response = await chai.request(app).get('/users')
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
   })
 
@@ -108,107 +100,86 @@ describe('admin users routes', function () {
       const response = await chai.request(app).get(`/users/${id}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(user)
-      expect(findByIdStub.getCall(0).calledWith(id))
+      expect(findByIdStub.getCall(0).calledWith(id)).to.equal(true)
     })
     it('should return a failure if findById throws an error', async function () {
       const id = faker.random.uuid()
 
       const findByIdStub = sandbox.stub(User, 'findById').throws(new Error())
 
-      try {
-        await chai.request(app).get(`/users/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find user by id.' })
-        expect(findByIdStub.getCall(0).calledWith(id))
-      }
+      const response = await chai.request(app).get(`/users/${id}`).set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(404)
+      expect(response.body).to.eql({ message: 'Unable to find user by id.' })
+      expect(findByIdStub.getCall(0).calledWith(id)).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
-      try {
-        await chai.request(app).get('/users').set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+
+      const response = await chai.request(app).get('/users').set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should should fail for unauthorized if token is not provided', async function () {
-      try {
-        await chai.request(app).get('/users')
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+      const response = await chai.request(app).get('/users')
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
   })
 
   describe('PATCH /:id', function () {
     it('should update the user with new properties', async function () {
       const id = faker.random.uuid()
-      const updateFirstName = faker.name.findName()
-      const updateLastName = faker.name.findName()
       const updateEmail = faker.internet.email()
 
       const updateStub = sandbox.stub(User, 'update').resolves()
 
       const response = await chai.request(app).patch(`/users/${id}`).set('Authorization', `Bearer ${token}`)
-        .send({ firstName: updateFirstName, lastName: updateLastName, email: updateEmail })
+        .send({ email: updateEmail })
 
-      const fields = { firstName: updateFirstName, lastName: updateLastName, email: updateEmail }
+      const fields = { email: updateEmail }
       const options = { where: { id } }
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'User was updated.' })
-      expect(updateStub.calledWith(fields, options))
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
     })
     it('should return a failure if update throws an error', async function () {
       const id = faker.random.uuid()
       const updateEmail = faker.internet.email()
       const updateStub = sandbox.stub(User, 'update').throws(new Error())
 
-      try {
-        await chai.request(app).patch(`/users/${id}`).set('Authorization', `Bearer ${token}`).send({ email: updateEmail })
-      } catch ({ response }) {
-        const fields = { email: updateEmail }
-        const options = { where: { id } }
+      const response = await chai.request(app).patch(`/users/${id}`).set('Authorization', `Bearer ${token}`).send({ email: updateEmail })
+      const fields = { email: updateEmail }
+      const options = { where: { id } }
 
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find user by id.' })
-        expect(updateStub.calledWith(fields, options))
-      }
+      expect(response.status).to.equal(500)
+      expect(response.body).to.eql({ message: 'Unable to update user.' })
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
-      try {
-        await chai.request(app).patch('/users/1').set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+
+      const response = await chai.request(app).patch('/users/1').set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should should fail for unauthorized if token is not provided', async function () {
-      try {
-        await chai.request(app).patch('/users/1')
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+      const response = await chai.request(app).patch('/users/1')
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should return a failure if no modifiable user property is provided', async function () {
       const id = faker.random.uuid()
       const updateId = faker.random.uuid()
 
-      try {
-        await chai.request(app).patch(`/users/${id}`).set('Authorization', `Bearer ${token}`)
-          .send({ id: updateId })
-      } catch ({ response }) {
-        expect(response.status).to.equal(500)
-        expect(response.body).to.eql({ message: 'No modifiable user property was provided.' })
-      }
+      const response = await chai.request(app).patch(`/users/${id}`).set('Authorization', `Bearer ${token}`)
+        .send({ id: updateId })
+      expect(response.status).to.equal(500)
+      expect(response.body).to.eql({ message: 'No modifiable user property was provided.' })
     })
   })
 
@@ -223,7 +194,7 @@ describe('admin users routes', function () {
       const fields = { status: USER_STATUS.DELETED }
       const options = { where: { id } }
 
-      expect(updateStub.calledWith(fields, options))
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'User was deleted.' })
     })
@@ -231,16 +202,14 @@ describe('admin users routes', function () {
       const id = faker.random.uuid()
       const updateStub = sandbox.stub(User, 'update').throws(new Error())
 
-      try {
-        await chai.request(app).delete(`/users/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        const fields = { status: USER_STATUS.DELETED }
-        const options = { where: { id } }
+      const response = await chai.request(app).delete(`/users/${id}`).set('Authorization', `Bearer ${token}`)
 
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find user by id.' })
-        expect(updateStub.calledWith(fields, options))
-      }
+      const fields = { status: USER_STATUS.DELETED }
+      const options = { where: { id } }
+
+      expect(response.status).to.equal(500)
+      expect(response.body).to.eql({ message: 'Unable to delete user.' })
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
     })
   })
 })

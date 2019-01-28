@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const uuid = require('uuid/v4')
+const uuid = require('uuid')
 const passport = require('passport')
 const { User, Member } = require('../../models')
 const Token = require('../../common/token')
@@ -18,9 +18,7 @@ router.post('/register', async function (req, res, next) {
   if (!req.body.email ||
     !req.body.confirmEmail ||
     !req.body.password ||
-    !req.body.confirmPassword ||
-    !req.body.firstName ||
-    !req.body.lastName) {
+    !req.body.confirmPassword) {
     return res.status(400).json({ message: 'All fields are required.' })
   }
 
@@ -51,7 +49,7 @@ router.post('/register', async function (req, res, next) {
     }
     // TODO do we check status as a rule for anyone trying to registered, like don't let deleted members register
 
-    const id = uuid()
+    const id = uuid.v4()
     const {email, firstName, lastName} = req.body
     let salt = Security.generateSalt()
     let hash = Security.generateHash(salt, req.body.password)

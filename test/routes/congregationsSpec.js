@@ -59,37 +59,29 @@ describe('congregations routes', function () {
       const response = await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregations)
-      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] }))
+      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] })).to.equal(true)
     })
     it('should return a failure if findAll throws an error', async function () {
       const findAllStub = sandbox.stub(Congregation, 'findAll').throws(new Error())
 
-      try {
-        await chai.request(app).get(`/congregations/`).set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find all congregations.' })
-        expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] }))
-      }
+      const response = await chai.request(app).get(`/congregations/`).set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(404)
+      expect(response.body).to.eql({ message: 'Unable to find all congregations.' })
+      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] })).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
-      try {
-        await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+
+      const response = await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should should fail for unauthorized if token is not provided', async function () {
-      try {
-        await chai.request(app).get('/congregations')
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+      const response = await chai.request(app).get('/congregations')
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
   })
   describe('GET /:id', function () {
@@ -102,7 +94,7 @@ describe('congregations routes', function () {
       const response = await chai.request(app).get(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
-      expect(findByIdStub.getCall(0).calledWith(id))
+      expect(findByIdStub.getCall(0).calledWith(id)).to.equal(true)
     })
     it('should return a failure if findById throws an error', async function () {
       const id = faker.random.uuid()
@@ -110,32 +102,24 @@ describe('congregations routes', function () {
       const findByIdStub = sandbox.stub(Congregation, 'findById').throws(new Error())
       sandbox.stub(uuid, 'v4').returns(id)
 
-      try {
-        await chai.request(app).get(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
-        expect(findByIdStub.getCall(0).calledWith(id))
-      }
+      const response = await chai.request(app).get(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(404)
+      expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
+      expect(findByIdStub.getCall(0).calledWith(id)).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
-      try {
-        await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+
+      const response = await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should should fail for unauthorized if token is not provided', async function () {
-      try {
-        await chai.request(app).get('/congregations')
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+      const response = await chai.request(app).get('/congregations')
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
   })
   describe('POST /', function () {
@@ -153,7 +137,7 @@ describe('congregations routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregation)
-      expect(createStub.getCall(0).calledWith({ id, name, status }))
+      expect(createStub.getCall(0).calledWith({ id, name, status })).to.equal(true)
     })
     it('should return a failure if create throws an error', async function () {
       const id = faker.random.uuid()
@@ -163,32 +147,24 @@ describe('congregations routes', function () {
       const createStub = sandbox.stub(Congregation, 'create').throws(new Error())
       sandbox.stub(uuid, 'v4').returns(id)
 
-      try {
-        await chai.request(app).post('/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
-      } catch ({ response }) {
-        expect(response.status).to.equal(409)
-        expect(response.body).to.eql({ message: 'Unable to create congregation.' })
-        expect(createStub.getCall(0).calledWith({ id, name, status }))
-      }
+      const response = await chai.request(app).post('/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
+      expect(response.status).to.equal(409)
+      expect(response.body).to.eql({ message: 'Unable to create congregation.' })
+      expect(createStub.getCall(0).calledWith({ id, name, status })).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
-      try {
-        await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+
+      const response = await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should should fail for unauthorized if token is not provided', async function () {
-      try {
-        await chai.request(app).get('/congregations')
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+      const response = await chai.request(app).get('/congregations')
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
   })
   describe('PATCH /:id', function () {
@@ -206,54 +182,43 @@ describe('congregations routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Congregation was updated.' })
-      expect(updateStub.calledWith(fields, options))
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
     })
     it('should return a failure if update throws an error', async function () {
       const id = faker.random.uuid()
       const updateName = faker.name.findName()
       const updateStub = sandbox.stub(Congregation, 'update').throws(new Error())
 
-      try {
-        await chai.request(app).patch(`/congregations/${id}`).set('Authorization', `Bearer ${token}`).send({ name: updateName })
-      } catch ({ response }) {
-        const fields = { name: updateName }
-        const options = { where: { id } }
+      const response = await chai.request(app).patch(`/congregations/${id}`).set('Authorization', `Bearer ${token}`).send({ name: updateName })
+      const fields = { name: updateName }
+      const options = { where: { id } }
 
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
-        expect(updateStub.calledWith(fields, options))
-      }
+      expect(response.status).to.equal(500)
+      expect(response.body).to.eql({ message: 'Unable to update congregation.' })
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
         id: 1
       }, 'not correct secret', { expiresIn: 60 * 60 })
-      try {
-        await chai.request(app).patch('/congregations/1').set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+
+      const response = await chai.request(app).patch('/congregations/1').set('Authorization', `Bearer ${token}`)
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should should fail for unauthorized if token is not provided', async function () {
-      try {
-        await chai.request(app).patch('/congregations/1')
-      } catch ({ response }) {
-        expect(response.status).to.equal(401)
-        expect(response.body.message).to.equal('Unauthorized.')
-      }
+      const response = await chai.request(app).patch('/congregations/1')
+      expect(response.status).to.equal(401)
+      expect(response.body.message).to.equal('Unauthorized.')
     })
     it('should return a failure if no modifiable congregation property is provided', async function () {
       const id = faker.random.uuid()
       const updateId = faker.random.uuid()
 
-      try {
-        await chai.request(app).patch(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
-          .send({ id: updateId })
-      } catch ({ response }) {
-        expect(response.status).to.equal(500)
-        expect(response.body).to.eql({ message: 'No modifiable congregation property was provided.' })
-      }
+      const response = await chai.request(app).patch(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+        .send({ id: updateId })
+      expect(response.status).to.equal(500)
+      expect(response.body).to.eql({ message: 'No modifiable congregation property was provided.' })
     })
   })
   describe('DELETE /:id', function () {
@@ -267,7 +232,7 @@ describe('congregations routes', function () {
       const fields = { status: CONGREGATION_STATUS.DELETED }
       const options = { where: { id } }
 
-      expect(updateStub.calledWith(fields, options))
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: 'Congregation was deleted.' })
     })
@@ -275,16 +240,13 @@ describe('congregations routes', function () {
       const id = faker.random.uuid()
       const updateStub = sandbox.stub(Congregation, 'update').throws(new Error())
 
-      try {
-        await chai.request(app).delete(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
-      } catch ({ response }) {
-        const fields = { status: CONGREGATION_STATUS.DELETED }
-        const options = { where: { id } }
+      const response = await chai.request(app).delete(`/congregations/${id}`).set('Authorization', `Bearer ${token}`)
+      const fields = { status: CONGREGATION_STATUS.DELETED }
+      const options = { where: { id } }
 
-        expect(response.status).to.equal(404)
-        expect(response.body).to.eql({ message: 'Unable to find congregation by id.' })
-        expect(updateStub.calledWith(fields, options))
-      }
+      expect(response.status).to.equal(500)
+      expect(response.body).to.eql({ message: 'Unable to delete congregation.' })
+      expect(updateStub.calledWith(fields, options)).to.equal(true)
     })
   })
 })
