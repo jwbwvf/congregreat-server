@@ -12,22 +12,28 @@ const canAccess = action => {
       return next()
     }
 
+    // only the system admin can access a congregation they are not a member of
+    if (congregationId !== req.params.id) {
+      console.log(`User ${req.user.id} is not a member of congregation ${req.params.id} and tried to ${action} the congregation.`)
+      return res.status(401).json({ message: `Not authorized to ${action} this congregation.` })
+    }
+
     // all members can read their own congregation
-    if (action === READ && congregationId === req.params.id) {
+    if (action === READ) {
       return next()
     }
 
     // if the user has access to the entity and the permission to take the action and are part of the congregation then allow access
-    if (permissions && permissions.entities && permissions.entities.length > 0) {
+    if (permissions && Array.isArray(permissions.entities)) {
       const entity = permissions.entities.find(entity => entity.name === CONGREGATION)
-      if (entity.actions && entity.actions.includes(action) && congregationId === req.params.id) {
+      if (entity && Array.isArray(entity.actions) && entity.actions.includes(action)) {
         return next()
       }
     }
 
-    const congregationMessage = req.params.id ? `congregation ${req.params.id}` : 'all congregations'
-    console.log(`User ${req.user.id} tried to ${action} ${congregationMessage}`)
-    return res.status(401).json({ message: `Not authorized to ${action} this congregation` })
+    // user is a member of the congregation but does not have the correct permissions to take the action
+    console.log(`User ${req.user.id} tried to ${action} congregation ${req.params.id}.`)
+    return res.status(401).json({ message: `Not authorized to ${action} this congregation.` })
   }
 }
 
