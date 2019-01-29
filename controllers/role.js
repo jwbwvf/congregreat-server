@@ -1,6 +1,6 @@
 'use strict'
 
-const uuid = require('uuid/v4')
+const uuid = require('uuid')
 const { Role } = require('../models')
 const { ROLE_STATUS } = require('../common/status')
 const { entities } = require('../common/entities')
@@ -8,7 +8,7 @@ const { actions } = require('../common/actions')
 
 const validatePermissions = (permissions) => {
   // validate entities
-  if (!permissions || !Array.isArray(permissions.entities) || permissions.entities.size <= 0) {
+  if (!permissions || !Array.isArray(permissions.entities) || permissions.entities.length <= 0) {
     throw new Error('The permissions are invalid since they do not contain any entities.')
   }
   permissions.entities.forEach(entity => {
@@ -16,7 +16,7 @@ const validatePermissions = (permissions) => {
       throw new Error(`The permissions are invalid since it includes an invalid entity: ${entity.name}`)
     }
     // validate actions
-    if (!Array.isArray(entity.actions) || entity.actions.size <= 0) {
+    if (!Array.isArray(entity.actions) || entity.actions.length <= 0) {
       throw new Error(`The permissions are invalid since there are no actions on the entity: ${entity.name}`)
     }
     entity.actions.forEach(action => {
@@ -28,7 +28,7 @@ const validatePermissions = (permissions) => {
 }
 
 /**
- * Get all roles across all congregations.
+ * Get all roles.
  */
 const getAll = async (req, res) => {
   try {
@@ -37,6 +37,7 @@ const getAll = async (req, res) => {
     })
     return res.status(200).json(roles)
   } catch (error) {
+    console.error(error)
     return res.status(404).json({ message: 'Unable to find all roles.' })
   }
 }
@@ -51,6 +52,7 @@ const getById = async (req, res) => {
     })
     return res.status(200).json(role)
   } catch (error) {
+    console.error(error)
     return res.status(404).json({ message: 'Unable to find role by id.' })
   }
 }
@@ -60,12 +62,13 @@ const getById = async (req, res) => {
  * Returns an error if the role already exists.
  */
 const create = async (req, res) => {
-  if (!req.body.name) {
-    return res.status(409).json({ message: 'Name is a required field.' })
-  }
-
   try {
-    const id = uuid()
+    if (!req.body.name) {
+      console.log(`User ${req.user.id} tried to create a role without a name for the role.`)
+      return res.status(409).json({ message: 'Name is a required field.' })
+    }
+
+    const id = uuid.v4()
     const status = ROLE_STATUS.NEW
     const { id: userId } = req.user
     const { name, permissions } = req.body
@@ -81,7 +84,7 @@ const create = async (req, res) => {
       updatedBy: userId
     })
 
-    return res.status(200).json({ message: `Role ${role.name} was added.` })
+    return res.status(200).json({ message: `Role ${role.name} was created.` })
   } catch (error) {
     console.error(error)
     return res.status(409).json({ message: 'Unable to create role.' })
@@ -92,11 +95,11 @@ const create = async (req, res) => {
  * Update a role by id.
  */
 const update = async (req, res) => {
-  if (!req.body.name) {
-    return res.status(500).json({ message: 'No modifiable role property was provided.' })
-  }
-
   try {
+    if (!req.body.name || !req.body.permissions) {
+      return res.status(500).json({ message: 'No modifiable role property was provided.' })
+    }
+
     const { name, permissions } = req.body
 
     validatePermissions(permissions)
@@ -110,11 +113,11 @@ const update = async (req, res) => {
     if (response[0]) {
       return res.status(200).json({ message: 'Role was updated.' })
     }
-    console.error(`Failed to update the role with the following fields: ${JSON.stringify(fields)} and options: ${JSON.stringify(options)}`)
-    return res.status(500).json({ message: 'Failed to update the role.' })
+    console.log(`Failed to update the role with the following fields: ${JSON.stringify(fields)} and options: ${JSON.stringify(options)}`)
+    return res.status(500).json({ message: 'Unable to update the role.' })
   } catch (error) {
     console.error(error)
-    return res.status(500).json({ message: 'Failed to update the role.' })
+    return res.status(500).json({ message: 'Unable to update the role.' })
   }
 }
 
@@ -131,7 +134,7 @@ const softDelete = async (req, res) => {
     return res.status(200).json({ message: 'Role was deleted.' })
   } catch (error) {
     console.error(error)
-    return res.status(500).json({ message: 'Unable delete role.' })
+    return res.status(500).json({ message: 'Unable to delete the role.' })
   }
 }
 
