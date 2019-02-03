@@ -63,9 +63,9 @@ const getById = async (req, res) => {
  */
 const create = async (req, res) => {
   try {
-    if (!req.body.name) {
-      console.log(`User ${req.user.id} tried to create a role without a name for the role.`)
-      return res.status(409).json({ message: 'Name is a required field.' })
+    if (!req.body || !req.body.name || !req.body.permissions) {
+      console.log(`User ${req.user.id} tried to create a role without the required fields. ${JSON.stringify(req.body)}`)
+      return res.status(409).json({ message: 'Name and permissions are required fields.' })
     }
 
     const id = uuid.v4()
@@ -96,7 +96,8 @@ const create = async (req, res) => {
  */
 const update = async (req, res) => {
   try {
-    if (!req.body.name || !req.body.permissions) {
+    if (!req.body || (!req.body.name && !req.body.permissions)) {
+      console.log(`User ${req.user.id} tried to update a role without a modifiable property. ${JSON.stringify(req.body)}`)
       return res.status(500).json({ message: 'No modifiable role property was provided.' })
     }
 
@@ -105,7 +106,11 @@ const update = async (req, res) => {
     validatePermissions(permissions)
 
     const { id: userId } = req.user
-    const fields = { name, updatedBy: userId, permissions }
+    const fields = { updatedBy: userId }
+
+    if (name) fields.name = name
+    if (permissions) fields.permissions = permissions
+
     const options = { where: { id: req.params.id } }
 
     const response = await Role.update(fields, options)
