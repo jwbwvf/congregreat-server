@@ -9,12 +9,13 @@ const { USER_ROLE_STATUS } = require('../common/status')
  */
 const getAll = async (req, res) => {
   try {
-    const roles = await UserRole.findAll({
+    const userRoles = await UserRole.findAll({
       attributes: ['id', 'userId', 'roleId', 'status']
     })
-    return res.status(200).json(roles)
+    return res.status(200).json(userRoles)
   } catch (error) {
-    return res.status(404).json({ message: 'Unable to find all roles.' })
+    console.error(error)
+    return res.status(404).json({ message: 'Unable to find all userRoles.' })
   }
 }
 
@@ -28,6 +29,7 @@ const getById = async (req, res) => {
     })
     return res.status(200).json(userRole)
   } catch (error) {
+    console.error(error)
     return res.status(404).json({ message: 'Unable to find userRole by id.' })
   }
 }
@@ -37,7 +39,8 @@ const getById = async (req, res) => {
  * Returns an error if the role already exists.
  */
 const create = async (req, res) => {
-  if (!req.body.userId || !req.body.roleId) {
+  if (!req.body || !req.body.userId || !req.body.roleId) {
+    console.log(`User ${req.user.id} tried to create a userRole without the required fields. ${JSON.stringify(req.body)}`)
     return res.status(409).json({ message: 'userId and roleId are required fields.' })
   }
 
@@ -50,14 +53,14 @@ const create = async (req, res) => {
       userId,
       roleId,
       status,
-      createdBy: userId,
-      updatedBy: userId
+      createdBy: req.user.id,
+      updatedBy: req.user.id
     })
 
-    return res.status(200).json({ message: `UserRole was added.` })
+    return res.status(200).json({ message: `UserRole was created.` })
   } catch (error) {
     console.error(error)
-    return res.status(409).json({ message: 'Unable to create role.' })
+    return res.status(409).json({ message: 'Unable to create userRole.' })
   }
 }
 
