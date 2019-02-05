@@ -14,7 +14,7 @@ const setUserPermissions = async (req, res, next) => {
     })
     // since each role has it's own array of permissions combine them
     const entities = response.flatMap(role => {
-      const { permissions = [] } = role
+      const { permissions = {} } = role
       return permissions.entities
     })
     // since system admin allows users to view more than their own congregation it has

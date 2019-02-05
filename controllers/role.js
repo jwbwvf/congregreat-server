@@ -5,10 +5,11 @@ const { Role } = require('../models')
 const { ROLE_STATUS } = require('../common/status')
 const { entities } = require('../common/entities')
 const { actions } = require('../common/actions')
+const { get } = require('lodash')
 
 const validatePermissions = (permissions) => {
   // validate entities
-  if (!permissions || !Array.isArray(permissions.entities) || permissions.entities.length <= 0) {
+  if (get(permissions, 'entities', []).length <= 0) {
     throw new Error('The permissions are invalid since they do not contain any entities.')
   }
   permissions.entities.forEach(entity => {
@@ -16,7 +17,7 @@ const validatePermissions = (permissions) => {
       throw new Error(`The permissions are invalid since it includes an invalid entity: ${entity.name}`)
     }
     // validate actions
-    if (!Array.isArray(entity.actions) || entity.actions.length <= 0) {
+    if (get(entity, 'actions', []).length <= 0) {
       throw new Error(`The permissions are invalid since there are no actions on the entity: ${entity.name}`)
     }
     entity.actions.forEach(action => {

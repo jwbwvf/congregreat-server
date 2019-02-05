@@ -2,6 +2,7 @@
 
 const { READ } = require('../common/actions')
 const { CONGREGATION } = require('../common/entities')
+const { get } = require('lodash')
 
 const canAccess = action => {
   return (req, res, next) => {
@@ -24,9 +25,9 @@ const canAccess = action => {
     }
 
     // if the user has access to the entity and the permission to take the action and are part of the congregation then allow access
-    if (permissions && Array.isArray(permissions.entities)) {
+    if (get(permissions, 'entities', []).length > 0) {
       const entity = permissions.entities.find(entity => entity.name === CONGREGATION)
-      if (entity && Array.isArray(entity.actions) && entity.actions.includes(action)) {
+      if (get(entity, 'actions', []).includes(action)) {
         return next()
       }
     }
