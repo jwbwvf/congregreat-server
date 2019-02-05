@@ -1,6 +1,6 @@
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
-const { User, Member } = require('../models')
+const { User, Member, Role } = require('../models')
 const Security = require('../common/security')
 
 passport.use(new LocalStrategy({ usernameField: 'email' },
@@ -14,6 +14,10 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
           attributes: ['congregationId'],
           // creates inner join when true, left outer join when false
           required: true
+        }, {
+          model: Role,
+          attributes: ['id'],
+          required: false
         }]
       })
       if (!user) {
@@ -38,7 +42,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
       user.salt = ''
       return done(null, user)
     } catch (error) {
-      return (done(null, false, {message: error.message}))
+      return (done(null, false, { message: error.message }))
     }
   })
 )

@@ -46,11 +46,14 @@ module.exports = function (sequelize, DataTypes) {
         unique: true
       }
     })
-    // User.belongsToMany(models.Role,
-    //   {
-    //     through: models.UserRole
-    //   }
-    // )
+    User.belongsToMany(models.Role, {
+      through: models.UserRole,
+      foreignKey: {
+        name: 'userId',
+        allowNull: false
+      }
+    }
+    )
   }
 
   User.prototype.isVerified = function () {

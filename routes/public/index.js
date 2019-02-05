@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const uuid = require('uuid/v4')
+const uuid = require('uuid')
 const passport = require('passport')
 const { User, Member } = require('../../models')
 const Token = require('../../common/token')
@@ -18,9 +18,7 @@ router.post('/register', async function (req, res, next) {
   if (!req.body.email ||
     !req.body.confirmEmail ||
     !req.body.password ||
-    !req.body.confirmPassword ||
-    !req.body.firstName ||
-    !req.body.lastName) {
+    !req.body.confirmPassword) {
     return res.status(400).json({ message: 'All fields are required.' })
   }
 
@@ -51,7 +49,7 @@ router.post('/register', async function (req, res, next) {
     }
     // TODO do we check status as a rule for anyone trying to registered, like don't let deleted members register
 
-    const id = uuid()
+    const id = uuid.v4()
     const {email, firstName, lastName} = req.body
     let salt = Security.generateSalt()
     let hash = Security.generateHash(salt, req.body.password)
@@ -64,7 +62,7 @@ router.post('/register', async function (req, res, next) {
     user.salt = ''
 
     // generate token that expires in half a day
-    const token = Token.generateToken({ id, email, memberId, congregationId }, 0.5)
+    const token = Token.generateToken({ id, memberId, congregationId }, 0.5)
 
     mailer.sendMail(firstName, lastName, email, token)
 
@@ -89,9 +87,10 @@ router.post('/login', function (req, res, next) {
       if (!user.Member) {
         return next(new Error('User does not contain a valid congregation membership.'))
       }
-      const {id, email, memberId} = user
+      const {id, memberId} = user
       const {congregationId} = user.Member
-      const token = Token.generateToken({ id, email, memberId, congregationId })
+      const roleIds = user.Roles ? user.Roles.map(role => role.id) : []
+      const token = Token.generateToken({ id, memberId, congregationId, roleIds })
 
       const userResponse = (({id}) => ({id}))(user)
       return res.status(200).json({ 'user': userResponse, 'token': token })
@@ -167,7 +166,7 @@ router.post('/resend', async function (req, res, next) {
     // generate token that expires in half a day
     const { id, email } = user
     const { id: memberId, congregationId } = user.Member
-    const token = Token.generateToken({ id, email, memberId, congregationId }, 0.5)
+    const token = Token.generateToken({ id, memberId, congregationId }, 0.5)
 
     const { firstName, lastName } = user.Member
     mailer.sendMail(firstName, lastName, email, token)

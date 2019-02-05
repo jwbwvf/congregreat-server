@@ -39,10 +39,15 @@ app.use(expressjwt({
 
 app.use('/public', require('./routes/public/index'))
 
+const { setUserPermissions } = require('./accessControllers/setUserPermissions')
+app.use(setUserPermissions)
+
 app.use('/congregations', require('./routes/congregations'))
 app.use('/users', require('./routes/users'))
 app.use('/members', require('./routes/members'))
 app.use('/attendances', require('./routes/attendances'))
+app.use('/roles', require('./routes/roles'))
+app.use('/user-roles', require('./routes/userRoles'))
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

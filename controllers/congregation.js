@@ -47,7 +47,7 @@ const update = async (req, res) => {
     await Congregation.update(fields, options)
     return res.status(200).json({ message: 'Congregation was updated.' })
   } catch (error) {
-    return res.status(404).json({ message: 'Unable to update congregation.' })
+    return res.status(500).json({ message: 'Unable to update congregation.' })
   }
 }
 
@@ -60,7 +60,7 @@ const softDelete = async (req, res) => {
     await Congregation.update(fields, options)
     return res.status(200).json({ message: 'Congregation was deleted.' })
   } catch (error) {
-    return res.status(404).json({ message: 'Unable to delete congregation.' })
+    return res.status(500).json({ message: 'Unable to delete congregation.' })
   }
 }
 

@@ -1,22 +1,43 @@
+'use strict'
+
+const ACTIVE = 'active'
+const DELETED = 'deleted'
+const NEW = 'new'
+const REGISTERED = 'registered'
+const UNVERIFIED = 'unVerified'
+const VERIFIED = 'verified'
+
 const USER_STATUS = {
-  VERIFIED: 'verified',
-  UNVERIFIED: 'unVerified',
-  DELETED: 'deleted'
+  VERIFIED,
+  UNVERIFIED,
+  DELETED
 }
 
 const CONGREGATION_STATUS = {
-  NEW: 'new',
-  DELETED: 'deleted'
+  NEW,
+  DELETED
 }
 
 const MEMBER_STATUS = {
-  REGISTERED: 'registered',
-  DELETED: 'deleted',
-  ACTIVE: 'active'
+  REGISTERED,
+  DELETED,
+  ACTIVE
+}
+
+const ROLE_STATUS = {
+  NEW,
+  DELETED
+}
+
+const USER_ROLE_STATUS = {
+  NEW,
+  DELETED
 }
 
 module.exports = {
   USER_STATUS,
+  USER_ROLE_STATUS,
   CONGREGATION_STATUS,
-  MEMBER_STATUS
+  MEMBER_STATUS,
+  ROLE_STATUS
 }
