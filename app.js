@@ -48,6 +48,7 @@ app.use('/members', require('./routes/members'))
 app.use('/attendances', require('./routes/attendances'))
 app.use('/roles', require('./routes/roles'))
 app.use('/user-roles', require('./routes/userRoles'))
+app.use('/events', require('./routes/events'))
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

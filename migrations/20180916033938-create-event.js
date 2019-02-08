@@ -11,6 +11,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      status: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      description: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       startDate: {
         allowNull: false,
         type: Sequelize.DATEONLY
@@ -43,6 +51,14 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      createdBy: {
+        allowNull: false,
+        type: Sequelize.UUID
+      },
+      updatedBy: {
+        allowNull: false,
+        type: Sequelize.UUID
       }
     })
   },
