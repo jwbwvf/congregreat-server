@@ -17,7 +17,7 @@ module.exports = {
     const salt = generateSalt()
     const hash = generateHash(salt, password)
 
-    console.log(`seed user password: ${password}`)
+    console.log(`seed user=[${memberRows[0].email}] password=[${password}]`)
 
     return queryInterface.bulkInsert('Users', [{
       id: uuid.v4(),
