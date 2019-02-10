@@ -10,6 +10,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     startDate: {
       type: DataTypes.DATEONLY,
       allowNull: false
@@ -24,6 +32,22 @@ module.exports = (sequelize, DataTypes) => {
     },
     endTime: {
       type: DataTypes.TIME,
+      allowNull: false
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    createdBy: {
+      type: DataTypes.UUID,
+      allowNull: false
+    },
+    updatedBy: {
+      type: DataTypes.UUID,
       allowNull: false
     }
   }, {})

@@ -6,6 +6,7 @@ const NEW = 'new'
 const REGISTERED = 'registered'
 const UNVERIFIED = 'unVerified'
 const VERIFIED = 'verified'
+const EXPIRED = 'expired'
 
 const USER_STATUS = {
   VERIFIED,
@@ -34,10 +35,17 @@ const USER_ROLE_STATUS = {
   DELETED
 }
 
+const EVENT_STATUS = {
+  NEW,
+  DELETED,
+  EXPIRED
+}
+
 module.exports = {
   USER_STATUS,
   USER_ROLE_STATUS,
   CONGREGATION_STATUS,
   MEMBER_STATUS,
-  ROLE_STATUS
+  ROLE_STATUS,
+  EVENT_STATUS
 }
