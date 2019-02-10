@@ -7,8 +7,9 @@ const {
   update,
   softDelete
 } = require('../../controllers/role')
-const Role = require('../../models').Role
+const { Role } = require('../../models')
 const { ROLE_STATUS } = require('../../common/status')
+const uuid = require('uuid')
 const sinon = require('sinon')
 const faker = require('faker')
 const chai = require('chai')
@@ -98,8 +99,8 @@ describe('role', function () {
       sandbox.stub(Role, 'findAll').resolves(roles)
 
       await getAll(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith(roles)).to.equal(true)
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith(roles)).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -107,9 +108,9 @@ describe('role', function () {
       sandbox.stub(Role, 'findAll').throws(error)
 
       await getAll(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(404)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to find all roles.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(404)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to find all roles.' })).to.equal(true)
     })
   })
   describe('getById', async function () {
@@ -119,8 +120,8 @@ describe('role', function () {
       req.params = { id: roles[0].id }
 
       await getById(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith(roles[0])).to.equal(true)
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith(roles[0])).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -130,9 +131,9 @@ describe('role', function () {
       req.params = { id: faker.random.number() }
 
       await getById(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(404)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to find role by id.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(404)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to find role by id.' })).to.equal(true)
     })
   })
   describe('create', async function () {
@@ -140,10 +141,11 @@ describe('role', function () {
       const role = {
         name: faker.random.word()
       }
-      sandbox.stub(Role, 'create').resolves(role)
-
+      const createStub = sandbox.stub(Role, 'create').resolves(role)
+      const id = uuid.v4()
+      sandbox.stub(uuid, 'v4').returns(id)
       req.user = { id: faker.random.number() }
-      req.params = { id: roles[0].id }
+
       req.body = {
         name: role.name,
         permissions: {
@@ -157,16 +159,24 @@ describe('role', function () {
       }
 
       await create(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: `Role ${role.name} was created.` }))
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith({ message: `Role ${role.name} was created.` }))
+      expect(createStub.calledWith({
+        id,
+        name: req.body.name,
+        permissions: req.body.permissions,
+        status: ROLE_STATUS.NEW,
+        createdBy: req.user.id,
+        updatedBy: req.user.id
+      })).to.equal(true)
     })
     it('should return an error if the required fields are not on the body', async function () {
       req.user = { id: faker.random.uuid() }
 
       await create(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Name and permissions are required fields.' })).to.equal(true)
-      expect(logStub.getCall(0).calledWith(`User ${req.user.id} tried to create a role without the required fields. ${JSON.stringify(req.body)}`)).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Name and permissions are required fields.' })).to.equal(true)
+      expect(logStub.calledWith(`User ${req.user.id} tried to create a role without the required fields. ${JSON.stringify(req.body)}`)).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -184,9 +194,9 @@ describe('role', function () {
       req.user = { id: faker.random.number() }
 
       await create(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to create role.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to create role.' })).to.equal(true)
     })
     it('should return an error if there are no entities on the permissions', async function () {
       req.body = {
@@ -197,8 +207,8 @@ describe('role', function () {
 
       await create(req, resStub)
       expect(errorStub.getCall(0).args[0].message).to.eql('The permissions are invalid since they do not contain any entities.')
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to create role.' })).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to create role.' })).to.equal(true)
     })
     it('should return an error if there is an invalid entity on the permissions', async function () {
       const invalidEntityName = 'invalidEntity' // not using faker just in case it were to randomly pick a valid entity name
@@ -215,8 +225,8 @@ describe('role', function () {
 
       await create(req, resStub)
       expect(errorStub.getCall(0).args[0].message).to.eql(`The permissions are invalid since it includes an invalid entity: ${invalidEntityName}`)
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to create role.' })).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to create role.' })).to.equal(true)
     })
     it('should return an error if there are no actions on the entity on the permissions', async function () {
       const entityName = 'attendance'
@@ -233,8 +243,8 @@ describe('role', function () {
 
       await create(req, resStub)
       expect(errorStub.getCall(0).args[0].message).to.eql(`The permissions are invalid since there are no actions on the entity: ${entityName}`)
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to create role.' })).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to create role.' })).to.equal(true)
     })
     it('should return an error if there is an invalid action on the entities on the permissions', async function () {
       const entityName = 'attendance'
@@ -252,15 +262,15 @@ describe('role', function () {
 
       await create(req, resStub)
       expect(errorStub.getCall(0).args[0].message).to.eql(`The permissions are invalid since ${entityName} has an invalid action: ${invalidAction}`)
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to create role.' })).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to create role.' })).to.equal(true)
     })
   })
   describe('update', async function () {
     it('should update an existing role', async function () {
-      sandbox.stub(Role, 'update').resolves([1])
+      const updateStub = sandbox.stub(Role, 'update').resolves([1])
 
-      req.user = { id: faker.random.number() }
+      req.user = { id: faker.random.uuid() }
       req.params = { id: roles[0].id }
       req.body = {
         permissions: {
@@ -273,8 +283,9 @@ describe('role', function () {
         }
       }
       await update(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Role was updated.' })).to.equal(true)
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Role was updated.' })).to.equal(true)
+      expect(updateStub.calledWith({ updatedBy: req.user.id, permissions: req.body.permissions }, { where: { id: req.params.id } })).to.equal(true)
     })
     it('should return an error if it fails to update the role', async function () {
       sandbox.stub(Role, 'update').resolves([0])
@@ -292,18 +303,18 @@ describe('role', function () {
         }
       }
       await update(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(500)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to update the role.' })).to.equal(true)
+      expect(resStub.status.calledWith(500)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to update the role.' })).to.equal(true)
       const fields = {updatedBy: req.user.id, permissions: req.body.permissions}
       const options = {where: {id: req.params.id}}
-      expect(logStub.getCall(0).calledWith(`Failed to update the role with the following fields: ${JSON.stringify(fields)} and options: ${JSON.stringify(options)}`)).to.equal(true)
+      expect(logStub.calledWith(`Failed to update the role with the following fields: ${JSON.stringify(fields)} and options: ${JSON.stringify(options)}`)).to.equal(true)
     })
     it('should return an error if no modifiable property was provided', async function () {
       req.user = { id: faker.random.uuid() }
       await update(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(500)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'No modifiable role property was provided.' })).to.equal(true)
-      console.log(`User ${req.user.id} tried to update a role without a modifiable property. ${JSON.stringify(req.body)}`)
+      expect(resStub.status.calledWith(500)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'No modifiable role property was provided.' })).to.equal(true)
+      expect(logStub.calledWith(`User ${req.user.id} tried to update a role without a modifiable property. ${JSON.stringify(req.body)}`)).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -322,9 +333,9 @@ describe('role', function () {
       req.params = { id: faker.random.number() }
 
       await update(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(500)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to update the role.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(500)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to update the role.' })).to.equal(true)
     })
   })
   describe('softDelete', async function () {
@@ -333,9 +344,9 @@ describe('role', function () {
       req.params = { id: roles[0].id }
 
       await softDelete(req, resStub)
-      expect(updateStub.getCall(0).calledWith({ status: ROLE_STATUS.DELETED }, { where: { id: roles[0].id } })).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Role was deleted.' })).to.equal(true)
+      expect(updateStub.calledWith({ status: ROLE_STATUS.DELETED }, { where: { id: roles[0].id } })).to.equal(true)
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Role was deleted.' })).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -345,9 +356,9 @@ describe('role', function () {
       req.params = { id: faker.random.number() }
 
       await softDelete(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(500)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to delete the role.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(500)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to delete the role.' })).to.equal(true)
     })
   })
 })
