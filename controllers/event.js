@@ -8,7 +8,8 @@ const create = async (req, res) => {
   try {
     const { name, description, startDate, endDate, startTime, endTime } = req.body
     if (!name || !startDate || !endDate || !startTime || !endTime) {
-      return res.status(500).json({ message: 'Not all required fields were provided.' })
+      console.log(`User ${req.user.id} tried to create an event without the required fields. ${JSON.stringify(req.body)}`)
+      return res.status(409).json({ message: 'Not all required fields were provided.' })
     }
 
     const id = uuid.v4()
@@ -79,12 +80,14 @@ const update = async (req, res) => {
   try {
     const { name, description, startDate, endDate, startTime, endTime } = req.body
     if (!name && !description && !startDate && !endDate && !startTime && !endTime) {
+      console.log(`User ${req.user.id} tried to update an event without a modifiable property. ${JSON.stringify(req.body)}`)
       return res.status(500).json({ message: 'No modifiable event property was provided.' })
     }
 
     const options = { where: { id: req.params.id } }
+    const { id: userId } = req.user
 
-    const fields = {}
+    const fields = { updatedBy: userId }
     if (name) fields.name = name
     if (description) fields.description = description
     if (startDate) fields.startDate = startDate
@@ -96,7 +99,7 @@ const update = async (req, res) => {
     return res.status(200).json({ message: 'Event was updated.' })
   } catch (error) {
     console.error(error)
-    return res.status(500).json({ message: 'Unable to update event.' })
+    return res.status(500).json({ message: 'Unable to update the event.' })
   }
 }
 
@@ -109,7 +112,7 @@ const softDelete = async (req, res) => {
     return res.status(200).json({ message: 'Event was deleted.' })
   } catch (error) {
     console.error(error)
-    return res.status(500).json({ message: 'Unable to delete event.' })
+    return res.status(500).json({ message: 'Unable to delete the event.' })
   }
 }
 
