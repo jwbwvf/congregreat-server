@@ -8,6 +8,10 @@ const { USER_ROLE_STATUS } = require('../common/status')
 const setUserPermissions = async (req, res, next) => {
   try {
     const { roleIds = [] } = req.user
+    if (!roleIds || roleIds.length === 0) {
+      throw Error('No roles found.');
+    }
+
     const response = await Role.findAll({
       attributes: ['name', 'permissions'],
       where: { id: roleIds, status: USER_ROLE_STATUS.NEW }
@@ -29,6 +33,7 @@ const setUserPermissions = async (req, res, next) => {
   } catch (error) {
     console.error(error)
     res.status(401).send('Unauthorized')
+    return res;
   }
 }
 
