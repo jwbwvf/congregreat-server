@@ -61,7 +61,7 @@ describe('attendances routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(attendance)
-      expect(createStub.getCall(0).calledWith({ id, memberId, eventId })).to.equal(true)
+      expect(createStub.calledWith({ id, memberId, eventId })).to.equal(true)
     })
     it('should return a failure if create throws an error', async function () {
       const id = faker.random.uuid()
@@ -75,7 +75,7 @@ describe('attendances routes', function () {
         .send({ memberId, eventId })
       expect(response.status).to.equal(409)
       expect(response.body).to.eql({ message: 'Unable to create attendance record.' })
-      expect(createStub.getCall(0).calledWith({ id, memberId, eventId })).to.equal(true)
+      expect(createStub.calledWith({ id, memberId, eventId })).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({

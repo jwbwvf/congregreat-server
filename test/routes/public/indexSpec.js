@@ -181,7 +181,7 @@ describe('index routes', function () {
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ 'message': 'Please check your email to verify your account.' })
       const status = USER_STATUS.UNVERIFIED
-      expect(createStub.getCall(0).calledWith({id, email, salt, hash, status, memberId})).to.equal(true)
+      expect(createStub.calledWith({id, email, salt, hash, status, memberId})).to.equal(true)
     })
   })
   describe('PUT /public/confirm/', function () {
@@ -193,7 +193,7 @@ describe('index routes', function () {
 
       const response = await chai.request(app).put(`/public/confirm`).send('12345678')
 
-      expect(consoleStub.getCall(0).calledWith(error)).to.equal(true)
+      expect(consoleStub.calledWith(error)).to.equal(true)
       expect(response.status).to.equal(400)
       expect(response.body.message).to.equal(`The token is invalid.`)
     })

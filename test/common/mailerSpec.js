@@ -48,7 +48,7 @@ describe('mailer', function () {
       transportStub.sendMail = sandbox.stub()
       transportStub.sendMail.rejects(new Error(message))
       await mailer.sendMail({firstName, lastName}, email, token)
-      expect(consoleStub.getCall(0).calledWith(message)).to.equal(true)
+      expect(consoleStub.calledWith(message)).to.equal(true)
     })
   })
 })

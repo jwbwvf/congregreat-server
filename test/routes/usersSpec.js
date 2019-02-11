@@ -65,7 +65,7 @@ describe('admin users routes', function () {
       const response = await chai.request(app).get('/users').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(users)
-      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'email', 'memberId', 'status'] })).to.equal(true)
+      expect(findAllStub.calledWith({ attributes: ['id', 'email', 'memberId', 'status'] })).to.equal(true)
     })
     it('should return a failure if findAll throws an error', async function () {
       const findAllStub = sandbox.stub(User, 'findAll').throws(new Error())
@@ -73,7 +73,7 @@ describe('admin users routes', function () {
       const response = await chai.request(app).get(`/users/`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(404)
       expect(response.body).to.eql({ message: 'Unable to find all users.' })
-      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'email', 'memberId', 'status'] })).to.equal(true)
+      expect(findAllStub.calledWith({ attributes: ['id', 'email', 'memberId', 'status'] })).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       var token = jwt.sign({
@@ -100,7 +100,7 @@ describe('admin users routes', function () {
       const response = await chai.request(app).get(`/users/${id}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(user)
-      expect(findByIdStub.getCall(0).calledWith(id)).to.equal(true)
+      expect(findByIdStub.calledWith(id)).to.equal(true)
     })
     it('should return a failure if findById throws an error', async function () {
       const id = faker.random.uuid()
@@ -110,7 +110,7 @@ describe('admin users routes', function () {
       const response = await chai.request(app).get(`/users/${id}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(404)
       expect(response.body).to.eql({ message: 'Unable to find user by id.' })
-      expect(findByIdStub.getCall(0).calledWith(id)).to.equal(true)
+      expect(findByIdStub.calledWith(id)).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
