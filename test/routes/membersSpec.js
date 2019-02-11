@@ -161,7 +161,7 @@ describe('members routes', function () {
       const response = await chai.request(app).get(`/members/congregations/${congregationId}`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql([memberOne, memberThree])
-      expect(findAllStub.getCall(0).calledWith({
+      expect(findAllStub.calledWith({
         where: { congregationId },
         attributes: ['id', 'firstName', 'lastName', 'email']
       })).to.equal(true)
@@ -203,7 +203,7 @@ describe('members routes', function () {
 
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ message: `Member ${firstName} ${lastName} was added.` })
-      expect(createStub.getCall(0).calledWith({ id, email, firstName, lastName, status, congregationId })).to.equal(true)
+      expect(createStub.calledWith({ id, email, firstName, lastName, status, congregationId })).to.equal(true)
     })
     it('should return a failure if create throws an error', async function () {
       const id = faker.random.uuid()

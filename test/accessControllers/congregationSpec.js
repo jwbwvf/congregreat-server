@@ -39,7 +39,7 @@ describe('congregation', function () {
       req.params = { id: faker.random.number() }
       canAccess(READ)(req, resStub, nextSpy)
       expect(nextSpy.called).to.equal(false)
-      expect(consoleStub.getCall(0).calledWith(`User ${userId} is not a member of congregation ${req.params.id} and tried to ${READ} the congregation.`)).to.equal(true)
+      expect(consoleStub.calledWith(`User ${userId} is not a member of congregation ${req.params.id} and tried to ${READ} the congregation.`)).to.equal(true)
       expect(resStub.status.calledWith(401)).to.equal(true)
       expect(resStub.json.calledWith({ message: `Not authorized to ${READ} this congregation.` })).to.equal(true)
     })
@@ -67,7 +67,7 @@ describe('congregation', function () {
       req.params = { id: congregationId }
       canAccess(DELETE)(req, resStub, nextSpy)
       expect(nextSpy.calledOnce).to.equal(false)
-      expect(consoleStub.getCall(0).calledWith(`User ${userId} tried to ${DELETE} congregation ${req.params.id}.`)).to.equal(true)
+      expect(consoleStub.calledWith(`User ${userId} tried to ${DELETE} congregation ${req.params.id}.`)).to.equal(true)
       expect(resStub.status.calledWith(401)).to.equal(true)
       expect(resStub.json.calledWith({ message: `Not authorized to ${DELETE} this congregation.` })).to.equal(true)
     })
@@ -80,7 +80,7 @@ describe('congregation', function () {
       req.params = { id: congregationId }
       canAccess(CREATE)(req, resStub, nextSpy)
       expect(nextSpy.calledOnce).to.equal(false)
-      expect(consoleStub.getCall(0).calledWith(`User ${userId} tried to ${CREATE} congregation ${req.params.id}.`)).to.equal(true)
+      expect(consoleStub.calledWith(`User ${userId} tried to ${CREATE} congregation ${req.params.id}.`)).to.equal(true)
       expect(resStub.status.calledWith(401)).to.equal(true)
       expect(resStub.json.calledWith({ message: `Not authorized to ${CREATE} this congregation.` })).to.equal(true)
     })

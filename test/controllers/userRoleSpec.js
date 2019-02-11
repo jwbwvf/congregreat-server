@@ -51,8 +51,8 @@ describe('userRole', function () {
       sandbox.stub(UserRole, 'findAll').resolves(userRoles)
 
       await getAll(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith(userRoles)).to.equal(true)
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith(userRoles)).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -60,9 +60,9 @@ describe('userRole', function () {
       sandbox.stub(UserRole, 'findAll').throws(error)
 
       await getAll(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(404)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to find all userRoles.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(404)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to find all userRoles.' })).to.equal(true)
     })
   })
   describe('getById', async function () {
@@ -72,8 +72,8 @@ describe('userRole', function () {
       req.params = { id: userRoles[0].id }
 
       await getById(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith(userRoles[0])).to.equal(true)
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith(userRoles[0])).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -83,9 +83,9 @@ describe('userRole', function () {
       req.params = { id: faker.random.number() }
 
       await getById(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(404)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to find userRole by id.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(404)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to find userRole by id.' })).to.equal(true)
     })
   })
   describe('create', async function () {
@@ -99,16 +99,16 @@ describe('userRole', function () {
       sandbox.stub(UserRole, 'create')
 
       await create(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: `UserRole was created.` }))
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith({ message: `UserRole was created.` }))
     })
     it('should return an error if the required fields are not on the body', async function () {
       req.user = { id: faker.random.uuid() }
 
       await create(req, resStub)
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'userId and roleId are required fields.' })).to.equal(true)
-      expect(logStub.getCall(0).calledWith(`User ${req.user.id} tried to create a userRole without the required fields. ${JSON.stringify(req.body)}`)).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'userId and roleId are required fields.' })).to.equal(true)
+      expect(logStub.calledWith(`User ${req.user.id} tried to create a userRole without the required fields. ${JSON.stringify(req.body)}`)).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -122,9 +122,9 @@ describe('userRole', function () {
       req.user = { id: faker.random.uuid() }
 
       await create(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(409)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to create userRole.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(409)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to create userRole.' })).to.equal(true)
     })
   })
   describe('softDelete', async function () {
@@ -133,9 +133,9 @@ describe('userRole', function () {
       req.params = { id: userRoles[0].id }
 
       await softDelete(req, resStub)
-      expect(updateStub.getCall(0).calledWith({ status: USER_ROLE_STATUS.DELETED }, { where: { id: userRoles[0].id } })).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(200)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'UserRole was deleted.' })).to.equal(true)
+      expect(updateStub.calledWith({ status: USER_ROLE_STATUS.DELETED }, { where: { id: userRoles[0].id } })).to.equal(true)
+      expect(resStub.status.calledWith(200)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'UserRole was deleted.' })).to.equal(true)
     })
     it('should return an error if one is caught', async function () {
       const errorMessage = faker.random.words()
@@ -145,9 +145,9 @@ describe('userRole', function () {
       req.params = { id: faker.random.number() }
 
       await softDelete(req, resStub)
-      expect(errorStub.getCall(0).calledWith(error)).to.equal(true)
-      expect(resStub.status.getCall(0).calledWith(500)).to.equal(true)
-      expect(resStub.json.getCall(0).calledWith({ message: 'Unable to delete userRole.' })).to.equal(true)
+      expect(errorStub.calledWith(error)).to.equal(true)
+      expect(resStub.status.calledWith(500)).to.equal(true)
+      expect(resStub.json.calledWith({ message: 'Unable to delete userRole.' })).to.equal(true)
     })
   })
 })

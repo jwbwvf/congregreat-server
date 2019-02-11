@@ -59,7 +59,7 @@ describe('congregations routes', function () {
       const response = await chai.request(app).get('/congregations').set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(congregations)
-      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] })).to.equal(true)
+      expect(findAllStub.calledWith({ attributes: ['id', 'name', 'status'] })).to.equal(true)
     })
     it('should return a failure if findAll throws an error', async function () {
       const findAllStub = sandbox.stub(Congregation, 'findAll').throws(new Error())
@@ -67,7 +67,7 @@ describe('congregations routes', function () {
       const response = await chai.request(app).get(`/congregations/`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(404)
       expect(response.body).to.eql({ message: 'Unable to find all congregations.' })
-      expect(findAllStub.getCall(0).calledWith({ attributes: ['id', 'name', 'status'] })).to.equal(true)
+      expect(findAllStub.calledWith({ attributes: ['id', 'name', 'status'] })).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {
       token = jwt.sign({
