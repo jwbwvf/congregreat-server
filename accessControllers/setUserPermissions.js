@@ -16,11 +16,17 @@ const setUserPermissions = async (req, res, next) => {
       attributes: ['name', 'permissions'],
       where: { id: roleIds, status: USER_ROLE_STATUS.NEW }
     })
+
+    if (!response || response.length === 0) {
+      throw new Error(`Could not find role ${roleIds.join(', ')}`)
+    }
+
     // since each role has it's own array of permissions combine them
     const entities = response.flatMap(role => {
       const { permissions = {} } = role
       return permissions.entities
     })
+
     // since system admin allows users to view more than their own congregation it has
     // to be set separately from the permissionss
     const systemAdmin = response.find(role => role.name === 'system admin')
