@@ -11,9 +11,9 @@ const {
 
 const event = require('../accessControllers/event')
 
-const { CREATE, READ, UPDATE, DELETE } = require('../common/actions')
+const { CREATE, READ, READ_ALL, UPDATE, DELETE } = require('../common/actions')
 
-router.get('/', event.canAccess(READ), getAll)
+router.get('/', event.canAccess(READ_ALL), getAll)
 router.get('/:id', event.canAccess(READ), getById)
 router.post('/', event.canAccess(CREATE), create)
 router.patch('/:id', event.canAccess(UPDATE), update)
