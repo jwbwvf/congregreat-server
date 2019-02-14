@@ -6,6 +6,7 @@
 */
 const ATTENDANCE = 'attendance'
 const CONGREGATION = 'congregation'
+const EVENT = 'event'
 const MEMBER = 'member'
 const ROLE = 'role'
 const USER = 'user'
@@ -14,6 +15,7 @@ const USER_ROLE = 'userRole'
 const entities = [
   ATTENDANCE,
   CONGREGATION,
+  EVENT,
   MEMBER,
   ROLE,
   USER,
@@ -23,6 +25,7 @@ module.exports = {
   entities,
   ATTENDANCE,
   CONGREGATION,
+  EVENT,
   MEMBER,
   ROLE,
   USER,
