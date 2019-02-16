@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const uuid = require('uuid')
 const { USER_ROLE_STATUS } = require('../common/status')
@@ -8,7 +8,7 @@ module.exports = {
     const users = await queryInterface.sequelize.query(
       `SELECT id from Users;`
     )
-    
+
     const userId = users[0][0].id
 
     const roles = await queryInterface.sequelize.query(
@@ -32,4 +32,4 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete('UserRoles', null, {})
   }
-};
+}

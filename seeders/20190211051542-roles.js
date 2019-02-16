@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const uuid = require('uuid')
 const { ROLE_STATUS } = require('../common/status')
@@ -6,12 +6,12 @@ const { ROLE_STATUS } = require('../common/status')
 const actions = ['create', 'read', 'update', 'delete']
 const permissions = {
   entities: [
-    {name: 'role', actions },
-    {name: 'user', actions },
-    {name: 'attendance', actions },
-    {name: 'congregation', actions },
-    {name: 'member', actions },
-    {name: 'userRole', actions }
+    { name: 'role', actions },
+    { name: 'user', actions },
+    { name: 'attendance', actions },
+    { name: 'congregation', actions },
+    { name: 'member', actions },
+    { name: 'userRole', actions }
   ]
 }
 
@@ -38,4 +38,4 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete('Roles', null, {})
   }
-};
+}
