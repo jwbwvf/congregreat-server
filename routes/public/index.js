@@ -89,8 +89,14 @@ router.post('/login', function (req, res, next) {
       }
       const {id, memberId} = user
       const {congregationId} = user.Member
-      const roleIds = user.Roles ? user.Roles.map(role => role.id) : []
-      const token = Token.generateToken({ id, memberId, congregationId, roleIds })
+      const {Roles = []} = user
+
+      const entities = Roles ? Roles.flatMap(role => {
+        const { permissions = {} } = role
+        return permissions.entities
+      }) : []
+
+      const token = Token.generateToken({ id, memberId, congregationId, permissions: { entities } })
 
       const userResponse = (({id}) => ({id}))(user)
       return res.status(200).json({ 'user': userResponse, 'token': token })
