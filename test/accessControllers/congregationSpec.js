@@ -2,6 +2,7 @@
 
 const { CREATE, READ, UPDATE, DELETE } = require('../../common/actions')
 const { canAccess } = require('../../accessControllers/congregation')
+const accessor = require('../../accessControllers/accessor')
 const faker = require('faker')
 const sinon = require('sinon')
 const chai = require('chai')
@@ -31,7 +32,8 @@ describe('congregation', function () {
     })
     it('gives system admin access to any congregation for any action', function () {
       req.params = { id: faker.random.number() }
-      req.user.systemAdmin = true
+      sandbox.stub(accessor, 'isSystemAdmin').returns(true)
+
       canAccess(CREATE)(req, resStub, nextSpy)
       expect(nextSpy.calledOnce).to.equal(true)
     })
