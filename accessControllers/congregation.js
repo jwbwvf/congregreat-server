@@ -2,14 +2,15 @@
 
 const { READ } = require('../common/actions')
 const { CONGREGATION } = require('../common/entities')
+const accessor = require('./accessor')
 const { get } = require('lodash')
 
 const canAccess = action => {
   return (req, res, next) => {
-    const { congregationId, permissions, systemAdmin = false } = req.user
+    const { congregationId, permissions } = req.user
 
     // system admin has access to all entities with permissions to every action across all congregations
-    if (systemAdmin) {
+    if (accessor.isSystemAdmin(permissions)) {
       return next()
     }
 

@@ -35,7 +35,7 @@ const create = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     const members = await Member.findAll({
-      attributes: ['id', 'firstName', 'lastName', 'email']
+      attributes: ['id', 'firstName', 'lastName', 'email', 'congregationId', 'status']
     })
     return res.status(200).json(members)
   } catch (error) {

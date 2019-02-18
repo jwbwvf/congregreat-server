@@ -10,7 +10,6 @@ const uuid = require('uuid')
 const config = require('../../common/config')
 const Congregation = require('../../models').Congregation
 const { CONGREGATION_STATUS } = require('../../common/status')
-const setUserPermissions = require('../../accessControllers/setUserPermissions')
 
 const expect = chai.expect
 
@@ -22,10 +21,6 @@ describe('congregations routes', function () {
   const passphrase = config.jwt.passphrase
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
-
-    sandbox.stub(setUserPermissions, 'setUserPermissions').callsFake(function (req, res, next) {
-      return next()
-    })
 
     delete require.cache[require.resolve('../../routes/congregations')]
     congregation = require('../../accessControllers/congregation')

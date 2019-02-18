@@ -2,19 +2,20 @@
 
 const { READ, READ_ALL } = require('../common/actions')
 const { EVENT } = require('../common/entities')
+const accessor = require('./accessor')
 const { get } = require('lodash')
 
 const canAccess = action => {
   return (req, res, next) => {
-    const { congregationId, permissions, systemAdmin = false } = req.user
+    const { congregationId, permissions } = req.user
 
     // system admin has access to all entities with permissions to every action across all congregations
-    if (systemAdmin) {
+    if (accessor.isSystemAdmin(permissions)) {
       return next()
     }
 
     // only the system admin can access a congregation they are not a member of
-    if (congregationId !== req.params.id) {
+    if (congregationId !== req.params.id) { // TODO this id is an event id not congregationId  need to look up the event to get it's congregationId
       console.log(`User ${req.user.id} is not a member of congregation ${req.params.id} and tried to ${action} the event.`)
       return res.status(401).json({ message: `Not authorized to ${action} this event.` })
     }

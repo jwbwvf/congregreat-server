@@ -10,7 +10,6 @@ const uuid = require('uuid')
 const config = require('../../common/config')
 const { Member } = require('../../models')
 const { MEMBER_STATUS } = require('../../common/status')
-const setUserPermissions = require('../../accessControllers/setUserPermissions')
 
 const expect = chai.expect
 
@@ -22,10 +21,6 @@ describe('members routes', function () {
   const passphrase = config.jwt.passphrase
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
-
-    sandbox.stub(setUserPermissions, 'setUserPermissions').callsFake(function (req, res, next) {
-      return next()
-    })
 
     // in order to mock the middleware it has to be stubbed before app is included
     // so it needs to be removed if it was already added by another test
@@ -62,7 +57,7 @@ describe('members routes', function () {
       expect(response.status).to.equal(200)
       expect(response.body).to.eql(members)
       expect(findAllStub.getCall(0).calledWith({
-        attributes: ['id', 'firstName', 'lastName', 'email']
+        attributes: ['id', 'firstName', 'lastName', 'email', 'congregationId', 'status']
       })).to.equal(true)
     })
     it('should return a failure if findAll throws an error', async function () {
@@ -72,7 +67,7 @@ describe('members routes', function () {
       expect(response.status).to.equal(404)
       expect(response.body).to.eql({ message: 'Unable to find all members.' })
       expect(findAllStub.getCall(0).calledWith({
-        attributes: ['id', 'firstName', 'lastName', 'email']
+        attributes: ['id', 'firstName', 'lastName', 'email', 'congregationId', 'status']
       })).to.equal(true)
     })
     it('should should fail for unauthorized if a valid token is not provided', async function () {

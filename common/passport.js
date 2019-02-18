@@ -16,7 +16,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' },
           required: true
         }, {
           model: Role,
-          attributes: ['id'],
+          attributes: ['permissions'],
           required: false
         }]
       })

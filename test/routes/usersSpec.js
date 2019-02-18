@@ -9,7 +9,6 @@ const faker = require('faker')
 const config = require('../../common/config')
 const { USER_STATUS } = require('../../common/status')
 const User = require('../../models').User
-const setUserPermissions = require('../../accessControllers/setUserPermissions')
 
 const expect = chai.expect
 
@@ -21,10 +20,6 @@ describe('admin users routes', function () {
   const passphrase = config.jwt.passphrase
   beforeEach(function () {
     sandbox = sinon.sandbox.create()
-
-    sandbox.stub(setUserPermissions, 'setUserPermissions').callsFake(function (req, res, next) {
-      return next()
-    })
 
     // in order to mock the middleware it has to be stubbed before app is included
     // so it needs to be removed if it was already added by another test
