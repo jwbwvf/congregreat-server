@@ -22,7 +22,10 @@ module.exports = {
       endTime: '10:00',
       congregationId: congregationRows[0].id,
       createdAt: today,
-      updatedAt: today
+      updatedAt: today,
+      status: 'CREATED',
+      createdBy: 1,
+      updatedBy: 1
     }], {})
   },
 

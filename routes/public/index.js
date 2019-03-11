@@ -91,7 +91,7 @@ router.post('/login', function (req, res, next) {
       const {congregationId} = user.Member
       const {Roles = []} = user
 
-      const entities = Roles ? Roles.flatMap(role => {
+      const entities = Roles && Roles.length > 0 ? Roles.flatMap(role => {
         const { permissions = {} } = role
         return permissions.entities
       }) : []

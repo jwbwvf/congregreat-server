@@ -64,7 +64,6 @@ describe('index routes', function () {
 
       const response = await chai.request(app).post('/public/login')
         .send({ email, password })
-
       expect(response.status).to.equal(200)
       expect(response.body).to.eql({ 'user': { id: id }, 'token': token })
     })
