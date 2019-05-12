@@ -32,6 +32,7 @@ describe('congregations routes', function () {
 
     // in order to mock the middleware it has to be stubbed before app is included
     // so it needs to be removed if it was already added by another test
+    delete require.cache[require.resolve('../../routes')]
     delete require.cache[require.resolve('../../app')]
     app = require('../../app')
 
@@ -59,7 +60,7 @@ describe('congregations routes', function () {
     it('should return a failure if findAll throws an error', async function () {
       const findAllStub = sandbox.stub(Congregation, 'findAll').throws(new Error())
 
-      const response = await chai.request(app).get(`/congregations/`).set('Authorization', `Bearer ${token}`)
+      const response = await chai.request(app).get(`/congregations`).set('Authorization', `Bearer ${token}`)
       expect(response.status).to.equal(404)
       expect(response.body).to.eql({ message: 'Unable to find all congregations.' })
       expect(findAllStub.calledWith({ attributes: ['id', 'name', 'status'] })).to.equal(true)
@@ -127,7 +128,7 @@ describe('congregations routes', function () {
       const createStub = sandbox.stub(Congregation, 'create').resolves(congregation)
       sandbox.stub(uuid, 'v4').returns(id)
 
-      const response = await chai.request(app).post('/congregations/').set('Authorization', `Bearer ${token}`)
+      const response = await chai.request(app).post('/congregations').set('Authorization', `Bearer ${token}`)
         .send({ id, name })
 
       expect(response.status).to.equal(200)
@@ -142,7 +143,7 @@ describe('congregations routes', function () {
       const createStub = sandbox.stub(Congregation, 'create').throws(new Error())
       sandbox.stub(uuid, 'v4').returns(id)
 
-      const response = await chai.request(app).post('/congregations/').set('Authorization', `Bearer ${token}`).send({ id, name })
+      const response = await chai.request(app).post('/congregations').set('Authorization', `Bearer ${token}`).send({ id, name })
       expect(response.status).to.equal(409)
       expect(response.body).to.eql({ message: 'Unable to create congregation.' })
       expect(createStub.getCall(0).calledWith({ id, name, status })).to.equal(true)

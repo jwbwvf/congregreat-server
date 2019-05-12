@@ -38,14 +38,7 @@ app.use(expressjwt({
 }))
 
 app.use('/public', require('./routes/public/index'))
-
-app.use('/congregations', require('./routes/congregations'))
-app.use('/users', require('./routes/users'))
-app.use('/members', require('./routes/members'))
-app.use('/attendances', require('./routes/attendances'))
-app.use('/roles', require('./routes/roles'))
-app.use('/user-roles', require('./routes/userRoles'))
-app.use('/events', require('./routes/events'))
+app.use(require('./routes'))
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

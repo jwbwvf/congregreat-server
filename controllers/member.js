@@ -1,8 +1,11 @@
 'use strict'
 
+const fs = require('fs')
 const uuid = require('uuid')
+const config = require('../common/config')
 const { Member } = require('../models')
 const { MEMBER_STATUS } = require('../common/status')
+const aws = require('aws-sdk')
 
 const create = async (req, res) => {
   if (!req.body.firstName ||
@@ -96,11 +99,30 @@ const softDelete = async (req, res) => {
   }
 }
 
+// This is for the user to upload their profile pic.
+// There will be a different route that is for an admin to upload pics for users.
+const uploadProfilePic = async (req, res) => {
+  const { path } = req.file
+  const { congregationId, memberId } = req.user
+
+  const params = {
+    Bucket: config.aws.bucket,
+    Key: `${congregationId}/${memberId}.jpg`,
+    Body: fs.createReadStream(path)
+  }
+
+  new aws.S3().upload(params, (err, data) => {
+    console.log(err, data)
+    res.end()
+  })
+}
+
 module.exports = {
   create,
   getAll,
   getById,
   getByCongregationId,
   update,
-  softDelete
+  softDelete,
+  uploadProfilePic
 }
