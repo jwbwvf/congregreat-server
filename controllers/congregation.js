@@ -1,10 +1,9 @@
 'use strict'
 
 const uuid = require('uuid')
-const aws = require('aws-sdk')
-const config = require('../common/config')
 const { Congregation } = require('../models')
 const { CONGREGATION_STATUS } = require('../common/status')
+const photoUploadService = require('../services/photoUploadService')
 
 const create = async (req, res) => {
   const id = uuid.v4()
@@ -13,9 +12,7 @@ const create = async (req, res) => {
 
   try {
     const congregation = await Congregation.create({ id, name, status })
-    new aws.S3().upload({Bucket: config.aws.bucket, Key: `${id}/`, Body: 'doesnot matter'}, (err, data) => {
-      console.log(err, data)
-    })
+    photoUploadService.createDirectory(id)
     return res.status(200).json(congregation)
   } catch (error) {
     return res.status(409).json({ message: 'Unable to create congregation.' })

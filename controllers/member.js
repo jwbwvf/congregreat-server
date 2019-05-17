@@ -1,11 +1,9 @@
 'use strict'
 
-const fs = require('fs')
 const uuid = require('uuid')
-const config = require('../common/config')
 const { Member } = require('../models')
 const { MEMBER_STATUS } = require('../common/status')
-const aws = require('aws-sdk')
+const photoUploadService = require('../services/photoUploadService')
 
 const create = async (req, res) => {
   if (!req.body.firstName ||
@@ -102,19 +100,15 @@ const softDelete = async (req, res) => {
 // This is for the user to upload their profile pic.
 // There will be a different route that is for an admin to upload pics for users.
 const uploadProfilePic = async (req, res) => {
-  const { path } = req.file
-  const { congregationId, memberId } = req.user
-
-  const params = {
-    Bucket: config.aws.bucket,
-    Key: `${congregationId}/${memberId}.jpg`,
-    Body: fs.createReadStream(path)
+  try {
+    const { path } = req.file
+    const { congregationId, memberId } = req.user
+    photoUploadService.upload(congregationId, memberId, path)
+  } catch (error) {
+    console.error(error)
+    return res.send({ message: 'Unable to upload profile pic' }, 409)
   }
-
-  new aws.S3().upload(params, (err, data) => {
-    console.log(err, data)
-    res.end()
-  })
+  return res.send(200)
 }
 
 module.exports = {
