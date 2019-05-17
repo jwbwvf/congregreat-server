@@ -3,6 +3,7 @@
 const uuid = require('uuid')
 const { Congregation } = require('../models')
 const { CONGREGATION_STATUS } = require('../common/status')
+const photoUploadService = require('../services/photoUploadService')
 
 const create = async (req, res) => {
   const id = uuid.v4()
@@ -11,6 +12,7 @@ const create = async (req, res) => {
 
   try {
     const congregation = await Congregation.create({ id, name, status })
+    photoUploadService.createDirectory(id)
     return res.status(200).json(congregation)
   } catch (error) {
     return res.status(409).json({ message: 'Unable to create congregation.' })
