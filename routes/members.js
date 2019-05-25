@@ -8,6 +8,7 @@ const {
   getAll,
   getById,
   getByCongregationId,
+  getProfilePic,
   update,
   softDelete,
   uploadProfilePic
@@ -19,6 +20,7 @@ router.get('/congregations/:id', getByCongregationId)
 router.post('/', create)
 router.patch('/:id', update)
 router.delete('/:id', softDelete)
+router.get('/profile/pic', getProfilePic)
 router.post('/profile/pic', upload.single('profilePic'), uploadProfilePic)
 
 module.exports = router

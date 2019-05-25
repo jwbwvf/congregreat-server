@@ -20,7 +20,22 @@ const upload = (directoryName, fileName, filePath) => {
   })
 }
 
+const download = (directoryName, fileName, res) => {
+  const params = {
+    Bucket: config.aws.resizedBucket,
+    Key: `${directoryName}/${fileName}.jpg`
+  }
+
+  const s3 = new aws.S3()
+  s3.getObject(params, (error, data) => {
+    if (error) console.error(error)
+    res.attachment(`${fileName}.jpg`)
+    res.send(data.Body)
+  })
+}
+
 module.exports = {
   createDirectory,
-  upload
+  upload,
+  download
 }
