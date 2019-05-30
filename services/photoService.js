@@ -20,18 +20,20 @@ const upload = (directoryName, fileName, filePath) => {
   })
 }
 
-const download = (directoryName, fileName, res) => {
-  const params = {
-    Bucket: config.aws.resizedBucket,
-    Key: `${directoryName}/${fileName}.jpg`
-  }
+const download = async (directoryName, fileName) => {
+  try {
+    const params = {
+      Bucket: config.aws.resizedBucket,
+      Key: `${directoryName}/${fileName}.jpg`
+    }
 
-  const s3 = new aws.S3()
-  s3.getObject(params, (error, data) => {
-    if (error) console.error(error)
-    res.attachment(`${fileName}.jpg`)
-    res.send(data.Body)
-  })
+    const s3 = new aws.S3()
+    const data = await s3.getObject(params).promise()
+    return data.Body
+  } catch (error) {
+    console.error(error)
+    throw new Error('Could not download file from S3', error)
+  }
 }
 
 module.exports = {

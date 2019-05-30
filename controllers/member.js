@@ -111,15 +111,16 @@ const uploadProfilePic = async (req, res) => {
   return res.send(200)
 }
 
-const getProfilePic = (req, res) => {
+const getProfilePic = async (req, res) => {
   const { congregationId, memberId } = req.user
   try {
-    photoService.download(congregationId, memberId, res)
+    const profilePic = await photoService.download(congregationId, memberId)
+    res.attachment(`${memberId}.jpg`)
+    return res.status(200).send(profilePic)
   } catch (error) {
     console.error(error, { congregationId, memberId })
-    return res.send({ message: 'Unable to download the profile pic' })
+    return res.status(500).send({ message: `Unable to download the profile pic for ${memberId}` })
   }
-  // no return because the photoService takes the res and when it gets a response from s3 it puts it on the res
 }
 
 module.exports = {
