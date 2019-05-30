@@ -3,7 +3,7 @@
 const uuid = require('uuid')
 const { Member } = require('../models')
 const { MEMBER_STATUS } = require('../common/status')
-const photoUploadService = require('../services/photoUploadService')
+const photoService = require('../services/photoService')
 
 const create = async (req, res) => {
   if (!req.body.firstName ||
@@ -100,15 +100,27 @@ const softDelete = async (req, res) => {
 // This is for the user to upload their profile pic.
 // There will be a different route that is for an admin to upload pics for users.
 const uploadProfilePic = async (req, res) => {
+  const { congregationId, memberId } = req.user
   try {
     const { path } = req.file
-    const { congregationId, memberId } = req.user
-    photoUploadService.upload(congregationId, memberId, path)
+    photoService.upload(congregationId, memberId, path)
   } catch (error) {
-    console.error(error)
+    console.error(error, { congregationId, memberId })
     return res.send({ message: 'Unable to upload profile pic' }, 409)
   }
   return res.send(200)
+}
+
+const getProfilePic = async (req, res) => {
+  const { congregationId, memberId } = req.user
+  try {
+    const profilePic = await photoService.download(congregationId, memberId)
+    res.attachment(`${memberId}.jpg`)
+    return res.status(200).send(profilePic)
+  } catch (error) {
+    console.error(error, { congregationId, memberId })
+    return res.status(500).send({ message: `Unable to download the profile pic for ${memberId}` })
+  }
 }
 
 module.exports = {
@@ -118,5 +130,6 @@ module.exports = {
   getByCongregationId,
   update,
   softDelete,
-  uploadProfilePic
+  uploadProfilePic,
+  getProfilePic
 }

@@ -38,7 +38,8 @@ module.exports = {
   },
   aws: {
     region: process.env.AWS_REGION,
-    bucket: process.env.AWS_BUCKET
+    bucket: process.env.AWS_BUCKET,
+    resizedBucket: process.env.AWS_RESIZED_BUCKET
     // Initialising the s3 object from aws-sdk automatically loads the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
     // process.env.AWS_ACCESS_KEY_ID,
     // process.env.AWS_SECRET_ACCESS_KEY
