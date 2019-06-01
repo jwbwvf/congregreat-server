@@ -1,30 +1,20 @@
 'use strict'
-module.exports = (sequelize, DataTypes) => {
-  var Congregation = sequelize.define('Congregation', {
-    id: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false
-    },
-    name: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
-    },
-    status: {
-      allowNull: false,
-      type: DataTypes.STRING
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    }
-  }, {})
 
+const baseModel = require('../common/baseModel')
+
+module.exports = (sequelize, DataTypes) => {
+  var Congregation = sequelize.define('Congregation',
+    Object.assign(baseModel.getProperties(DataTypes), {
+      name: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false
+      },
+      status: {
+        allowNull: false,
+        type: DataTypes.STRING
+      }
+    }), {})
   Congregation.associate = function (models) {
     Congregation.hasMany(models.Member, {
       foreignKey: {

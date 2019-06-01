@@ -1,42 +1,25 @@
 'use strict'
+
+const baseModel = require('../common/baseModel')
+
 module.exports = (sequelize, DataTypes) => {
-  var Role = sequelize.define('Role', {
-    id: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: 'uniqueTag'
-    },
-    status: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: 'uniqueTag'
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    createdBy: {
-      type: DataTypes.UUID,
-      allowNull: false
-    },
-    updatedBy: {
-      type: DataTypes.UUID,
-      allowNull: false
-    },
-    permissions: {
-      type: DataTypes.JSON,
-      allowNull: false
-    }
-  }, {})
+  var Role = sequelize.define('Role',
+    Object.assign(baseModel.getProperties(DataTypes), {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: 'uniqueTag'
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: 'uniqueTag'
+      },
+      permissions: {
+        type: DataTypes.JSON,
+        allowNull: false
+      }
+    }), {})
   Role.associate = function (models) {
     Role.belongsToMany(models.User, {
       through: models.UserRole,

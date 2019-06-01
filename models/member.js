@@ -1,41 +1,32 @@
 'use strict'
+
+const baseModel = require('../common/baseModel')
+
 module.exports = (sequelize, DataTypes) => {
-  var Member = sequelize.define('Member', {
-    id: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: true,
-      defaultValue: null,
-      validate: {
-        isEmail: true
+  var Member = sequelize.define('Member',
+    Object.assign(baseModel.getProperties(DataTypes), {
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: true,
+        defaultValue: null,
+        validate: {
+          isEmail: true
+        }
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: false
       }
-    },
-    status: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    }
-  }, {})
+    }), {})
   Member.associate = function (models) {
     Member.belongsTo(models.Congregation, {
       foreignKey: {

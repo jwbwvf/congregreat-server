@@ -1,43 +1,32 @@
 'use strict'
 
 const { USER_STATUS } = require('../common/status')
+const baseModel = require('../common/baseModel')
 
 module.exports = function (sequelize, DataTypes) {
-  var User = sequelize.define('User', {
-    id: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
-      validate: {
-        isEmail: true
+  var User = sequelize.define('User',
+    Object.assign(baseModel.getProperties(DataTypes), {
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+        validate: {
+          isEmail: true
+        }
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      hash: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      salt: {
+        type: DataTypes.STRING,
+        allowNull: false
       }
-    },
-    status: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    hash: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    salt: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    }
-  }, {})
+    }), {})
   User.associate = function (models) {
     User.belongsTo(models.Member, {
       foreignKey: {

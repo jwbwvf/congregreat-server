@@ -4,7 +4,7 @@ const baseModel = require('../common/baseModel')
 
 module.exports = (sequelize, DataTypes) => {
   const Address = sequelize.define('Address',
-    Object.assign(baseModel.getProperties, {
+    Object.assign(baseModel.getProperties(DataTypes), {
       addressLine1: {
         type: DataTypes.STRING,
         allowNull: false

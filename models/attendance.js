@@ -1,21 +1,10 @@
 'use strict'
 
+const baseModel = require('../common/baseModel')
+
 module.exports = (sequelize, DataTypes) => {
-  var Attendance = sequelize.define('Attendance', {
-    id: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      allowNull: false
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false
-    }
-  }, {})
+  var Attendance = sequelize.define('Attendance',
+    Object.assign(baseModel.getProperties(DataTypes), {}), {})
   Attendance.associate = function (models) {
     Attendance.belongsTo(models.Member, {
       foreignKey: {
